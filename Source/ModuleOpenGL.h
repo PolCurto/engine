@@ -19,6 +19,10 @@ public:
 	bool CleanUp();
 	void WindowResized(unsigned width, unsigned height);
 
+	unsigned CreateTriangleVBO();
+	void RenderVBO(unsigned vbo, unsigned program);
+	void DestroyVBO(usnigned vbo);
+
 private:
 	void* context;
 };

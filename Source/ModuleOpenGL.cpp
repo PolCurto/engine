@@ -7,6 +7,7 @@
 
 ModuleOpenGL::ModuleOpenGL()
 {
+	context = nullptr;
 }
 
 // Destructor
@@ -32,18 +33,17 @@ bool ModuleOpenGL::Init()
 	GLenum err = glewInit();
 	// … check for errors
 	LOG("Using Glew %s", glewGetString(GLEW_VERSION));
-	// Should be 2.0
 
+	// Information of the software and hardware
 	LOG("Vendor: %s", glGetString(GL_VENDOR));
 	LOG("Renderer: %s", glGetString(GL_RENDERER));
 	LOG("OpenGL version supported %s", glGetString(GL_VERSION));
 	LOG("GLSL: %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
 
+	// Pipeline options
 	glEnable(GL_DEPTH_TEST); // Enable depth test
 	glEnable(GL_CULL_FACE); // Enable cull backward faces
 	glFrontFace(GL_CCW); // Front faces will be counter clockwise
-
-
 
 	return true;
 }
@@ -88,5 +88,36 @@ bool ModuleOpenGL::CleanUp()
 
 void ModuleOpenGL::WindowResized(unsigned width, unsigned height)
 {
+}
+
+unsigned ModuleOpenGL::CreateTriangleVBO()
+{
+	float vtx_data[] = { -1.0f, -1.0f, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f };
+	unsigned vbo;
+	glGenBuffers(1, &vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo); // set vbo active
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vtx_data), vtx_data, GL_STATIC_DRAW);
+
+	return vbo;
+}
+
+void ModuleOpenGL::RenderVBO(unsigned int vbo, unsigned int program)
+{
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glEnableVertexAttribArray(0);
+
+	// size = 3 float per vertex
+	// stride = 0 is equivalent to stride = sizeof(float)*3
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
+	glUseProgram(program);
+
+	// 1 triangle to draw = 3 vertices
+	glDrawArrays(GL_TRIANGLES, 0, 3);
+}
+
+void DestroyVBO(unsigned vbo)
+{
+	glDeleteBuffers(1, &vbo);
 }
 
