@@ -8,6 +8,7 @@
     <ClCompile Include="ModuleOpenGL.cpp" />
     <ClCompile Include="ModuleWindow.cpp" />
     <ClCompile Include="ModuleProgram.cpp" />
+    <ClCompile Include="ModuleRenderExercise.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -18,5 +19,6 @@
     <ClInclude Include="ModuleOpenGL.h" />
     <ClInclude Include="ModuleWindow.h" />
     <ClInclude Include="ModuleProgram.h" />
+    <ClInclude Include="ModuleRenderExercise.h" />
   </ItemGroup>
 </Project>
