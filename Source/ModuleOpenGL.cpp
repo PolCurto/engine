@@ -3,6 +3,7 @@
 #include "ModuleWindow.h"
 #include "SDL.h"
 #include "GL/glew.h"
+#include "MathGeoLib.h"
 
 void __stdcall OpenGlDebugging(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam);
 
@@ -105,21 +106,42 @@ unsigned ModuleOpenGL::CreateTriangleVBO(float vertex_data[], int data_length)
 	unsigned vbo;
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo); // set vbo active
-	glBufferData(GL_ARRAY_BUFFER, sizeof(*vertex_data) * data_length, vtx_data, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(*vertex_data) * data_length, vertex_data, GL_STATIC_DRAW);
 
 	return vbo;
 }
 
 void ModuleOpenGL::RenderVBO(unsigned vbo, unsigned program)
 {
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glEnableVertexAttribArray(0);
+	// Get all the data using the frustrum class
+	Frustum frustum;
+	frustum.type = FrustumType::PerspectiveFrustum;
 
-	// size = 3 float per vertex
-	// stride = 0 is equivalent to stride = sizeof(float)*3
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+	frustum.pos = math::float3::zero;
+	frustum.front = -math::float3::unitZ;
+	frustum.up = math::float3::unitY;
+
+	frustum.nearPlaneDistance = 0.1f;
+	frustum.farPlaneDistance = 100.0f;
+	frustum.verticalFov = math::pi / 4.0f;
+	frustum.horizontalFov = 2.0f * atanf(tanf(frustum.verticalFov * 0.5f) /** aspect*/);
+
+	float4x4 projection = frustum.ProjectionMatrix();
+
+	float4x4 view = frustum.ViewMatrix();
+	float4x4 model = math::float4x4::FromTRS(float3(2.0f, 0.0f, 0.0f),
+										float4x4::RotateZ(pi / 4.0f),
+										float3(2.0f, 1.0f, 1.0f));
 
 	glUseProgram(program);
+	glUniformMatrix4fv(0, 1, GL_TRUE, &projection[0][0]);
+	glUniformMatrix4fv(1, 1, GL_TRUE, &view[0][0]);
+	glUniformMatrix4fv(2, 1, GL_TRUE, &model[0][0]);
+
+	// Bind buffer and vertex attributes
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
 	// 1 triangle to draw = 3 vertices
 	glDrawArrays(GL_TRIANGLES, 0, 3);
