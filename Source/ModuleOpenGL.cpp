@@ -59,11 +59,12 @@ bool ModuleOpenGL::Init()
 
 update_status ModuleOpenGL::PreUpdate()
 {
-	int* w = new int(0);
-	int* h = new int(0);
+	int w = 0;
+	int h = 0;
 
-	SDL_GetWindowSize(App->GetWindow()->window, w, h);
-	glViewport(0, 0, *w, *h);
+	SDL_GetWindowSize(App->GetWindow()->window, &w, &h);
+	glViewport(0, 0, w, h);
+
 	glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -99,12 +100,12 @@ void ModuleOpenGL::WindowResized(unsigned width, unsigned height)
 {
 }
 
-unsigned ModuleOpenGL::CreateTriangleVBO(float vertex_data[])
+unsigned ModuleOpenGL::CreateTriangleVBO(float vertex_data[], int data_length)
 {
 	unsigned vbo;
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo); // set vbo active
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertex_data), vertex_data, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(*vertex_data) * data_length, vtx_data, GL_STATIC_DRAW);
 
 	return vbo;
 }

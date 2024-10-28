@@ -17,9 +17,11 @@ ModuleRenderExercise::~ModuleRenderExercise()
 
 bool ModuleRenderExercise::Init()
 {
-	// Load a triangle into a VBO
 	float vtx_data[] = { -1.0f, -1.0f, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f };
-	vbo = App->GetOpenGL()->CreateTriangleVBO(vtx_data);
+	int data_length = sizeof(vtx_data) / sizeof(vtx_data[0]);
+
+	// Load a triangle into a VBO
+	vbo = App->GetOpenGL()->CreateTriangleVBO(vtx_data, data_length);
 	LOG("VBO: %d", vbo);
 
 	// Compile the vertex shader
@@ -41,7 +43,6 @@ bool ModuleRenderExercise::Init()
 
 	free(vtx_source);
 	free(frag_source);
-
 
 	return true;
 }

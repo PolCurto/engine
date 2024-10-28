@@ -19,7 +19,7 @@ public:
 	bool CleanUp();
 	void WindowResized(unsigned width, unsigned height);
 
-	unsigned CreateTriangleVBO(float vertex_data[]);
+	unsigned CreateTriangleVBO(float vertex_data[], int data_length);
 	void RenderVBO(unsigned vbo, unsigned program);
 	void DestroyVBO(unsigned vbo);
 
