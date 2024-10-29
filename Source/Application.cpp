@@ -5,6 +5,7 @@
 #include "ModuleInput.h"
 #include "ModuleProgram.h"
 #include "ModuleRenderExercise.h"
+#include "ModuleDebugDraw.h"
 
 using namespace std;
 
@@ -16,6 +17,7 @@ Application::Application()
 	modules.push_back(render = new ModuleOpenGL());
 	modules.push_back(program = new ModuleProgram());
 	modules.push_back(exercise = new ModuleRenderExercise());
+	modules.push_back(debug = new ModuleDebugDraw());
 }
 
 Application::~Application()

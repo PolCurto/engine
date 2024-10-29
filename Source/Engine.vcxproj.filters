@@ -41,6 +41,7 @@
     <ClCompile Include="MathGeoLib\include\Geometry\Triangle.cpp" />
     <ClCompile Include="MathGeoLib\include\Geometry\TriangleMesh.cpp" />
     <ClCompile Include="MathGeoLib\include\Time\Clock.cpp" />
+    <ClCompile Include="ModuleDebugDraw.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -112,6 +113,9 @@
     <ClInclude Include="MathGeoLib\include\MathBuildConfig.h" />
     <ClInclude Include="MathGeoLib\include\MathGeoLib.h" />
     <ClInclude Include="MathGeoLib\include\MathGeoLibFwd.h" />
+    <ClInclude Include="debug_draw.hpp" />
+    <ClInclude Include="debugdraw.h" />
+    <ClInclude Include="ModuleDebugDraw.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="MathGeoLib\include\Math\Matrix.inl" />

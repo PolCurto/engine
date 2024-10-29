@@ -17,7 +17,7 @@ ModuleRenderExercise::~ModuleRenderExercise()
 
 bool ModuleRenderExercise::Init()
 {
-	float vtx_data[] = { -1.0f, -1.0f, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f };
+	float vtx_data[] = { -1.0f, -1.0f, -3.0f, 1.0f, -1.0f, -3.0f, 0.0f, 1.0f, -3.0f };
 	int data_length = sizeof(vtx_data) / sizeof(vtx_data[0]);
 
 	// Load a triangle into a VBO
