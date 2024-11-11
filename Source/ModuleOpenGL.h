@@ -1,6 +1,5 @@
 #pragma once
 #include "Module.h"
-#include "Globals.h"
 
 struct SDL_Texture;
 struct SDL_Renderer;
@@ -23,8 +22,13 @@ public:
 	void RenderVBO(unsigned vbo, unsigned program);
 	void DestroyVBO(unsigned vbo);
 
+	int GetWindowWidth() { return window_width; }
+	int GetWindowHeight() { return window_height; }
+
 	//void __stdcall OpenGlDebugging(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam);
 
 private:
 	void* context;
+	int window_width;
+	int window_height;
 };

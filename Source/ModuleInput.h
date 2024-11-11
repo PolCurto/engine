@@ -1,6 +1,5 @@
 #pragma once
 #include "Module.h"
-#include "Globals.h"
 
 typedef unsigned __int8 Uint8;
 
@@ -14,6 +13,8 @@ public:
 	bool Init();
 	update_status Update();
 	bool CleanUp();
+
+	const Uint8* GetKeyboard() { return keyboard; }
 
 private:
 	const Uint8 *keyboard = NULL;

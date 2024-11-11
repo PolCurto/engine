@@ -2,9 +2,9 @@
 #include "ModuleOpenGL.h"
 #include "ModuleWindow.h"
 #include "ModuleDebugDraw.h"
+#include "ModuleEditorCamera.h"
 #include "SDL.h"
 #include "GL/glew.h"
-#include "MathGeoLib.h"
 
 void __stdcall OpenGlDebugging(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam);
 
@@ -61,11 +61,8 @@ bool ModuleOpenGL::Init()
 
 update_status ModuleOpenGL::PreUpdate()
 {
-	int w = 0;
-	int h = 0;
-
-	SDL_GetWindowSize(App->GetWindow()->window, &w, &h);
-	glViewport(0, 0, w, h);
+	SDL_GetWindowSize(App->GetWindow()->window, &window_width, &window_height);
+	glViewport(0, 0, window_width, window_height);
 
 	glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -114,31 +111,12 @@ unsigned ModuleOpenGL::CreateTriangleVBO(float vertex_data[], int data_length)
 
 void ModuleOpenGL::RenderVBO(unsigned vbo, unsigned program)
 {
-	// Get all the data using the frustrum class
-	Frustum frustum;
-	frustum.type = FrustumType::PerspectiveFrustum;
+	float4x4 projection = App->GetCamera()->GetProjectionMatrix();
+	float4x4 view = App->GetCamera()->GetViewMatrix();
+	float4x4 model = App->GetCamera()->GetModelMatrix();
 
-	frustum.pos = math::float3(0, 0.5f, 0);
-	frustum.front = math::float3(0, 0, -1);
-	frustum.up = math::float3::unitY;
-
-	frustum.nearPlaneDistance = 0.1f;
-	frustum.farPlaneDistance = 100.0f;
-	frustum.verticalFov = math::pi / 4.0f;
-	frustum.horizontalFov = 2.0f * atanf(tanf(frustum.verticalFov * 0.5f) /** aspect*/);
-
-	float4x4 projection = frustum.ProjectionMatrix();
-
-	float4x4 view = frustum.ViewMatrix();
-	float4x4 model = math::float4x4::FromTRS(float3(0.0f, 1.0f, -3.0f),
-										float4x4::RotateZ(pi / 4.0f),
-										float3(0.5f, 0.5f, 0.5f));
-
-	// TODO: Implement my own LookAt function
-
-
-	// Darw debug axis origin and square grid
-	App->GetDebug()->Draw(view, projection, SCREEN_WIDTH, SCREEN_HEIGHT);
+	// Draw debug axis origin and square grid
+	App->GetDebug()->Draw(view, projection, window_width, window_height);
 
 	glUseProgram(program);
 	glUniformMatrix4fv(0, 1, GL_TRUE, &projection[0][0]);
@@ -146,13 +124,10 @@ void ModuleOpenGL::RenderVBO(unsigned vbo, unsigned program)
 	glUniformMatrix4fv(2, 1, GL_TRUE, &model[0][0]);
 
 	// Bind buffer and vertex attributes
-	
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 	
-
-
 	// 1 triangle to draw = 3 vertices
 	glDrawArrays(GL_TRIANGLES, 0, 3);
 }
