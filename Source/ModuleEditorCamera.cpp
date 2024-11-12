@@ -15,7 +15,9 @@ ModuleEditorCamera::~ModuleEditorCamera()
 
 bool ModuleEditorCamera::Init()
 {
-	//frustum.type = FrustumType::PerspectiveFrustum;
+	frustum.type = FrustumType::PerspectiveFrustum;
+	frustum.front = math::float3(0, 0, -1);
+	frustum.up = math::float3::unitY;
 	return true;
 }
 
@@ -38,56 +40,73 @@ void ModuleEditorCamera::ProcessInput()
 	float front_speed = 0;
 	float right_speed = 0;
 	float up_speed = 0;
+	float factor = 1;
 
-	if (keys[SDL_SCANCODE_S])
-	{
-		LOG("FORWARD");
-		++front_speed;
-	}
 	if (keys[SDL_SCANCODE_W])
-	{
-		LOG("BACKWARD");
+		++front_speed;
+	if (keys[SDL_SCANCODE_S])
 		--front_speed;
-	}
 	if (keys[SDL_SCANCODE_D])
-	{
-		LOG("RIGHT");
 		++right_speed;
-	}
 	if (keys[SDL_SCANCODE_A])
-	{
-		LOG("LEFT");
 		--right_speed;
-	}
 	if (keys[SDL_SCANCODE_Q])
-	{
-		LOG("UP");
 		++up_speed;
-	}
 	if (keys[SDL_SCANCODE_E])
-	{
-		LOG("DOWN");
 		--up_speed;
+	if (keys[SDL_SCANCODE_LSHIFT])
+		factor = 3;
+
+	float delta = 0.05f;
+
+	math::DegToRad(2);
+
+	camera_position += (front_speed * frustum.front + right_speed * frustum.WorldRight() + up_speed * float3::unitY) * delta * factor;
+
+	LOG("[Position] x: %f - y: %f - z: %f", camera_position.x, camera_position.y, camera_position.z);
+
+	float pitch_deg = 0;
+	float yaw_deg = 0;
+
+	if (keys[SDL_SCANCODE_UP])
+		pitch_deg += 0.1;
+	if (keys[SDL_SCANCODE_DOWN])
+		pitch_deg -= 0.1;
+	if (keys[SDL_SCANCODE_RIGHT])
+		yaw_deg += 0.1;
+	if (keys[SDL_SCANCODE_LEFT])
+		yaw_deg -= 0.1;
+
+	float4x4 yaw_rotation = float4x4::RotateY(math::DegToRad(yaw_deg));
+
+	// Rotate around X axis
+	if (pitch_deg)
+	{
+		float4x4 pitch_rotation = float4x4::RotateX(math::DegToRad(pitch_deg));
+		float3 oldFront = frustum.front.Normalized();
+		float3 oldUp = frustum.up.Normalized();
+		frustum.up = pitch_rotation.MulDir(oldUp);
+		frustum.front = pitch_rotation.MulDir(oldFront);
 	}
 
-	float factor = 0.05f;
+	if (yaw_deg)
+	{
 
-	camera_position.x += right_speed * factor;
-	camera_position.y += up_speed * factor;
-	camera_position.z += front_speed * factor;
+	}
 
-	LOG("[Position] x: %d - y: %d - z: %d", camera_position.x, camera_position.y, camera_position.z);
+	//float3 oldFront = frustum.front.Normalized();
+	//float3 oldUp = frustum.front.Normalized();
+	//frustum.front = yaw_rotation.MulDir(oldFront);
+	//frustum.up = yaw_rotation.MulDir(oldUp);
+
+	LOG("[Front] x: %f - y: %f - z: %f", frustum.front.x, frustum.front.y, frustum.front.z);
+	LOG("[Up] x: %f - y: %f - z: %f", frustum.up.x, frustum.up.y, frustum.up.z);
 }
 
 void ModuleEditorCamera::SetFrustum()
 {
-	Frustum frustum;
-	frustum.type = FrustumType::PerspectiveFrustum;
-
 	// Get all the data using the frustrum class
 	frustum.pos = camera_position;
-	frustum.front = math::float3(0, 0, -1);
-	frustum.up = math::float3::unitY;
 
 	frustum.nearPlaneDistance = 0.1f;
 	frustum.farPlaneDistance = 100.0f;
@@ -97,10 +116,7 @@ void ModuleEditorCamera::SetFrustum()
 	frustum.horizontalFov = 2.0f * atanf(tanf(frustum.verticalFov * 0.5f) * aspect_ratio);
 
 	projection_matrix = frustum.ProjectionMatrix();
-	view_matrix = frustum.ViewMatrix();
-	model_matrix = math::float4x4::FromTRS(float3(0.0f, 1.0f, -3.0f),
-		float4x4::RotateZ(pi / 4.0f),
-		float3(0.5f, 0.5f, 0.5f));
+	view_matrix = static_cast<float4x4>(frustum.ViewMatrix());
 
 	// TODO: Implement my own LookAt function
 
