@@ -69,35 +69,33 @@ void ModuleEditorCamera::ProcessInput()
 	float yaw_deg = 0;
 
 	if (keys[SDL_SCANCODE_UP])
-		pitch_deg += 0.1;
+		pitch_deg += 1;
 	if (keys[SDL_SCANCODE_DOWN])
-		pitch_deg -= 0.1;
-	if (keys[SDL_SCANCODE_RIGHT])
-		yaw_deg += 0.1;
+		pitch_deg -= 1;
 	if (keys[SDL_SCANCODE_LEFT])
-		yaw_deg -= 0.1;
+		yaw_deg += 1;
+	if (keys[SDL_SCANCODE_RIGHT])
+		yaw_deg -= 1;
 
-	float4x4 yaw_rotation = float4x4::RotateY(math::DegToRad(yaw_deg));
-
-	// Rotate around X axis
+	// Rotate around local X axis
 	if (pitch_deg)
 	{
-		float4x4 pitch_rotation = float4x4::RotateX(math::DegToRad(pitch_deg));
+		float4x4 pitch_rotation = float4x4::RotateAxisAngle(frustum.WorldRight(), math::DegToRad(pitch_deg));
 		float3 oldFront = frustum.front.Normalized();
 		float3 oldUp = frustum.up.Normalized();
 		frustum.up = pitch_rotation.MulDir(oldUp);
 		frustum.front = pitch_rotation.MulDir(oldFront);
 	}
 
+	// Rotate around world Y axis
 	if (yaw_deg)
 	{
-
+		float4x4 yaw_rotation = float4x4::RotateY(math::DegToRad(yaw_deg));
+		float3 oldFront = frustum.front.Normalized();
+		float3 oldUp = frustum.up.Normalized();
+		frustum.up = yaw_rotation.MulDir(oldUp);
+		frustum.front = yaw_rotation.MulDir(oldFront);
 	}
-
-	//float3 oldFront = frustum.front.Normalized();
-	//float3 oldUp = frustum.front.Normalized();
-	//frustum.front = yaw_rotation.MulDir(oldFront);
-	//frustum.up = yaw_rotation.MulDir(oldUp);
 
 	LOG("[Front] x: %f - y: %f - z: %f", frustum.front.x, frustum.front.y, frustum.front.z);
 	LOG("[Up] x: %f - y: %f - z: %f", frustum.up.x, frustum.up.y, frustum.up.z);
