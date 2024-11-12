@@ -109,7 +109,7 @@ unsigned ModuleOpenGL::CreateTriangleVBO(float vertex_data[], int data_length)
 	return vbo;
 }
 
-void ModuleOpenGL::RenderVBO(unsigned vbo, unsigned program)
+void ModuleOpenGL::RenderVBO(unsigned vbo, unsigned program) const
 {
 	float4x4 projection = App->GetCamera()->GetProjectionMatrix();
 	float4x4 view = App->GetCamera()->GetViewMatrix();
@@ -132,7 +132,7 @@ void ModuleOpenGL::RenderVBO(unsigned vbo, unsigned program)
 	glDrawArrays(GL_TRIANGLES, 0, 3);
 }
 
-void ModuleOpenGL::DestroyVBO(unsigned vbo)
+void ModuleOpenGL::DestroyVBO(unsigned vbo) const
 {
 	glDeleteBuffers(1, &vbo);
 }

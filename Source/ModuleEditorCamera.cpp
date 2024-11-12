@@ -21,7 +21,7 @@ bool ModuleEditorCamera::Init()
 
 update_status ModuleEditorCamera::Update()
 {	
-	GetInput();
+	ProcessInput();
 	SetFrustum();
 	return UPDATE_CONTINUE;
 }
@@ -35,10 +35,48 @@ void ModuleEditorCamera::ProcessInput()
 {
 	const uint8_t* keys = App->GetInput()->GetKeyboard();
 
-	if (keys[SDL_SCANCODE_UP])
+	float front_speed = 0;
+	float right_speed = 0;
+	float up_speed = 0;
+
+	if (keys[SDL_SCANCODE_S])
+	{
+		LOG("FORWARD");
+		++front_speed;
+	}
+	if (keys[SDL_SCANCODE_W])
+	{
+		LOG("BACKWARD");
+		--front_speed;
+	}
+	if (keys[SDL_SCANCODE_D])
+	{
+		LOG("RIGHT");
+		++right_speed;
+	}
+	if (keys[SDL_SCANCODE_A])
+	{
+		LOG("LEFT");
+		--right_speed;
+	}
+	if (keys[SDL_SCANCODE_Q])
 	{
 		LOG("UP");
+		++up_speed;
 	}
+	if (keys[SDL_SCANCODE_E])
+	{
+		LOG("DOWN");
+		--up_speed;
+	}
+
+	float factor = 0.05f;
+
+	camera_position.x += right_speed * factor;
+	camera_position.y += up_speed * factor;
+	camera_position.z += front_speed * factor;
+
+	LOG("[Position] x: %d - y: %d - z: %d", camera_position.x, camera_position.y, camera_position.z);
 }
 
 void ModuleEditorCamera::SetFrustum()
@@ -47,7 +85,7 @@ void ModuleEditorCamera::SetFrustum()
 	frustum.type = FrustumType::PerspectiveFrustum;
 
 	// Get all the data using the frustrum class
-	frustum.pos = math::float3(0, 0.5f, 5);
+	frustum.pos = camera_position;
 	frustum.front = math::float3(0, 0, -1);
 	frustum.up = math::float3::unitY;
 
@@ -55,7 +93,7 @@ void ModuleEditorCamera::SetFrustum()
 	frustum.farPlaneDistance = 100.0f;
 	frustum.verticalFov = math::pi / 4.0f;
 
-	float aspect_ratio = App->GetOpenGL()->GetWindowWidth() / App->GetOpenGL()->GetWindowHeight();
+	float aspect_ratio = static_cast<float>(App->GetOpenGL()->GetWindowWidth()) / static_cast<float>(App->GetOpenGL()->GetWindowHeight());
 	frustum.horizontalFov = 2.0f * atanf(tanf(frustum.verticalFov * 0.5f) * aspect_ratio);
 
 	projection_matrix = frustum.ProjectionMatrix();

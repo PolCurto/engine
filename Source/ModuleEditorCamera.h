@@ -21,8 +21,8 @@ private:
 	void SetFrustum();
 	void ProcessInput();
 
-	float4x4 projection_matrix;
-	float4x4 view_matrix;
-	float4x4 model_matrix;
-	float3 camera_position;
+	float4x4 projection_matrix = float4x4::zero;
+	float4x4 view_matrix = float4x4::zero;
+	float4x4 model_matrix = float4x4::zero;
+	float3 camera_position = float3::zero;;
 };

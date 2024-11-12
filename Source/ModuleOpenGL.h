@@ -19,11 +19,11 @@ public:
 	void WindowResized(unsigned width, unsigned height);
 
 	unsigned CreateTriangleVBO(float vertex_data[], int data_length);
-	void RenderVBO(unsigned vbo, unsigned program);
-	void DestroyVBO(unsigned vbo);
+	void RenderVBO(unsigned vbo, unsigned program) const;
+	void DestroyVBO(unsigned vbo) const;
 
-	int GetWindowWidth() { return window_width; }
-	int GetWindowHeight() { return window_height; }
+	int GetWindowWidth() const { return window_width; }
+	int GetWindowHeight() const { return window_height; }
 
 	//void __stdcall OpenGlDebugging(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam);
 
