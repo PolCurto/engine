@@ -18,6 +18,16 @@ bool ModuleEditorCamera::Init()
 	frustum.type = FrustumType::PerspectiveFrustum;
 	frustum.front = math::float3(0, 0, -1);
 	frustum.up = math::float3::unitY;
+
+	frustum.nearPlaneDistance = 0.1f;
+	frustum.farPlaneDistance = 100.0f;
+	frustum.horizontalFov = DegToRad(120.0);
+
+	aspect_ratio = static_cast<float>(SCREEN_WIDTH) / static_cast<float>(SCREEN_HEIGHT);
+	frustum.verticalFov = 2.0f * atanf(tanf(frustum.horizontalFov * 0.5f) * (1 / aspect_ratio));
+	frustum.pos = camera_position;
+	projection_matrix = frustum.ProjectionMatrix();
+
 	return true;
 }
 
@@ -78,7 +88,7 @@ void ModuleEditorCamera::ProcessInput()
 		yaw_deg -= 1;
 
 	// Rotate around local X axis
-	if (pitch_deg)
+	if ((pitch_deg < 0 && frustum.front.y > -0.99f) || (pitch_deg > 0 && frustum.front.y < 0.99f))
 	{
 		float4x4 pitch_rotation = float4x4::RotateAxisAngle(frustum.WorldRight(), math::DegToRad(pitch_deg));
 		float3 oldFront = frustum.front.Normalized();
@@ -106,17 +116,36 @@ void ModuleEditorCamera::SetFrustum()
 	// Get all the data using the frustrum class
 	frustum.pos = camera_position;
 
-	frustum.nearPlaneDistance = 0.1f;
-	frustum.farPlaneDistance = 100.0f;
-	frustum.verticalFov = math::pi / 4.0f;
+	//LOG("Aspect ration: %f. Width: %d. Height: %d.", aspect_ratio, App->GetOpenGL()->GetWindowWidth(), App->GetOpenGL()->GetWindowHeight());
 
-	float aspect_ratio = static_cast<float>(App->GetOpenGL()->GetWindowWidth()) / static_cast<float>(App->GetOpenGL()->GetWindowHeight());
-	frustum.horizontalFov = 2.0f * atanf(tanf(frustum.verticalFov * 0.5f) * aspect_ratio);
-
-	projection_matrix = frustum.ProjectionMatrix();
 	view_matrix = static_cast<float4x4>(frustum.ViewMatrix());
-
 	// TODO: Implement my own LookAt function
 
+}
+
+void ModuleEditorCamera::SetFOV(float new_fov)
+{
+	frustum.horizontalFov = DegToRad(new_fov);
+	frustum.verticalFov = 2.0f * atanf(tanf(frustum.horizontalFov * 0.5f) * (1 / aspect_ratio));
+	projection_matrix = frustum.ProjectionMatrix();
+}
+
+void ModuleEditorCamera::SetAspectRatio(float new_aspect_ratio)
+{
+	aspect_ratio = new_aspect_ratio;
+	frustum.verticalFov = 2.0f * atanf(tanf(frustum.horizontalFov * 0.5f) * (1 / aspect_ratio));
+	projection_matrix = frustum.ProjectionMatrix();
+}
+
+void ModuleEditorCamera::SetPlaneDistances(float near_plane_dist, float far_plane_dist)
+{
+	frustum.nearPlaneDistance = near_plane_dist;
+	frustum.farPlaneDistance = far_plane_dist;
+	projection_matrix = frustum.ProjectionMatrix();
+}
+
+void ModuleEditorCamera::SetPosition(const float3& new_position)
+{
+	frustum.pos = camera_position = new_position;
 }
 

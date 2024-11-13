@@ -56,6 +56,10 @@ bool ModuleOpenGL::Init()
 	glDebugMessageCallback(&OpenGlDebugging, nullptr);
 	glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, true);
 
+	// Get the window size
+	SDL_GetWindowSize(App->GetWindow()->window, &window_width, &window_height);
+	glViewport(0, 0, window_width, window_height);
+
 	return true;
 }
 

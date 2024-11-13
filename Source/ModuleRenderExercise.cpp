@@ -1,6 +1,9 @@
 #include "ModuleRenderExercise.h"
 #include "ModuleOpenGL.h"
 #include "ModuleProgram.h"
+#include "ModuleInput.h"
+#include "ModuleEditorCamera.h"
+#include "SDL.h"
 #include "GL/glew.h"
 
 
@@ -50,6 +53,14 @@ bool ModuleRenderExercise::Init()
 update_status ModuleRenderExercise::Update()
 {
 	App->GetOpenGL()->RenderVBO(vbo, program_id);
+	const uint8_t* keys = App->GetInput()->GetKeyboard();
+
+	if (keys[SDL_SCANCODE_1])
+		App->GetCamera()->SetFOV(40.0f);
+	if (keys[SDL_SCANCODE_2])
+		App->GetCamera()->SetAspectRatio(4.0f / 3.0f);
+	if (keys[SDL_SCANCODE_3])
+		App->GetCamera()->SetPlaneDistances(5.0f, 10.0f);
 
 	return UPDATE_CONTINUE;
 }
