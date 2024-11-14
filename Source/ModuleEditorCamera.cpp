@@ -21,12 +21,11 @@ bool ModuleEditorCamera::Init()
 
 	frustum.nearPlaneDistance = 0.1f;
 	frustum.farPlaneDistance = 100.0f;
-	frustum.horizontalFov = DegToRad(120.0);
+	frustum.horizontalFov = DegToRad(90);
 
 	aspect_ratio = static_cast<float>(SCREEN_WIDTH) / static_cast<float>(SCREEN_HEIGHT);
 	frustum.verticalFov = 2.0f * atanf(tanf(frustum.horizontalFov * 0.5f) * (1 / aspect_ratio));
 	frustum.pos = camera_position;
-	projection_matrix = frustum.ProjectionMatrix();
 
 	return true;
 }
@@ -73,7 +72,7 @@ void ModuleEditorCamera::ProcessInput()
 
 	camera_position += (front_speed * frustum.front + right_speed * frustum.WorldRight() + up_speed * float3::unitY) * delta * factor;
 
-	LOG("[Position] x: %f - y: %f - z: %f", camera_position.x, camera_position.y, camera_position.z);
+	//LOG("[Position] x: %f - y: %f - z: %f", camera_position.x, camera_position.y, camera_position.z);
 
 	float pitch_deg = 0;
 	float yaw_deg = 0;
@@ -88,7 +87,7 @@ void ModuleEditorCamera::ProcessInput()
 		yaw_deg -= 1;
 
 	// Rotate around local X axis
-	if ((pitch_deg < 0 && frustum.front.y > -0.99f) || (pitch_deg > 0 && frustum.front.y < 0.99f))
+	if ((pitch_deg < 0 && frustum.front.y > -0.9f) || (pitch_deg > 0 && frustum.front.y < 0.9f))
 	{
 		float4x4 pitch_rotation = float4x4::RotateAxisAngle(frustum.WorldRight(), math::DegToRad(pitch_deg));
 		float3 oldFront = frustum.front.Normalized();
@@ -107,8 +106,8 @@ void ModuleEditorCamera::ProcessInput()
 		frustum.front = yaw_rotation.MulDir(oldFront);
 	}
 
-	LOG("[Front] x: %f - y: %f - z: %f", frustum.front.x, frustum.front.y, frustum.front.z);
-	LOG("[Up] x: %f - y: %f - z: %f", frustum.up.x, frustum.up.y, frustum.up.z);
+	//LOG("[Front] x: %f - y: %f - z: %f", frustum.front.x, frustum.front.y, frustum.front.z);
+	//LOG("[Up] x: %f - y: %f - z: %f", frustum.up.x, frustum.up.y, frustum.up.z);
 }
 
 void ModuleEditorCamera::SetFrustum()
@@ -117,6 +116,8 @@ void ModuleEditorCamera::SetFrustum()
 	frustum.pos = camera_position;
 
 	//LOG("Aspect ration: %f. Width: %d. Height: %d.", aspect_ratio, App->GetOpenGL()->GetWindowWidth(), App->GetOpenGL()->GetWindowHeight());
+	//LOG("Fov: %f", RadToDeg(frustum.horizontalFov));
+	projection_matrix = frustum.ProjectionMatrix();
 
 	view_matrix = static_cast<float4x4>(frustum.ViewMatrix());
 	// TODO: Implement my own LookAt function

@@ -65,7 +65,6 @@ bool ModuleOpenGL::Init()
 
 update_status ModuleOpenGL::PreUpdate()
 {
-	SDL_GetWindowSize(App->GetWindow()->window, &window_width, &window_height);
 	glViewport(0, 0, window_width, window_height);
 
 	glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
@@ -101,6 +100,10 @@ bool ModuleOpenGL::CleanUp()
 
 void ModuleOpenGL::WindowResized(unsigned width, unsigned height)
 {
+	LOG("Window resized");
+	SDL_GetWindowSize(App->GetWindow()->window, &window_width, &window_height);
+	
+	App->GetCamera()->SetAspectRatio(static_cast<float>(window_width) / static_cast<float>(window_height));
 }
 
 unsigned ModuleOpenGL::CreateTriangleVBO(float vertex_data[], int data_length)
