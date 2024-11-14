@@ -74,26 +74,14 @@ void ModuleEditorCamera::ProcessInput()
 
 	//LOG("[Position] x: %f - y: %f - z: %f", camera_position.x, camera_position.y, camera_position.z);
 
-	float pitch_deg = 0;
+	float sensitivity = 0.2f;
 	float yaw_deg = 0;
+	float pitch_deg = 0;
 
-	if (keys[SDL_SCANCODE_UP])
-		pitch_deg += 1;
-	if (keys[SDL_SCANCODE_DOWN])
-		pitch_deg -= 1;
-	if (keys[SDL_SCANCODE_LEFT])
-		yaw_deg += 1;
-	if (keys[SDL_SCANCODE_RIGHT])
-		yaw_deg -= 1;
-
-	// Rotate around local X axis
-	if ((pitch_deg < 0 && frustum.front.y > -0.9f) || (pitch_deg > 0 && frustum.front.y < 0.9f))
+	if (App->GetInput()->GetMouseButtons()[RIGHT_BUTTON])
 	{
-		float4x4 pitch_rotation = float4x4::RotateAxisAngle(frustum.WorldRight(), math::DegToRad(pitch_deg));
-		float3 oldFront = frustum.front.Normalized();
-		float3 oldUp = frustum.up.Normalized();
-		frustum.up = pitch_rotation.MulDir(oldUp);
-		frustum.front = pitch_rotation.MulDir(oldFront);
+		yaw_deg = -App->GetInput()->GetMouseMotionX() * sensitivity;
+		pitch_deg = -App->GetInput()->GetMouseMotionY() * sensitivity;
 	}
 
 	// Rotate around world Y axis
@@ -105,6 +93,17 @@ void ModuleEditorCamera::ProcessInput()
 		frustum.up = yaw_rotation.MulDir(oldUp);
 		frustum.front = yaw_rotation.MulDir(oldFront);
 	}
+
+	// Rotate around local X axis
+	if ((pitch_deg < 0 && frustum.front.y > -0.9f) || (pitch_deg > 0 && frustum.front.y < 0.9f))
+	{
+		float4x4 pitch_rotation = float4x4::RotateAxisAngle(frustum.WorldRight(), math::DegToRad(pitch_deg));
+		float3 oldFront = frustum.front.Normalized();
+		float3 oldUp = frustum.up.Normalized();
+		frustum.up = pitch_rotation.MulDir(oldUp);
+		frustum.front = pitch_rotation.MulDir(oldFront);
+	}
+
 
 	//LOG("[Front] x: %f - y: %f - z: %f", frustum.front.x, frustum.front.y, frustum.front.z);
 	//LOG("[Up] x: %f - y: %f - z: %f", frustum.up.x, frustum.up.y, frustum.up.z);
