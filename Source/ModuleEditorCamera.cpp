@@ -57,12 +57,17 @@ void ModuleEditorCamera::ProcessInput()
 	float delta = 0.05f;
 
 	// Add the mouse wheel motion to the movement
-	front_speed += App->GetInput()->GetMouseWheel() * 10;
 
 	float yaw_deg = 0;
 	float pitch_deg = 0;
-
-	if (keys[SDL_SCANCODE_LALT] && App->GetInput()->GetMouseButtons()[RIGHT_BUTTON])    // Zoom with vertical mouse motion
+	if (App->GetInput()->GetMouseButtons()[MIDDLE_BUTTON])
+	{
+		SDL_SetRelativeMouseMode(SDL_TRUE);
+		float drag_speed = 0.7f;
+		up_speed += App->GetInput()->GetMouseMotionY() * drag_speed;
+		right_speed -= App->GetInput()->GetMouseMotionX() * drag_speed;
+	}
+	else if (keys[SDL_SCANCODE_LALT] && App->GetInput()->GetMouseButtons()[RIGHT_BUTTON])    // Zoom with vertical mouse motion
 	{
 		SDL_SetRelativeMouseMode(SDL_TRUE);
 		float zoom_speed = 5;
@@ -96,6 +101,7 @@ void ModuleEditorCamera::ProcessInput()
 	}
 	else
 	{
+		front_speed += App->GetInput()->GetMouseWheel() * 10;
 		SDL_SetRelativeMouseMode(SDL_FALSE);
 	}
 
@@ -120,10 +126,6 @@ void ModuleEditorCamera::ProcessInput()
 		frustum.up = pitch_rotation.MulDir(oldUp);
 		frustum.front = pitch_rotation.MulDir(oldFront);
 	}
-
-
-	//LOG("[Front] x: %f - y: %f - z: %f", frustum.front.x, frustum.front.y, frustum.front.z);
-	//LOG("[Up] x: %f - y: %f - z: %f", frustum.up.x, frustum.up.y, frustum.up.z);
 }
 
 void ModuleEditorCamera::SetFrustum()

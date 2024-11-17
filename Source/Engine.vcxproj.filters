@@ -306,9 +306,6 @@
     </ClInclude>
     <ClInclude Include="Application.h" />
     <ClInclude Include="ModuleEditorCamera.h" />
-    <ClInclude Include="Vectors.h">
-      <Filter>MathGeoLib</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="MathGeoLib\include\Geometry\KDTree.inl">
