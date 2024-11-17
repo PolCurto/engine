@@ -15,6 +15,9 @@ ModuleEditorCamera::~ModuleEditorCamera()
 
 bool ModuleEditorCamera::Init()
 {
+	movement_speed = 1;
+	sensitivity = 0.4f;
+
 	frustum.type = FrustumType::PerspectiveFrustum;
 	frustum.front = math::float3(0, 0, -1);
 	frustum.up = math::float3::unitY;
@@ -51,38 +54,52 @@ void ModuleEditorCamera::ProcessInput()
 	float up_speed = 0;
 	float factor = 1;
 
-	if (keys[SDL_SCANCODE_W])
-		++front_speed;
-	if (keys[SDL_SCANCODE_S])
-		--front_speed;
-	if (keys[SDL_SCANCODE_D])
-		++right_speed;
-	if (keys[SDL_SCANCODE_A])
-		--right_speed;
-	if (keys[SDL_SCANCODE_Q])
-		++up_speed;
-	if (keys[SDL_SCANCODE_E])
-		--up_speed;
-	if (keys[SDL_SCANCODE_LSHIFT])
-		factor = 3;
-
 	float delta = 0.05f;
 
-	math::DegToRad(2);
+	// Add the mouse wheel motion to the movement
+	front_speed += App->GetInput()->GetMouseWheel() * 10;
 
-	camera_position += (front_speed * frustum.front + right_speed * frustum.WorldRight() + up_speed * float3::unitY) * delta * factor;
-
-	//LOG("[Position] x: %f - y: %f - z: %f", camera_position.x, camera_position.y, camera_position.z);
-
-	float sensitivity = 0.2f;
 	float yaw_deg = 0;
 	float pitch_deg = 0;
 
-	if (App->GetInput()->GetMouseButtons()[RIGHT_BUTTON])
+	if (keys[SDL_SCANCODE_LALT] && App->GetInput()->GetMouseButtons()[RIGHT_BUTTON])    // Zoom with vertical mouse motion
 	{
+		SDL_SetRelativeMouseMode(SDL_TRUE);
+		float zoom_speed = 5;
+		front_speed -= App->GetInput()->GetMouseMotionY() * movement_speed * zoom_speed;
+	}
+	else if (keys[SDL_SCANCODE_LALT] && App->GetInput()->GetMouseButtons()[LEFT_BUTTON])    // Orbit around the selected object
+	{
+		SDL_SetRelativeMouseMode(SDL_TRUE);
+	}
+	else if (App->GetInput()->GetMouseButtons()[RIGHT_BUTTON])    // Enables WASD movement and mouse motion camera movement
+	{
+		SDL_SetRelativeMouseMode(SDL_TRUE);
+
+		if (keys[SDL_SCANCODE_W])
+			front_speed += movement_speed;
+		if (keys[SDL_SCANCODE_S])
+			front_speed -= movement_speed;
+		if (keys[SDL_SCANCODE_D])
+			right_speed += movement_speed;
+		if (keys[SDL_SCANCODE_A])
+			right_speed -= movement_speed;
+		if (keys[SDL_SCANCODE_Q])
+			up_speed += movement_speed;
+		if (keys[SDL_SCANCODE_E])
+			up_speed -= movement_speed;
+		if (keys[SDL_SCANCODE_LSHIFT])
+			factor = 3;
+
 		yaw_deg = -App->GetInput()->GetMouseMotionX() * sensitivity;
 		pitch_deg = -App->GetInput()->GetMouseMotionY() * sensitivity;
 	}
+	else
+	{
+		SDL_SetRelativeMouseMode(SDL_FALSE);
+	}
+
+	camera_position += (front_speed * frustum.front + right_speed * frustum.WorldRight() + up_speed * float3::unitY) * delta * factor;
 
 	// Rotate around world Y axis
 	if (yaw_deg)

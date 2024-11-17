@@ -25,6 +25,7 @@ public:
 	const bool* GetMouseButtons() const { return mouse_buttons; }
 	const float GetMouseMotionX() const { return mouse_motion_x; }
 	const float GetMouseMotionY() const { return mouse_motion_y; }
+	const float GetMouseWheel() const { return mouse_wheel; }
 
 private:
 	const Uint8 *keyboard = NULL;
@@ -33,4 +34,5 @@ private:
 	float mouse_motion_y = 0;
 
 	bool* mouse_buttons;
+	float mouse_wheel = 0;
 };

@@ -39,6 +39,7 @@ update_status ModuleInput::Update()
     SDL_Event sdlEvent;
     mouse_motion_x = 0;
     mouse_motion_y = 0;
+    mouse_wheel = 0;
 
     while (SDL_PollEvent(&sdlEvent) != 0)
     {
@@ -70,10 +71,14 @@ update_status ModuleInput::Update()
                 else if (sdlEvent.button.button == SDL_BUTTON_MIDDLE)
                     mouse_buttons[MIDDLE_BUTTON] = false;
                 break;
+            case SDL_MOUSEWHEEL:
+                mouse_wheel = sdlEvent.wheel.y;
+                break;
         }
     }
     //LOG("Mouse motion x: %f, y: %f", mouse_motion_x, mouse_motion_y);
     keyboard = SDL_GetKeyboardState(NULL);
+
 
     return UPDATE_CONTINUE;
 }

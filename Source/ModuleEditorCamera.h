@@ -32,4 +32,7 @@ private:
 	float3 camera_position = float3::zero;
 
 	float aspect_ratio = 0;
+
+	float movement_speed = 0;
+	float sensitivity = 0;
 };
