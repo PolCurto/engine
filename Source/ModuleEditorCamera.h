@@ -20,6 +20,7 @@ public:
 	void SetAspectRatio(float new_aspect_ratio);
 	void SetPlaneDistances(float near_plane, float far_plane);
 	void SetPosition(const float3& new_position);
+	void SetOrientation(const float3& new_front);
 
 
 private:

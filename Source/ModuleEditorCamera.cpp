@@ -168,3 +168,10 @@ void ModuleEditorCamera::SetPosition(const float3& new_position)
 	frustum.pos = camera_position = new_position;
 }
 
+void ModuleEditorCamera::SetOrientation(const float3& new_front)
+{
+	frustum.front = new_front;
+}
+
+
+
