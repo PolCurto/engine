@@ -73,8 +73,6 @@ bool ModuleEditor::CleanUp()
 
 void ModuleEditor::Draw()
 {
-	static bool show_demo = false;
-
 	ImGui::BeginMainMenuBar();
 	if (ImGui::BeginMenu("help"))
 	{
@@ -94,14 +92,21 @@ void ModuleEditor::Draw()
 	}
 	ImGui::EndMainMenuBar();
 
-	//ImGui::Begin("Configuration");
-	//static bool fullscreen = false;
-	//if (ImGui::Checkbox("Fullscreen", &fullscreen))
-	//{
-	//
-	//}
-	//
-	//ImGui::End();
+
+	ImGui::Begin("Configuration");
+	ImGui::Text("Options");
+	if (ImGui::Checkbox("Fullscreen", &fullscreen))
+	{
+		App->GetWindow()->SetFullscreen(fullscreen);
+	}
+
+	ImGui::SameLine();
+	if (ImGui::Checkbox("Resizable", &resizable))
+		App->GetWindow()->SetResizable(resizable);
+	if (ImGui::IsItemHovered())
+		ImGui::SetTooltip("Restart to apply");
+	
+	ImGui::End();
 
 
 	if (show_demo)

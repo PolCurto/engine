@@ -68,3 +68,15 @@ bool ModuleWindow::CleanUp()
 	return true;
 }
 
+bool ModuleWindow::SetFullscreen(bool fullscreen) const
+{
+	return SDL_SetWindowFullscreen(window, fullscreen);
+}
+
+bool ModuleWindow::SetResizable(bool resizable) const
+{
+	SDL_bool res = resizable ? SDL_TRUE : SDL_FALSE;
+	SDL_SetWindowResizable(window, res);
+	return true;
+}
+

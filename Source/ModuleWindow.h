@@ -21,6 +21,9 @@ public:
 	// Called before quitting
 	bool CleanUp();
 
+	bool SetFullscreen(bool fullscreen) const;
+	bool SetResizable(bool resizable) const;
+
 public:
 	//The window we'll be rendering to
 	SDL_Window* window = NULL;

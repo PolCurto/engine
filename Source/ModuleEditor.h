@@ -19,6 +19,9 @@ public:
 private:
 	void Draw();
 
+	bool show_demo = false;
+	bool fullscreen = false;
+	bool resizable = false;
 };
 
 #endif // __MODULE_EDITOR_H__
