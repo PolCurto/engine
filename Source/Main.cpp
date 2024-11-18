@@ -4,8 +4,8 @@
 #include "Globals.h"
 
 #include "SDL/include/SDL.h"
-#pragma comment( lib, "SDL/lib/x64/SDL2.lib" )
-#pragma comment( lib, "SDL/lib/x64/SDL2main.lib" )
+#pragma comment( lib, "SDL/lib/64/SDL2.lib" )
+#pragma comment( lib, "SDL/lib/64/SDL2main.lib" )
 
 enum main_states
 {
