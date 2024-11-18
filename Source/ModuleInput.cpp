@@ -3,6 +3,7 @@
 #include "ModuleInput.h"
 #include "ModuleOpenGL.h"
 #include "SDL/include/SDL.h"
+#include "ImGui/imgui_impl_sdl2.h"
 
 ModuleInput::ModuleInput()
 {}
@@ -43,6 +44,7 @@ update_status ModuleInput::Update()
 
     while (SDL_PollEvent(&sdlEvent) != 0)
     {
+        ImGui_ImplSDL2_ProcessEvent(&sdlEvent);
         switch (sdlEvent.type)
         {
             case SDL_QUIT:

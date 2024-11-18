@@ -1,0 +1,109 @@
+#include "ModuleEditor.h"
+#include "Imgui/imgui.h"
+#include "ImGui/imgui_impl_sdl2.h"
+#include "ImGui/imgui_impl_opengl3.h"
+#include "GL/glew.h"
+#include "ModuleWindow.h"
+#include "ModuleOpenGL.h"
+
+ModuleEditor::ModuleEditor()
+{
+
+}
+
+ModuleEditor::~ModuleEditor()
+{
+
+}
+
+bool ModuleEditor::Init()
+{
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO();
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // IF using Docking Branch
+	//io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;         
+
+	ImGui_ImplSDL2_InitForOpenGL(App->GetWindow()->window, App->GetOpenGL()->GetContext());
+	ImGui_ImplOpenGL3_Init();
+	return true;
+}
+
+update_status ModuleEditor::PreUpdate()
+{
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplSDL2_NewFrame();
+	ImGui::NewFrame();
+	return UPDATE_CONTINUE;
+}
+
+update_status ModuleEditor::Update()
+{
+	Draw();
+
+	// Renders at the end
+	ImGui::Render();
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+	//if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+	//{
+	//	GLFWwindow* backup_current_context = glfwGetCurrentContext();
+	//	// Update and Render additional Platform Windows
+	//	ImGui::UpdatePlatformWindows();
+	//	ImGui::RenderPlatformWindowsDefault();
+	//	glewMakeContextCurrent(backup_current_context);
+	//}
+
+	return UPDATE_CONTINUE;
+}
+
+update_status ModuleEditor::PostUpdate()
+{
+	return UPDATE_CONTINUE;
+}
+
+bool ModuleEditor::CleanUp()
+{
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplSDL2_Shutdown();
+	ImGui::DestroyContext();
+	return true;
+}
+
+void ModuleEditor::Draw()
+{
+	static bool show_demo = false;
+
+	ImGui::BeginMainMenuBar();
+	if (ImGui::BeginMenu("help"))
+	{
+		if (ImGui::MenuItem("Gui Demo"))
+			show_demo = !show_demo;
+
+		if (ImGui::MenuItem("Documentation"))
+			App->RequestBrowser("https://github.com/PolCurto/engine");
+
+		if (ImGui::MenuItem("Download Latest"))
+			App->RequestBrowser("https://github.com/PolCurto/engine");
+
+		if (ImGui::MenuItem("Report a bug"))
+			App->RequestBrowser("https://github.com/PolCurto/engine");
+
+		ImGui::EndMenu();
+	}
+	ImGui::EndMainMenuBar();
+
+	//ImGui::Begin("Configuration");
+	//static bool fullscreen = false;
+	//if (ImGui::Checkbox("Fullscreen", &fullscreen))
+	//{
+	//
+	//}
+	//
+	//ImGui::End();
+
+
+	if (show_demo)
+		ImGui::ShowDemoWindow();
+}

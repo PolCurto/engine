@@ -7,6 +7,7 @@
 #include "ModuleRenderExercise.h"
 #include "ModuleDebugDraw.h"
 #include "ModuleEditorCamera.h"
+#include "ModuleEditor.h"
 
 using namespace std;
 
@@ -20,6 +21,7 @@ Application::Application()
 	modules.push_back(program = new ModuleProgram());
 	modules.push_back(debug = new ModuleDebugDraw());
 	modules.push_back(exercise = new ModuleRenderExercise());
+	modules.push_back(editor = new ModuleEditor());
 }
 
 Application::~Application()
@@ -64,4 +66,9 @@ bool Application::CleanUp()
 		ret = (*it)->CleanUp();
 
 	return ret;
+}
+
+void Application::RequestBrowser(const char* url) const
+{
+	ShellExecuteA(NULL, "open", url, NULL, NULL, SW_SHOWNORMAL);
 }

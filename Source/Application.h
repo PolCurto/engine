@@ -13,6 +13,7 @@ class ModuleRenderExercise;
 class ModuleProgram;
 class ModuleDebugDraw;
 class ModuleEditorCamera;
+class ModuleEditor;
 
 class Application
 {
@@ -25,12 +26,15 @@ public:
 	update_status Update();
 	bool CleanUp();
 
-    ModuleOpenGL* GetOpenGL() { return render; }
-    ModuleWindow* GetWindow() { return window; }
-    ModuleInput*  GetInput() { return input; }
-    ModuleProgram* GetProgram() { return program; }
-    ModuleDebugDraw* GetDebug() { return debug; }
-    ModuleEditorCamera* GetCamera() { return camera; }
+    ModuleOpenGL* GetOpenGL() const { return render; }
+    ModuleWindow* GetWindow() const { return window; }
+    ModuleInput*  GetInput() const { return input; }
+    ModuleProgram* GetProgram() const { return program; }
+    ModuleDebugDraw* GetDebug() const { return debug; }
+    ModuleEditorCamera* GetCamera() const { return camera; }
+    ModuleEditor* GetEditor() const { return editor; }
+
+    void RequestBrowser(const char* url) const;
 
 private:
 
@@ -41,6 +45,7 @@ private:
     ModuleRenderExercise* exercise = nullptr;
     ModuleDebugDraw* debug = nullptr;
     ModuleEditorCamera* camera = nullptr;
+    ModuleEditor* editor = nullptr;
 
     std::list<Module*> modules;
 
