@@ -74,6 +74,38 @@ bool ModuleEditor::CleanUp()
 
 void ModuleEditor::Draw()
 {
+	MainMenu();
+	
+	ImGui::Begin("Configuration");
+	ImGui::Text("Options");
+
+	if (ImGui::CollapsingHeader("Application"))
+	{
+		FPSCount();
+	}
+
+	if (ImGui::CollapsingHeader("Window"))
+	{
+		if (ImGui::Checkbox("Fullscreen", &fullscreen))
+		{
+			App->GetWindow()->SetFullscreen(fullscreen);
+		}
+
+		ImGui::SameLine();
+		if (ImGui::Checkbox("Resizable", &resizable))
+			App->GetWindow()->SetResizable(resizable);
+		if (ImGui::IsItemHovered())
+			ImGui::SetTooltip("Restart to apply");
+	}
+
+	ImGui::End();
+	
+	if (show_demo)
+		ImGui::ShowDemoWindow();
+}
+
+void ModuleEditor::MainMenu()
+{
 	ImGui::BeginMainMenuBar();
 	if (ImGui::BeginMenu("help"))
 	{
@@ -92,23 +124,22 @@ void ModuleEditor::Draw()
 		ImGui::EndMenu();
 	}
 	ImGui::EndMainMenuBar();
+}
 
-	ImGui::Begin("Configuration");
-	ImGui::Text("Options");
-	if (ImGui::Checkbox("Fullscreen", &fullscreen))
+void ModuleEditor::FPSCount()
+{
+	int vectors_length = 50;
+	if (ms_log.size() < vectors_length)
+		ms_log.emplace_back(App->GetDelta());
+	else
 	{
-		App->GetWindow()->SetFullscreen(fullscreen);
+		ms_log.pop_front();
+		ms_log.emplace_back(App->GetDelta());
 	}
 
-	ImGui::SameLine();
-	if (ImGui::Checkbox("Resizable", &resizable))
-		App->GetWindow()->SetResizable(resizable);
-	if (ImGui::IsItemHovered())
-		ImGui::SetTooltip("Restart to apply");
-	
-	ImGui::End();
-
-
-	if (show_demo)
-		ImGui::ShowDemoWindow();
+	char title[25];
+	//sprintf_s(title, 25, "Framerate %.1f", fps_log.back());
+	//ImGui::PlotHistogram("framerate", &fps_log.front(), fps_log.size(), 0, title, 0.0f, 100.0f, ImVec2(310, 100));
+	sprintf_s(title, 25, "Milliseconds %0.1f", ms_log.back());
+	ImGui::PlotHistogram("##milliseconds", &ms_log.front(), 50, 0, title, 0.0f, 40.0f, ImVec2(310, 100));
 }

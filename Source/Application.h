@@ -1,6 +1,7 @@
 #pragma once
 
-#include<list>
+#include <list>
+#include <chrono>
 #include "Globals.h"
 #include "Module.h"
 
@@ -26,6 +27,8 @@ public:
 	update_status Update();
 	bool CleanUp();
 
+    void RequestBrowser(const char* url) const;
+
     ModuleOpenGL* GetOpenGL() const { return render; }
     ModuleWindow* GetWindow() const { return window; }
     ModuleInput*  GetInput() const { return input; }
@@ -34,7 +37,7 @@ public:
     ModuleEditorCamera* GetCamera() const { return camera; }
     ModuleEditor* GetEditor() const { return editor; }
 
-    void RequestBrowser(const char* url) const;
+    double GetDelta() const { return time_lapse.count(); }
 
 private:
 
@@ -49,6 +52,8 @@ private:
 
     std::list<Module*> modules;
 
+    std::chrono::steady_clock::time_point last_time;
+    std::chrono::duration<double, std::milli> time_lapse;
 };
 
 extern Application* App;

@@ -53,7 +53,7 @@ bool ModuleOpenGL::Init()
 	// Debugging
 	glEnable(GL_DEBUG_OUTPUT);
 	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-	glDebugMessageCallback(&OpenGlDebugging, nullptr);
+	//glDebugMessageCallback(&OpenGlDebugging, nullptr);
 	glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, true);
 
 	// Get the window size

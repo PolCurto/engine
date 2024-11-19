@@ -2,6 +2,7 @@
 #define __MODULE_EDITOR_H__
 
 #include "Module.h"
+#include <deque>
 
 class ModuleEditor : public Module
 {
@@ -18,10 +19,16 @@ public:
 
 private:
 	void Draw();
+	void MainMenu();
+	void FPSCount();
 
 	bool show_demo = false;
 	bool fullscreen = false;
 	bool resizable = false;
+
+	int fps_counter;
+	std::deque<float> fps_log;
+	std::deque<float> ms_log;
 };
 
 #endif // __MODULE_EDITOR_H__
