@@ -23,7 +23,7 @@ bool ModuleEditor::Init()
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // IF using Docking Branch
-	//io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;         
+	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;         
 
 	ImGui_ImplSDL2_InitForOpenGL(App->GetWindow()->window, App->GetOpenGL()->GetContext());
 	ImGui_ImplOpenGL3_Init();
@@ -46,14 +46,15 @@ update_status ModuleEditor::Update()
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-	//if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-	//{
-	//	GLFWwindow* backup_current_context = glfwGetCurrentContext();
-	//	// Update and Render additional Platform Windows
-	//	ImGui::UpdatePlatformWindows();
-	//	ImGui::RenderPlatformWindowsDefault();
-	//	glewMakeContextCurrent(backup_current_context);
-	//}
+	// Needed for the viewports flag to work
+	if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+	{
+		SDL_Window* backup_current_window = SDL_GL_GetCurrentWindow();
+		SDL_GLContext backup_current_context = SDL_GL_GetCurrentContext();
+		ImGui::UpdatePlatformWindows();
+		ImGui::RenderPlatformWindowsDefault();
+		SDL_GL_MakeCurrent(backup_current_window, backup_current_context);
+	}
 
 	return UPDATE_CONTINUE;
 }
@@ -91,7 +92,6 @@ void ModuleEditor::Draw()
 		ImGui::EndMenu();
 	}
 	ImGui::EndMainMenuBar();
-
 
 	ImGui::Begin("Configuration");
 	ImGui::Text("Options");
