@@ -44,6 +44,7 @@ public:
 	//The surface contained by the window
 	SDL_Surface* screen_surface = NULL;
 
+private:
 	int window_width;
 	int window_height;
 };

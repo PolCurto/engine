@@ -71,11 +71,10 @@ bool ModuleWindow::CleanUp()
 
 void ModuleWindow::WindowResized(unsigned width, unsigned height)
 {
-	LOG("Window resized");
 	window_width = width;
 	window_height = height;
 
-	App->GetCamera()->SetAspectRatio(static_cast<float>(width) / static_cast<float>(height));
+	App->GetCamera()->SetAspectRatio(static_cast<float>(window_width) / static_cast<float>(window_height));
 }
 
 void ModuleWindow::SetBrightness(float brightness) const

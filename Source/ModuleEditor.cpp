@@ -94,16 +94,16 @@ void ModuleEditor::Draw()
 		if (ImGui::SliderFloat("Brightness", &brightness, 0, 1))    
 			App->GetWindow()->SetBrightness(brightness);
 
-		// Width Slider
+		//// Width Slider
 		int width = App->GetWindow()->GetWidth();
 		if (ImGui::SliderInt("Width", &width, 0, 2000))
 			App->GetWindow()->SetWidth(width);
-
+		
 		// Height Slider
 		int height = App->GetWindow()->GetHeight();
 		if (ImGui::SliderInt("Height", &height, 0, 2000))
 			App->GetWindow()->SetHeight(height);
-
+		
 		// Set Fullscreen
 		if (ImGui::Checkbox("Fullscreen", &fullscreen))    
 			App->GetWindow()->SetFullscreen(fullscreen);

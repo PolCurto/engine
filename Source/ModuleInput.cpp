@@ -49,14 +49,17 @@ update_status ModuleInput::Update()
         {
             case SDL_QUIT:
                 return UPDATE_STOP;
+
             case SDL_WINDOWEVENT:
-                if (sdlEvent.window.event == SDL_WINDOWEVENT_RESIZED || sdlEvent.window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
-                    App->GetWindow()->WindowResized(sdlEvent.window.data1, sdlEvent.window.data2);
+                if (sdlEvent.window.windowID == SDL_GetWindowID(App->GetWindow()->window) && (sdlEvent.window.event == SDL_WINDOWEVENT_RESIZED || sdlEvent.window.event == SDL_WINDOWEVENT_SIZE_CHANGED))
+                    App->GetWindow()->WindowResized(sdlEvent.window.data1, sdlEvent.window.data2);                    
                 break;
+
             case SDL_MOUSEMOTION:
                 mouse_motion_x = static_cast<float>(sdlEvent.motion.xrel);
                 mouse_motion_y = static_cast<float>(sdlEvent.motion.yrel);
                 break;
+
             case SDL_MOUSEBUTTONDOWN:
                 if (sdlEvent.button.button == SDL_BUTTON_LEFT)
                     mouse_buttons[LEFT_BUTTON] = true;
@@ -65,6 +68,7 @@ update_status ModuleInput::Update()
                 else if (sdlEvent.button.button == SDL_BUTTON_MIDDLE)
                     mouse_buttons[MIDDLE_BUTTON] = true;
                 break;
+
             case SDL_MOUSEBUTTONUP:
                 if (sdlEvent.button.button == SDL_BUTTON_LEFT)
                     mouse_buttons[LEFT_BUTTON] = false;
@@ -73,6 +77,7 @@ update_status ModuleInput::Update()
                 else if (sdlEvent.button.button == SDL_BUTTON_MIDDLE)
                     mouse_buttons[MIDDLE_BUTTON] = false;
                 break;
+
             case SDL_MOUSEWHEEL:
                 mouse_wheel = sdlEvent.wheel.y;
                 break;
