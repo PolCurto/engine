@@ -27,6 +27,7 @@ bool ModuleEditor::Init()
 
 	ImGui_ImplSDL2_InitForOpenGL(App->GetWindow()->window, App->GetOpenGL()->GetContext());
 	ImGui_ImplOpenGL3_Init();
+
 	return true;
 }
 
@@ -69,72 +70,37 @@ bool ModuleEditor::CleanUp()
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplSDL2_Shutdown();
 	ImGui::DestroyContext();
+
 	return true;
 }
 
 void ModuleEditor::Draw()
 {
 	MainMenu();
-	
-	ImGui::Begin("Configuration");
-	ImGui::Text("Options");
 
-	if (ImGui::CollapsingHeader("Application"))
-	{
-		FPSCount();
-	}
+	if (show_settings)
+		SettingsWindow();
 
-	static bool borderless = false;
-	static bool full_desktop = false;
-
-	if (ImGui::CollapsingHeader("Window"))
-	{
-		// Brightness Slider
-		float brightness = App->GetWindow()->GetBrightness();
-		if (ImGui::SliderFloat("Brightness", &brightness, 0, 1))    
-			App->GetWindow()->SetBrightness(brightness);
-
-		//// Width Slider
-		int width = App->GetWindow()->GetWidth();
-		if (ImGui::SliderInt("Width", &width, 0, 2000))
-			App->GetWindow()->SetWidth(width);
-		
-		// Height Slider
-		int height = App->GetWindow()->GetHeight();
-		if (ImGui::SliderInt("Height", &height, 0, 2000))
-			App->GetWindow()->SetHeight(height);
-		
-		// Set Fullscreen
-		if (ImGui::Checkbox("Fullscreen", &fullscreen))    
-			App->GetWindow()->SetFullscreen(fullscreen);
-		ImGui::SameLine();
-
-		// Set Resizable
-		if (ImGui::Checkbox("Resizable", &resizable))    
-			App->GetWindow()->SetResizable(resizable);
-		if (ImGui::IsItemHovered())
-			ImGui::SetTooltip("Restart to apply");
-
-		// Set Borderless
-		if (ImGui::Checkbox("Borderless", &borderless))    
-			App->GetWindow()->SetBorderless(borderless);
-		ImGui::SameLine();
-
-		// Set Full Desktop
-		if (ImGui::Checkbox("Full Desktop", &full_desktop))   
-			App->GetWindow()->SetFullDesktop(full_desktop);
-	}
-
-	ImGui::End();
-	
 	if (show_demo)
 		ImGui::ShowDemoWindow();
+
+	if (show_about)
+		AboutWindow();
+
 }
 
 void ModuleEditor::MainMenu()
 {
 	ImGui::BeginMainMenuBar();
-	if (ImGui::BeginMenu("help"))
+	if (ImGui::BeginMenu("Editor"))
+	{
+		if (ImGui::MenuItem("Editor settings"))
+			show_settings = !show_settings;
+
+		ImGui::EndMenu();
+	}
+
+	if (ImGui::BeginMenu("Help"))
 	{
 		if (ImGui::MenuItem("Gui Demo"))
 			show_demo = !show_demo;
@@ -148,25 +114,98 @@ void ModuleEditor::MainMenu()
 		if (ImGui::MenuItem("Report a bug"))
 			App->RequestBrowser("https://github.com/PolCurto/engine");
 
+		if (ImGui::MenuItem("About"))
+			show_about = !show_about;
+
 		ImGui::EndMenu();
 	}
 	ImGui::EndMainMenuBar();
 }
 
-void ModuleEditor::FPSCount()
+void ModuleEditor::SettingsWindow()
 {
-	int vectors_length = 50;
-	if (ms_log.size() < vectors_length)
-		ms_log.emplace_back(App->GetDelta());
-	else
+	ImGui::Begin("Settings");
+	ImGui::Text("Options");
+
+	if (ImGui::CollapsingHeader("Application"))
+		FPSCount();
+
+	static bool borderless = false;
+	static bool full_desktop = false;
+
+	if (ImGui::CollapsingHeader("Window"))
 	{
-		ms_log.pop_front();
-		ms_log.emplace_back(App->GetDelta());
+		// Brightness Slider
+		float brightness = App->GetWindow()->GetBrightness();
+		if (ImGui::SliderFloat("Brightness", &brightness, 0, 1))
+			App->GetWindow()->SetBrightness(brightness);
+
+		//// Width Slider
+		int width = App->GetWindow()->GetWidth();
+		if (ImGui::SliderInt("Width", &width, 0, 2000))
+			App->GetWindow()->SetWidth(width);
+
+		// Height Slider
+		int height = App->GetWindow()->GetHeight();
+		if (ImGui::SliderInt("Height", &height, 0, 2000))
+			App->GetWindow()->SetHeight(height);
+
+		// Set Fullscreen
+		if (ImGui::Checkbox("Fullscreen", &fullscreen))
+			App->GetWindow()->SetFullscreen(fullscreen);
+		ImGui::SameLine();
+
+		// Set Resizable
+		if (ImGui::Checkbox("Resizable", &resizable))
+			App->GetWindow()->SetResizable(resizable);
+		if (ImGui::IsItemHovered())
+			ImGui::SetTooltip("Restart to apply");
+
+		// Set Borderless
+		if (ImGui::Checkbox("Borderless", &borderless))
+			App->GetWindow()->SetBorderless(borderless);
+		ImGui::SameLine();
+
+		// Set Full Desktop
+		if (ImGui::Checkbox("Full Desktop", &full_desktop))
+			App->GetWindow()->SetFullDesktop(full_desktop);
 	}
 
-	char title[25];
-	//sprintf_s(title, 25, "Framerate %.1f", fps_log.back());
-	//ImGui::PlotHistogram("framerate", &fps_log.front(), fps_log.size(), 0, title, 0.0f, 100.0f, ImVec2(310, 100));
-	sprintf_s(title, 25, "Milliseconds %0.1f", ms_log.back());
-	ImGui::PlotHistogram("##milliseconds", &ms_log.front(), 50, 0, title, 0.0f, 40.0f, ImVec2(310, 100));
+	ImGui::End();
 }
+
+void ModuleEditor::FPSCount()
+{
+	int vectors_length = 100;
+	if (ms_log.size() < vectors_length)
+	{
+		ms_log.push_back(App->delta);
+		//LOG("MS LOG: %f", ms_log.back());
+	}
+	else
+	{
+
+	ms_log.pop_front();
+	ms_log.emplace_back(App->delta);
+
+		char title[25];
+		//sprintf_s(title, 25, "Framerate %.1f", fps_log.back());
+		//ImGui::PlotHistogram("framerate", &fps_log.front(), fps_log.size(), 0, title, 0.0f, 100.0f, ImVec2(310, 100));
+		sprintf_s(title, 25, "Milliseconds %0.1f", ms_log.back());
+		ImGui::PlotHistogram("##milliseconds", &ms_log[0], ms_log.size(), 0, title, 0.0f, 40.0f, ImVec2(310, 100), 0);
+	}
+}
+
+void ModuleEditor::AboutWindow()
+{
+	ImGui::Begin("About");
+
+	ImGui::Text("Engine name: %s", TITLE);
+	ImGui::Text("Description: hard as stone");
+	ImGui::Text("Author: Pol Curto");
+	ImGui::Text("Libraries: SDL, Glew, MathGeoLig, ImGui");
+	ImGui::Text("License: esta");
+
+	ImGui::End();
+}
+

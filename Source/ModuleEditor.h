@@ -20,9 +20,13 @@ public:
 private:
 	void Draw();
 	void MainMenu();
+	void SettingsWindow();
 	void FPSCount();
+	void AboutWindow();
 
 	bool show_demo = false;
+	bool show_about = false;
+	bool show_settings = false;
 	bool fullscreen = false;
 	bool resizable = true;
 

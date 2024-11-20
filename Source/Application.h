@@ -15,6 +15,7 @@ class ModuleProgram;
 class ModuleDebugDraw;
 class ModuleEditorCamera;
 class ModuleEditor;
+class ModuleHardware;
 
 class Application
 {
@@ -37,7 +38,8 @@ public:
     ModuleEditorCamera* GetCamera() const { return camera; }
     ModuleEditor* GetEditor() const { return editor; }
 
-    double GetDelta() const { return time_lapse.count(); }
+public:
+    float delta;
 
 private:
 
@@ -49,11 +51,12 @@ private:
     ModuleDebugDraw* debug = nullptr;
     ModuleEditorCamera* camera = nullptr;
     ModuleEditor* editor = nullptr;
+    ModuleHardware* hardware = nullptr;
 
     std::list<Module*> modules;
 
     std::chrono::steady_clock::time_point last_time;
-    std::chrono::duration<double, std::milli> time_lapse;
+    std::chrono::duration<float, std::milli> time_lapse;
 };
 
 extern Application* App;

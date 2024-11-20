@@ -129,6 +129,7 @@
       <Filter>External\ImGui</Filter>
     </ClCompile>
     <ClCompile Include="ModuleEditor.cpp" />
+    <ClCompile Include="ModuleHardware.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Dummy.h" />
@@ -356,6 +357,7 @@
       <Filter>External\ImGui</Filter>
     </ClInclude>
     <ClInclude Include="ModuleEditor.h" />
+    <ClInclude Include="ModuleHardware.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="MathGeoLib\include\Geometry\KDTree.inl">

@@ -8,6 +8,7 @@
 #include "ModuleDebugDraw.h"
 #include "ModuleEditorCamera.h"
 #include "ModuleEditor.h"
+#include "ModuleHardware.h"
 
 using namespace std;
 
@@ -21,6 +22,7 @@ Application::Application()
 	modules.push_back(program = new ModuleProgram());
 	modules.push_back(debug = new ModuleDebugDraw());
 	modules.push_back(exercise = new ModuleRenderExercise());
+	modules.push_back(hardware = new ModuleHardware());
 	modules.push_back(editor = new ModuleEditor());
 }
 
@@ -48,6 +50,7 @@ update_status Application::Update()
 
 	time_lapse = (std::chrono::steady_clock::now() - last_time);
 	last_time = std::chrono::steady_clock::now();
+	delta = time_lapse.count();
 
 	//LOG("Delta: %f", GetDelta());
 
