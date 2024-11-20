@@ -89,6 +89,10 @@ void ModuleEditor::Draw()
 
 	if (ImGui::CollapsingHeader("Window"))
 	{
+		float brightness = App->GetWindow()->GetBrightness();
+		if (ImGui::SliderFloat("Brightness", &brightness, 0, 1))
+			App->GetWindow()->SetBrightness(brightness);
+
 		if (ImGui::Checkbox("Fullscreen", &fullscreen))
 			App->GetWindow()->SetFullscreen(fullscreen);
 		ImGui::SameLine();

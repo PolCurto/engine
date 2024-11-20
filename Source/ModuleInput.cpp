@@ -1,7 +1,7 @@
 #include "Globals.h"
 #include "Application.h"
 #include "ModuleInput.h"
-#include "ModuleOpenGL.h"
+#include "ModuleWindow.h"
 #include "SDL/include/SDL.h"
 #include "ImGui/imgui_impl_sdl2.h"
 
@@ -51,7 +51,7 @@ update_status ModuleInput::Update()
                 return UPDATE_STOP;
             case SDL_WINDOWEVENT:
                 if (sdlEvent.window.event == SDL_WINDOWEVENT_RESIZED || sdlEvent.window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
-                    App->GetOpenGL()->WindowResized(sdlEvent.window.data1, sdlEvent.window.data2);
+                    App->GetWindow()->WindowResized(sdlEvent.window.data1, sdlEvent.window.data2);
                 break;
             case SDL_MOUSEMOTION:
                 mouse_motion_x = static_cast<float>(sdlEvent.motion.xrel);

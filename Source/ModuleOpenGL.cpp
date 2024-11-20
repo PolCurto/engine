@@ -57,15 +57,14 @@ bool ModuleOpenGL::Init()
 	glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, true);
 
 	// Get the window size
-	SDL_GetWindowSize(App->GetWindow()->window, &window_width, &window_height);
-	glViewport(0, 0, window_width, window_height);
+	glViewport(0, 0, App->GetWindow()->GetWidth(), App->GetWindow()->GetHeight());
 
 	return true;
 }
 
 update_status ModuleOpenGL::PreUpdate()
 {
-	glViewport(0, 0, window_width, window_height);
+	glViewport(0, 0, App->GetWindow()->GetWidth(), App->GetWindow()->GetHeight());
 
 	glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -98,14 +97,6 @@ bool ModuleOpenGL::CleanUp()
 	return true;
 }
 
-void ModuleOpenGL::WindowResized(unsigned width, unsigned height)
-{
-	LOG("Window resized");
-	SDL_GetWindowSize(App->GetWindow()->window, &window_width, &window_height);
-	
-	App->GetCamera()->SetAspectRatio(static_cast<float>(window_width) / static_cast<float>(window_height));
-}
-
 unsigned ModuleOpenGL::CreateTriangleVBO(float vertex_data[], int data_length)
 {
 	unsigned vbo;
@@ -123,7 +114,7 @@ void ModuleOpenGL::RenderVBO(unsigned vbo, unsigned program) const
 	float4x4 model = math::float4x4::FromTRS(float3(0.0f, 1.0f, -3.0f), float4x4::RotateZ(pi / 4.0f), float3(0.5f, 0.5f, 0.5f));
 
 	// Draw debug axis origin and square grid
-	App->GetDebug()->Draw(view, projection, window_width, window_height);
+	App->GetDebug()->Draw(view, projection, App->GetWindow()->GetWidth(), App->GetWindow()->GetHeight());
 
 	glUseProgram(program);
 	glUniformMatrix4fv(0, 1, GL_TRUE, &projection[0][0]);

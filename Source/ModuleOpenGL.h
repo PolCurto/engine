@@ -16,14 +16,10 @@ public:
 	update_status Update();
 	update_status PostUpdate();
 	bool CleanUp();
-	void WindowResized(unsigned width, unsigned height);
 
 	unsigned CreateTriangleVBO(float vertex_data[], int data_length);
 	void RenderVBO(unsigned vbo, unsigned program) const;
 	void DestroyVBO(unsigned vbo) const;
-
-	int GetWindowWidth() const { return window_width; }
-	int GetWindowHeight() const { return window_height; }
 
 	void* GetContext() const { return context; }
 
@@ -31,6 +27,4 @@ public:
 
 private:
 	void* context;
-	int window_width;
-	int window_height;
 };
