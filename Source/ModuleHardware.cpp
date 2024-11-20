@@ -18,7 +18,19 @@ update_status ModuleHardware::Update()
 
 	SDL_version ver;
 	SDL_GetVersion(&ver);
-	ImGui::Text("SDL Version: %u", ver.major);
+	ImGui::Text("SDL Version: %u.%u.%u", ver.major, ver.minor, ver.patch);
+
+	ImGui::Separator();
+
+	ImGui::Text("CPUs: %i (Cache: %ikb)", SDL_GetCPUCount(), SDL_GetCPUCacheLineSize());
+
+	float ram = static_cast<float>(SDL_GetSystemRAM()) / 1000;
+	ImGui::Text("System RAM: %.2fGB", ram);
+	ImGui::Text("Caps: ");
+
+	ImGui::Separator();
+
+	ImGui::Text("GPU: ");
 
 	ImGui::End();
 
