@@ -26,8 +26,8 @@ bool ModuleWindow::Init()
 	else
 	{
 		//Create window
-		width = SCREEN_WIDTH;
-		height = SCREEN_HEIGHT;
+		window_width = SCREEN_WIDTH;
+		window_height = SCREEN_HEIGHT;
 		Uint32 flags = SDL_WINDOW_SHOWN |  SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE;
 
 		if(FULLSCREEN == true)
@@ -35,7 +35,7 @@ bool ModuleWindow::Init()
 			flags |= SDL_WINDOW_FULLSCREEN;
 		}
 
-		window = SDL_CreateWindow(TITLE, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, flags);
+		window = SDL_CreateWindow(TITLE, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, window_width, window_height, flags);
 
 		if(window == NULL)
 		{
@@ -72,8 +72,8 @@ bool ModuleWindow::CleanUp()
 void ModuleWindow::WindowResized(unsigned width, unsigned height)
 {
 	LOG("Window resized");
-	this->width = width;
-	this->height = height;
+	window_width = width;
+	window_height = height;
 
 	App->GetCamera()->SetAspectRatio(static_cast<float>(width) / static_cast<float>(height));
 }
@@ -83,14 +83,16 @@ void ModuleWindow::SetBrightness(float brightness) const
 	SDL_SetWindowBrightness(window, brightness);
 }
 
-void ModuleWindow::SetWidth(int width) const
+void ModuleWindow::SetWidth(int width)
 {
-	SDL_SetWindowSize(window, width, height);
+	window_width = width;
+	SDL_SetWindowSize(window, window_width, window_height);
 }
 
-void ModuleWindow::SetHeight(int height) const
+void ModuleWindow::SetHeight(int height)
 {
-	SDL_SetWindowSize(window, width, height);
+	window_height = height;
+	SDL_SetWindowSize(window, window_width, window_height);
 }
 
 bool ModuleWindow::SetFullscreen(bool fullscreen) const

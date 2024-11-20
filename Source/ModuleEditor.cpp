@@ -89,22 +89,39 @@ void ModuleEditor::Draw()
 
 	if (ImGui::CollapsingHeader("Window"))
 	{
+		// Brightness Slider
 		float brightness = App->GetWindow()->GetBrightness();
-		if (ImGui::SliderFloat("Brightness", &brightness, 0, 1))
+		if (ImGui::SliderFloat("Brightness", &brightness, 0, 1))    
 			App->GetWindow()->SetBrightness(brightness);
 
-		if (ImGui::Checkbox("Fullscreen", &fullscreen))
+		// Width Slider
+		int width = App->GetWindow()->GetWidth();
+		if (ImGui::SliderInt("Width", &width, 0, 2000))
+			App->GetWindow()->SetWidth(width);
+
+		// Height Slider
+		int height = App->GetWindow()->GetHeight();
+		if (ImGui::SliderInt("Height", &height, 0, 2000))
+			App->GetWindow()->SetHeight(height);
+
+		// Set Fullscreen
+		if (ImGui::Checkbox("Fullscreen", &fullscreen))    
 			App->GetWindow()->SetFullscreen(fullscreen);
 		ImGui::SameLine();
-		if (ImGui::Checkbox("Resizable", &resizable))
+
+		// Set Resizable
+		if (ImGui::Checkbox("Resizable", &resizable))    
 			App->GetWindow()->SetResizable(resizable);
 		if (ImGui::IsItemHovered())
 			ImGui::SetTooltip("Restart to apply");
 
-		if (ImGui::Checkbox("Borderless", &borderless))
+		// Set Borderless
+		if (ImGui::Checkbox("Borderless", &borderless))    
 			App->GetWindow()->SetBorderless(borderless);
 		ImGui::SameLine();
-		if (ImGui::Checkbox("Full Desktop", &full_desktop))
+
+		// Set Full Desktop
+		if (ImGui::Checkbox("Full Desktop", &full_desktop))   
 			App->GetWindow()->SetFullDesktop(full_desktop);
 	}
 

@@ -24,9 +24,9 @@ private:
 
 	bool show_demo = false;
 	bool fullscreen = false;
-	bool resizable = false;
+	bool resizable = true;
 
-	int fps_counter;
+	int fps_counter = 0;
 	std::deque<float> fps_log;
 	std::deque<float> ms_log;
 };

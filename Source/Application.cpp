@@ -49,7 +49,7 @@ update_status Application::Update()
 	time_lapse = (std::chrono::steady_clock::now() - last_time);
 	last_time = std::chrono::steady_clock::now();
 
-	LOG("Delta: %f", GetDelta());
+	//LOG("Delta: %f", GetDelta());
 
 	for(list<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
 		ret = (*it)->PreUpdate();
