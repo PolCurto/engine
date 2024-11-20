@@ -22,7 +22,9 @@ public:
 	bool CleanUp();
 
 	bool SetFullscreen(bool fullscreen) const;
-	bool SetResizable(bool resizable) const;
+	void SetResizable(bool resizable) const;
+	void SetBorderless(bool borderless) const;
+	bool SetFullDesktop(bool full_desktop) const;
 
 public:
 	//The window we'll be rendering to

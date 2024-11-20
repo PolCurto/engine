@@ -84,18 +84,24 @@ void ModuleEditor::Draw()
 		FPSCount();
 	}
 
+	static bool borderless = false;
+	static bool full_desktop = false;
+
 	if (ImGui::CollapsingHeader("Window"))
 	{
 		if (ImGui::Checkbox("Fullscreen", &fullscreen))
-		{
 			App->GetWindow()->SetFullscreen(fullscreen);
-		}
-
 		ImGui::SameLine();
 		if (ImGui::Checkbox("Resizable", &resizable))
 			App->GetWindow()->SetResizable(resizable);
 		if (ImGui::IsItemHovered())
 			ImGui::SetTooltip("Restart to apply");
+
+		if (ImGui::Checkbox("Borderless", &borderless))
+			App->GetWindow()->SetBorderless(borderless);
+		ImGui::SameLine();
+		if (ImGui::Checkbox("Full Desktop", &full_desktop))
+			App->GetWindow()->SetFullDesktop(full_desktop);
 	}
 
 	ImGui::End();

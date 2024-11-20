@@ -73,10 +73,17 @@ bool ModuleWindow::SetFullscreen(bool fullscreen) const
 	return SDL_SetWindowFullscreen(window, fullscreen);
 }
 
-bool ModuleWindow::SetResizable(bool resizable) const
+void ModuleWindow::SetResizable(bool resizable) const
 {
-	SDL_bool res = resizable ? SDL_TRUE : SDL_FALSE;
-	SDL_SetWindowResizable(window, res);
-	return true;
+	SDL_SetWindowResizable(window, resizable ? SDL_TRUE : SDL_FALSE);
 }
 
+void ModuleWindow::SetBorderless(bool borderless) const
+{
+	SDL_SetWindowBordered(window, borderless ? SDL_FALSE : SDL_TRUE);
+}
+
+bool ModuleWindow::SetFullDesktop(bool full_desktop) const
+{
+	return SDL_SetWindowFullscreen(window, full_desktop ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
+}
