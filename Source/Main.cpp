@@ -29,13 +29,18 @@ int main(int argc, char ** argv)
 		{
 		case MAIN_CREATION:
 
-			LOG("Application Creation --------------");
+			//LOG("Application Creation --------------");
 			App = new Application();
 			state = MAIN_START;
 			break;
 
 		case MAIN_START:
 
+			if (App->PreInit() == false)
+			{
+				LOG("Application PreInit exits with error -----");
+				state = MAIN_EXIT;
+			}
 			LOG("Application Init --------------");
 			if (App->Init() == false)
 			{
@@ -67,7 +72,7 @@ int main(int argc, char ** argv)
 
 		case MAIN_FINISH:
 
-			LOG("Application CleanUp --------------");
+			//LOG("Application CleanUp --------------");
 			if (App->CleanUp() == false)
 			{
 				LOG("Application CleanUp exits with error -----");
@@ -84,6 +89,6 @@ int main(int argc, char ** argv)
 	}
 
 	delete App;
-	LOG("Bye :)\n");
+	//LOG("Bye :)\n");
 	return main_return;
 }

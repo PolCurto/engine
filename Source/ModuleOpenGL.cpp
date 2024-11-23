@@ -88,7 +88,8 @@ update_status ModuleOpenGL::PostUpdate()
 // Called before quitting
 bool ModuleOpenGL::CleanUp()
 {
-	LOG("Destroying renderer");
+
+	//LOG("Destroying renderer");
 
 	SDL_GL_DeleteContext(context);
 

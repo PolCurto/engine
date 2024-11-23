@@ -76,6 +76,7 @@ void ModuleEditorCamera::ProcessInput()
 	else if (keys[SDL_SCANCODE_LALT] && App->GetInput()->GetMouseButtons()[LEFT_BUTTON])    // Orbit around the selected object
 	{
 		SDL_SetRelativeMouseMode(SDL_TRUE);
+		LOG("ALT");
 	}
 	else if (App->GetInput()->GetMouseButtons()[RIGHT_BUTTON])    // Enables WASD movement and mouse motion camera movement
 	{

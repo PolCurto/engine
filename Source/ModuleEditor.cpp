@@ -16,6 +16,13 @@ ModuleEditor::~ModuleEditor()
 
 }
 
+bool ModuleEditor::PreInit()
+{
+	logs = new ImGuiTextBuffer();
+
+	return true;
+}
+
 bool ModuleEditor::Init()
 {
 	ImGui::CreateContext();
@@ -23,7 +30,7 @@ bool ModuleEditor::Init()
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // IF using Docking Branch
-	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;         
+	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
 	ImGui_ImplSDL2_InitForOpenGL(App->GetWindow()->window, App->GetOpenGL()->GetContext());
 	ImGui_ImplOpenGL3_Init();
@@ -67,11 +74,21 @@ update_status ModuleEditor::PostUpdate()
 
 bool ModuleEditor::CleanUp()
 {
+	delete logs;
+	logs = nullptr;
+
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplSDL2_Shutdown();
 	ImGui::DestroyContext();
 
+
 	return true;
+}
+
+void ModuleEditor::AddLog(const char* new_log) const
+{
+	if (logs != nullptr)
+		logs->append(new_log);
 }
 
 void ModuleEditor::Draw()
@@ -87,6 +104,7 @@ void ModuleEditor::Draw()
 	if (show_about)
 		AboutWindow();
 
+	Console();
 }
 
 void ModuleEditor::MainMenu()
@@ -196,7 +214,7 @@ void ModuleEditor::FPSCount()
 	}
 }
 
-void ModuleEditor::AboutWindow()
+void ModuleEditor::AboutWindow() const
 {
 	ImGui::Begin("About");
 
@@ -205,6 +223,15 @@ void ModuleEditor::AboutWindow()
 	ImGui::Text("Author: Pol Curto");
 	ImGui::Text("Libraries: SDL, Glew, MathGeoLig, ImGui");
 	ImGui::Text("License: esta");
+
+	ImGui::End();
+}
+
+void ModuleEditor::Console() const
+{
+	ImGui::Begin("Console");
+
+	ImGui::TextUnformatted(logs->begin(), logs->end());
 
 	ImGui::End();
 }

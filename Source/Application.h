@@ -24,6 +24,7 @@ public:
 	Application();
 	~Application();
 
+    bool PreInit();
 	bool Init();
 	update_status Update();
 	bool CleanUp();
@@ -37,7 +38,6 @@ public:
     ModuleDebugDraw* GetDebug() const { return debug; }
     ModuleEditorCamera* GetCamera() const { return camera; }
     ModuleEditor* GetEditor() const { return editor; }
-
 public:
     float delta;
 

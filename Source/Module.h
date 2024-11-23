@@ -17,7 +17,10 @@ public:
     {
     }
 
-
+	virtual bool PreInit()
+	{
+		return true;
+	}
 
 	virtual bool Init() 
 	{
