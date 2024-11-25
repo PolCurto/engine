@@ -130,6 +130,7 @@
     </ClCompile>
     <ClCompile Include="ModuleEditor.cpp" />
     <ClCompile Include="ModuleHardware.cpp" />
+    <ClCompile Include="ModuleTextures.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Dummy.h" />
@@ -358,6 +359,7 @@
     </ClInclude>
     <ClInclude Include="ModuleEditor.h" />
     <ClInclude Include="ModuleHardware.h" />
+    <ClInclude Include="ModuleTextures.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="MathGeoLib\include\Geometry\KDTree.inl">
