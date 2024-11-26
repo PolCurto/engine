@@ -89,7 +89,7 @@ update_status ModuleOpenGL::PostUpdate()
 bool ModuleOpenGL::CleanUp()
 {
 
-	//LOG("Destroying renderer");
+	LOG("Destroying renderer");
 
 	SDL_GL_DeleteContext(context);
 
@@ -134,6 +134,11 @@ void ModuleOpenGL::RenderVBO(unsigned vbo, unsigned program) const
 void ModuleOpenGL::DestroyVBO(unsigned vbo) const
 {
 	glDeleteBuffers(1, &vbo);
+}
+
+void ModuleOpenGL::LoadTextureData()
+{
+
 }
 
 void __stdcall OpenGlDebugging(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)

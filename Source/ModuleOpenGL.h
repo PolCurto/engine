@@ -21,6 +21,8 @@ public:
 	void RenderVBO(unsigned vbo, unsigned program) const;
 	void DestroyVBO(unsigned vbo) const;
 
+	void LoadTextureData();
+
 	void* GetContext() const { return context; }
 
 	//void __stdcall OpenGlDebugging(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam);
