@@ -13,7 +13,7 @@ public:
 	update_status Update();
 	bool CleanUp();
 
-	bool LoadFile(const wchar_t* filename, DirectX::ScratchImage image);
+	//bool LoadFile(const wchar_t* filename, DirectX::ScratchImage image);
 
 private:
 

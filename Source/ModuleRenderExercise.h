@@ -1,5 +1,6 @@
 #pragma once
 #include "Module.h"
+#include <vector>
 
 class ModuleRenderExercise : public Module
 {
@@ -13,8 +14,7 @@ public:
 	bool CleanUp();
 
 private:
-
-	unsigned int vbo;
+	std::vector<unsigned int> vbos;
 	unsigned int program_id;
 
 };

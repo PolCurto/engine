@@ -112,7 +112,7 @@ void ModuleOpenGL::RenderVBO(unsigned vbo, unsigned program) const
 {
 	float4x4 projection = App->GetCamera()->GetProjectionMatrix();
 	float4x4 view = App->GetCamera()->GetViewMatrix();
-	float4x4 model = math::float4x4::FromTRS(float3(0.0f, 1.0f, -3.0f), float4x4::RotateZ(pi / 4.0f), float3(0.5f, 0.5f, 0.5f));
+	float4x4 model = math::float4x4::FromTRS(float3(0.0f, 1.0f, -3.0f), float4x4::RotateZ(0), float3(0.5f, 0.5f, 0.5f));
 
 	// Draw debug axis origin and square grid
 	App->GetDebug()->Draw(view, projection, App->GetWindow()->GetWidth(), App->GetWindow()->GetHeight());

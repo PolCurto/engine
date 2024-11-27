@@ -9,7 +9,6 @@
 
 ModuleRenderExercise::ModuleRenderExercise()
 {
-	vbo = 0;
 	program_id = 0;
 }
 
@@ -20,12 +19,17 @@ ModuleRenderExercise::~ModuleRenderExercise()
 
 bool ModuleRenderExercise::Init()
 {
-	float vtx_data[] = { -1.0f, -1.0f, -3.0f, 1.0f, -1.0f, -3.0f, 0.0f, 1.0f, -3.0f };
+	float vtx_data[] = { -1.0f, -1.0f, -3.0f, 1.0f, -1.0f, -3.0f, -1.0f, 1.0f, -3.0f };
 	int data_length = sizeof(vtx_data) / sizeof(vtx_data[0]);
 
 	// Load a triangle into a VBO
-	vbo = App->GetOpenGL()->CreateTriangleVBO(vtx_data, data_length);
-	LOG("VBO: %d", vbo);
+	vbos.emplace_back(App->GetOpenGL()->CreateTriangleVBO(vtx_data, data_length));
+	//LOG("VBO: %d", );
+
+	float vtx_data2[] = { 1.0f, -1.0f, -3.0f, 1.0f, 1.0f, -3.0f, -1.0f, 1.0f, -3.0f };
+	data_length = sizeof(vtx_data2) / sizeof(vtx_data2[0]);
+	vbos.emplace_back(App->GetOpenGL()->CreateTriangleVBO(vtx_data2, data_length));
+	//LOG("VBO 2: %d", vbos);
 
 	// Compile the vertex shader
 	char* vtx_source = App->GetProgram()->LoadShaderSource("default_vertex.glsl");
@@ -52,7 +56,10 @@ bool ModuleRenderExercise::Init()
 
 update_status ModuleRenderExercise::Update()
 {
-	App->GetOpenGL()->RenderVBO(vbo, program_id);
+	for (const unsigned int& vbo : vbos)
+	{
+		App->GetOpenGL()->RenderVBO(vbo, program_id);
+	}
 	const uint8_t* keys = App->GetInput()->GetKeyboard();
 
 	if (keys[SDL_SCANCODE_1])
@@ -67,7 +74,10 @@ update_status ModuleRenderExercise::Update()
 
 bool ModuleRenderExercise::CleanUp()
 {
-	App->GetOpenGL()->DestroyVBO(vbo);
+	for (const unsigned int& vbo : vbos)
+	{
+		App->GetOpenGL()->DestroyVBO(vbo);
+	}
 	App->GetProgram()->DeleteProgram(program_id);
 
 	return true;
