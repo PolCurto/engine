@@ -5,6 +5,7 @@
 #include "ModuleEditorCamera.h"
 #include "SDL.h"
 #include "GL/glew.h"
+#include "Imgui/imgui.h"
 
 void __stdcall OpenGlDebugging(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam);
 
@@ -130,9 +131,39 @@ void ModuleOpenGL::RenderVBO(unsigned vbo, unsigned program, unsigned texture) c
 	// Bind uvs
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)(sizeof(float) * 18));     // The pointer is in location sizeof(float) * 3 * 3 because we have already drawn the triangles,
-																						                 // which are three positions with x, y and z values.
+																						 // which are three positions with x, y and z values.
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture);
+
+	ImGui::Begin("Texture Settings");
+
+	//const char* items[] = { "Repeat", "Mirrored repeat", "Clamp to border", "Clamp" };
+	//static int item_current = 1;
+	//ImGui::ListBox("Wrap mode", &item_current, items, IM_ARRAYSIZE(items), 4);
+
+
+	static int mag_filter = GL_NEAREST;
+	if (ImGui::CollapsingHeader("Mag Filter"))
+	{
+		ImGui::RadioButton("Nearest##1", &mag_filter, GL_NEAREST);
+		ImGui::SameLine();
+		ImGui::RadioButton("Linear##1", &mag_filter, GL_LINEAR);
+	}
+
+	static int min_filter = GL_NEAREST;
+	if (ImGui::CollapsingHeader("Min Filter"))
+	{
+		ImGui::RadioButton("Nearest##2", &min_filter, GL_NEAREST);
+		ImGui::SameLine();
+		ImGui::RadioButton("Linear##2", &min_filter, GL_LINEAR);
+	}
+
+	ImGui::End();
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, min_filter);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mag_filter);
 	
 	// 1 triangle to draw = 3 vertices
 	glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -197,17 +228,15 @@ unsigned ModuleOpenGL::LoadTextureData(const DirectX::ScratchImage& image) const
 	//	glGenerateMipmap(GL_TEXTURE_2D);
 	//}
 
-	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, metadata.width, metadata.height, 0, metadata.format, GL_UNSIGNED_BYTE, image.GetPixels());
-
-	// texture parameters
+	// Texture parameters
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
 	if (metadata.mipLevels > 1)
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, metadata.mipLevels - 1);
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 	return texture;
 }

@@ -219,10 +219,10 @@ void ModuleEditor::AboutWindow() const
 	ImGui::Begin("About");
 
 	ImGui::Text("Engine name: %s", TITLE);
-	ImGui::Text("Description: hard as stone");
+	ImGui::Text("Description: rock solid");
 	ImGui::Text("Author: Pol Curto");
-	ImGui::Text("Libraries: SDL, Glew, MathGeoLig, ImGui");
-	ImGui::Text("License: esta");
+	ImGui::Text("Libraries: SDL, Glew, MathGeoLig, ImGui, DirectXTex");
+	ImGui::Text("License: ");
 
 	ImGui::End();
 }
