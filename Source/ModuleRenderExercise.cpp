@@ -21,22 +21,38 @@ ModuleRenderExercise::~ModuleRenderExercise()
 bool ModuleRenderExercise::Init()
 {
 	float vtx_data[] = { 
-						-1.0f, -1.0f, -3.0f,  // v0 pos
-						1.0f, -1.0f, -3.0f,   // v1 pos
-						-1.0f, 1.0f, -3.0f,   // v2 pos
+						-1.0f, -1.0f, 0.0f,  // v0 pos
+						1.0f, -1.0f, 0.0f,   // v1 pos
+						-1.0f, 1.0f, 0.0f,   // v2 pos
 
-						1.0f, -1.0f, -3.0f,  // v0 pos 
-						1.0f, 1.0f, -3.0f,   // v1 pos
-						-1.0f, 1.0f, -3.0f,  // v2 pos
+						1.0f, -1.0f, 0.0f,   // v0 pos 
+						1.0f, 1.0f, 0.0f,    // v1 pos
+						-1.0f, 1.0f, 0.0f,   // v2 pos
+						
+						2.0f, -1.0f, 0.0f,   // v0 pos
+						4.0f, -1.0f, 0.0f,   // v1 pos
+						2.0f, 1.0f, 0.0f,    // v2 pos
 
-						0.0f, 1.0f,           // v0 texcoord
-						1.0f, 1.0f,           // v1 texcoord
-						0.0f, 0.0f,           // v2 texcoord
+						4.0f, -1.0f, 0.0f,   // v0 pos 
+						4.0f, 1.0f, 0.0f,    // v1 pos
+						2.0f, 1.0f, 0.0f,    // v2 pos
+
+						0.0f, 1.0f,          // v0 texcoord
+						1.0f, 1.0f,          // v1 texcoord
+						0.0f, 0.0f,          // v2 texcoord
 
 						1.0f, 1.0f,          // v0 texcoord
 						1.0f, 0.0f,          // v1 texcoord
-						0.0f, 0.0f           // v2 texcoord
-						};
+						0.0f, 0.0f,          // v2 texcoord
+
+						-0.5f, 1.5f,          // v0 texcoord
+						1.5f, 1.5f,          // v1 texcoord
+						-0.5f, -0.5f,          // v2 texcoord
+
+						1.5f, 1.5f,          // v0 texcoord
+						1.5f, -0.5f,          // v1 texcoord
+						-0.5f, -0.5f           // v2 texcoord
+	};
 
 	int data_length = sizeof(vtx_data) / sizeof(vtx_data[0]);
 

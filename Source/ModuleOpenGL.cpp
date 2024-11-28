@@ -131,7 +131,7 @@ void ModuleOpenGL::RenderVBO(unsigned vbo, unsigned program, unsigned texture) c
 
 	// Bind uvs
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)(sizeof(float) * 18));     // The pointer is in location sizeof(float) * 3 * 3 because we have already drawn the triangles,
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)(sizeof(float) * 36));     // The pointer is in location sizeof(float) * 3 * 3 because we have already drawn the triangles,
 																						 // which are three positions with x, y and z values.
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture);
@@ -143,6 +143,7 @@ void ModuleOpenGL::RenderVBO(unsigned vbo, unsigned program, unsigned texture) c
 	ImGui::Text("Texture width: %i", baboon_metadata.width);
 	ImGui::Text("Texture height: %i", baboon_metadata.height);
 	ImGui::Text("Format: %i", baboon_metadata.format);
+	ImGui::Text("Mipmaps: %i", baboon_metadata.mipLevels);
 
 	ImGui::SeparatorText("Texture settings");
 
@@ -181,7 +182,7 @@ void ModuleOpenGL::RenderVBO(unsigned vbo, unsigned program, unsigned texture) c
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mag_filter);
 	
 	// 1 triangle to draw = 3 vertices
-	glDrawArrays(GL_TRIANGLES, 0, 6);
+	glDrawArrays(GL_TRIANGLES, 0, 12);
 }
 
 void ModuleOpenGL::DestroyVBO(unsigned vbo) const
@@ -207,29 +208,29 @@ unsigned ModuleOpenGL::LoadTextureData(DirectX::ScratchImage& image) const
 	GLint internal_format;
 	GLenum format;
 	GLenum type;
-	
+
 	// Get the texture formats
 	switch (metadata.format)
 	{
-		case DXGI_FORMAT_R8G8B8A8_UNORM_SRGB:
-		case DXGI_FORMAT_R8G8B8A8_UNORM:
-			internal_format = GL_RGBA8;
-			format = GL_RGBA;
-			type = GL_UNSIGNED_BYTE;
-			break;
-		case DXGI_FORMAT_B8G8R8A8_UNORM_SRGB:
-		case DXGI_FORMAT_B8G8R8A8_UNORM:
-			internal_format = GL_RGBA8;
-			format = GL_BGRA;
-			type = GL_UNSIGNED_BYTE;
-			break;
-		case DXGI_FORMAT_B5G6R5_UNORM:
-			internal_format = GL_RGB8;
-			format = GL_BGR;
-			type = GL_UNSIGNED_BYTE;
-			break;
-		default:
-			assert(false && "Unsupported format");
+	case DXGI_FORMAT_R8G8B8A8_UNORM_SRGB:
+	case DXGI_FORMAT_R8G8B8A8_UNORM:
+		internal_format = GL_RGBA8;
+		format = GL_RGBA;
+		type = GL_UNSIGNED_BYTE;
+		break;
+	case DXGI_FORMAT_B8G8R8A8_UNORM_SRGB:
+	case DXGI_FORMAT_B8G8R8A8_UNORM:
+		internal_format = GL_RGBA8;
+		format = GL_BGRA;
+		type = GL_UNSIGNED_BYTE;
+		break;
+	case DXGI_FORMAT_B5G6R5_UNORM:
+		internal_format = GL_RGB8;
+		format = GL_BGR;
+		type = GL_UNSIGNED_BYTE;
+		break;
+	default:
+		assert(false && "Unsupported format");
 	}
 
 	// Load texture data to VRAM
@@ -239,10 +240,10 @@ unsigned ModuleOpenGL::LoadTextureData(DirectX::ScratchImage& image) const
 		glTexImage2D(GL_TEXTURE_2D, i, internal_format, mip->width, mip->height, 0, format, type, mip->pixels);
 	}
 
-	//if (metadata.mipLevels == 1)
-	//{
-	//	glGenerateMipmap(GL_TEXTURE_2D);
-	//}
+	if (metadata.mipLevels == 1)
+	{
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
 
 	// Texture parameters
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
