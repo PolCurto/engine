@@ -15,6 +15,7 @@ public:
 
 private:
 	std::vector<unsigned int> vbos;
+	unsigned int texture;
 	unsigned int program_id;
 
 };

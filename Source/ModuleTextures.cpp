@@ -33,17 +33,17 @@ bool ModuleTextures::LoadFile(const wchar_t* filename, DirectX::ScratchImage& im
 	
 	if (FAILED(hr))
 	{
-		LOG("Could not load file %s from DDS. Trying with TGA...", filename);
+		LOG("Could not load file '%s' from DDS.Trying with TGA...", filename);
 		hr = DirectX::LoadFromTGAFile(filename, nullptr, image);
 	
 		if (FAILED(hr))
 		{
-			LOG("Could not load file %s from TGA. Trying with WIC...", filename);
+			LOG("Could not load file '%s' from TGA. Trying with WIC...", filename);
 			hr = DirectX::LoadFromWICFile(filename, DirectX::WIC_FLAGS_NONE, nullptr, image);
 	
 			if (FAILED(hr))
 			{
-				LOG("Could not load file %s from WIC. No more methods implemented.", filename);
+				LOG("Could not load file '%s' from WIC. No more methods implemented.", filename);
 				return false;
 			}
 		}

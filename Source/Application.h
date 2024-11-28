@@ -39,6 +39,7 @@ public:
     ModuleDebugDraw* GetDebug() const { return debug; }
     ModuleEditorCamera* GetCamera() const { return camera; }
     ModuleEditor* GetEditor() const { return editor; }
+    ModuleTextures* GetTextures() const { return textures; }
 public:
     float delta = 0;
 

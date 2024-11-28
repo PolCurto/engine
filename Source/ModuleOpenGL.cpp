@@ -108,11 +108,11 @@ unsigned ModuleOpenGL::CreateTriangleVBO(float vertex_data[], int data_length)
 	return vbo;
 }
 
-void ModuleOpenGL::RenderVBO(unsigned vbo, unsigned program) const
+void ModuleOpenGL::RenderVBO(unsigned vbo, unsigned program, unsigned texture) const
 {
 	float4x4 projection = App->GetCamera()->GetProjectionMatrix();
 	float4x4 view = App->GetCamera()->GetViewMatrix();
-	float4x4 model = math::float4x4::FromTRS(float3(0.0f, 1.0f, -3.0f), float4x4::RotateZ(0), float3(0.5f, 0.5f, 0.5f));
+	float4x4 model = math::float4x4::FromTRS(float3(0.0f, 2.0f, -3.0f), float4x4::RotateZ(0), float3(50.0f, 10.0f, 1.0f));
 
 	// Draw debug axis origin and square grid
 	App->GetDebug()->Draw(view, projection, App->GetWindow()->GetWidth(), App->GetWindow()->GetHeight());
@@ -126,6 +126,14 @@ void ModuleOpenGL::RenderVBO(unsigned vbo, unsigned program) const
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
+	// Bind uvs
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)(sizeof(float) * 3 * 3));  // The pointer is in location sizeof(float) * 3 * 3 because we have already drawn the triangles,
+																						 // which are three positions with x, y and z values.
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, texture);
 	
 	// 1 triangle to draw = 3 vertices
 	glDrawArrays(GL_TRIANGLES, 0, 3);
@@ -136,11 +144,12 @@ void ModuleOpenGL::DestroyVBO(unsigned vbo) const
 	glDeleteBuffers(1, &vbo);
 }
 
-void ModuleOpenGL::LoadTextureData(unsigned int* textures_buffer, const DirectX::ScratchImage& image) const
+unsigned ModuleOpenGL::LoadTextureData(const DirectX::ScratchImage& image) const
 {
 	// Generate textures
-	glGenTextures(1, textures_buffer);
-	glBindTexture(GL_TEXTURE_2D, *textures_buffer);
+	unsigned int texture;
+	glGenTextures(1, &texture);
+	glBindTexture(GL_TEXTURE_2D, texture);
 
 	DirectX::TexMetadata metadata = image.GetMetadata();
 
@@ -184,7 +193,7 @@ void ModuleOpenGL::LoadTextureData(unsigned int* textures_buffer, const DirectX:
 	//	glGenerateMipmap(GL_TEXTURE_2D);
 	//}
 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, metadata.width, metadata.height, 0, metadata.format, GL_UNSIGNED_BYTE, image.GetPixels());
+	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, metadata.width, metadata.height, 0, metadata.format, GL_UNSIGNED_BYTE, image.GetPixels());
 
 	// texture parameters
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
@@ -193,8 +202,10 @@ void ModuleOpenGL::LoadTextureData(unsigned int* textures_buffer, const DirectX:
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	return texture;
 }
 
 void __stdcall OpenGlDebugging(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)

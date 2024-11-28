@@ -19,10 +19,10 @@ public:
 	bool CleanUp();
 
 	unsigned CreateTriangleVBO(float vertex_data[], int data_length);
-	void RenderVBO(unsigned vbo, unsigned program) const;
+	void RenderVBO(unsigned vbo, unsigned program, unsigned texture) const;
 	void DestroyVBO(unsigned vbo) const;
 
-	void LoadTextureData(unsigned int* textures_buffer, const DirectX::ScratchImage& image) const;
+	unsigned LoadTextureData(const DirectX::ScratchImage& image) const;
 
 	void* GetContext() const { return context; }
 
