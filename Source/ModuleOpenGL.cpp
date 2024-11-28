@@ -136,9 +136,65 @@ void ModuleOpenGL::DestroyVBO(unsigned vbo) const
 	glDeleteBuffers(1, &vbo);
 }
 
-void ModuleOpenGL::LoadTextureData()
+void ModuleOpenGL::LoadTextureData(unsigned int* textures_buffer, const DirectX::ScratchImage& image) const
 {
+	// Generate textures
+	glGenTextures(1, textures_buffer);
+	glBindTexture(GL_TEXTURE_2D, *textures_buffer);
 
+	DirectX::TexMetadata metadata = image.GetMetadata();
+
+	GLint internal_format;
+	GLenum format;
+	GLenum type;
+	
+	// Get the texture formats
+	switch (metadata.format)
+	{
+		case DXGI_FORMAT_R8G8B8A8_UNORM_SRGB:
+		case DXGI_FORMAT_R8G8B8A8_UNORM:
+			internal_format = GL_RGBA8;
+			format = GL_RGBA;
+			type = GL_UNSIGNED_BYTE;
+			break;
+		case DXGI_FORMAT_B8G8R8A8_UNORM_SRGB:
+		case DXGI_FORMAT_B8G8R8A8_UNORM:
+			internal_format = GL_RGBA8;
+			format = GL_BGRA;
+			type = GL_UNSIGNED_BYTE;
+			break;
+		case DXGI_FORMAT_B5G6R5_UNORM:
+			internal_format = GL_RGB8;
+			format = GL_BGR;
+			type = GL_UNSIGNED_BYTE;
+			break;
+		default:
+			assert(false && "Unsupported format");
+	}
+
+	// Load texture data to VRAM
+	for (size_t i = 0; i < metadata.mipLevels; ++i)
+	{
+		const DirectX::Image* mip = image.GetImage(i, 0, 0);
+		glTexImage2D(GL_TEXTURE_2D, i, internal_format, mip->width, mip->height, 0, format, type, mip->pixels);
+	}
+
+	//if (metadata.mipLevels == 1)
+	//{
+	//	glGenerateMipmap(GL_TEXTURE_2D);
+	//}
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, metadata.width, metadata.height, 0, metadata.format, GL_UNSIGNED_BYTE, image.GetPixels());
+
+	// texture parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
+	if (metadata.mipLevels > 1)
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, metadata.mipLevels - 1);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 }
 
 void __stdcall OpenGlDebugging(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)

@@ -25,8 +25,8 @@ bool ModuleTextures::CleanUp()
 	return true;
 }
 
-/*
-bool ModuleTextures::LoadFile(const wchar_t* filename, DirectX::ScratchImage image)
+
+bool ModuleTextures::LoadFile(const wchar_t* filename, DirectX::ScratchImage& image) const
 {
 	HRESULT hr;
 	hr = DirectX::LoadFromDDSFile(filename, DirectX::DDS_FLAGS_NONE, nullptr, image);
@@ -51,4 +51,3 @@ bool ModuleTextures::LoadFile(const wchar_t* filename, DirectX::ScratchImage ima
 
 	return true;
 }
-*/

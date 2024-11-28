@@ -1,5 +1,6 @@
 #pragma once
 #include "Module.h"
+#include "DirectXTex.h"
 
 struct SDL_Texture;
 struct SDL_Renderer;
@@ -21,7 +22,7 @@ public:
 	void RenderVBO(unsigned vbo, unsigned program) const;
 	void DestroyVBO(unsigned vbo) const;
 
-	void LoadTextureData();
+	void LoadTextureData(unsigned int* textures_buffer, const DirectX::ScratchImage& image) const;
 
 	void* GetContext() const { return context; }
 
