@@ -6,6 +6,7 @@
 #include "SDL.h"
 #include "GL/glew.h"
 #include "Imgui/imgui.h"
+#include "DirectXTex.h"
 
 void __stdcall OpenGlDebugging(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam);
 
@@ -135,12 +136,26 @@ void ModuleOpenGL::RenderVBO(unsigned vbo, unsigned program, unsigned texture) c
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture);
 
-	ImGui::Begin("Texture Settings");
+	ImGui::Begin("Baboon Texture");
 
-	//const char* items[] = { "Repeat", "Mirrored repeat", "Clamp to border", "Clamp" };
-	//static int item_current = 1;
-	//ImGui::ListBox("Wrap mode", &item_current, items, IM_ARRAYSIZE(items), 4);
+	ImGui::SeparatorText("Texture Data");
 
+	ImGui::Text("Texture width: %i", baboon_metadata.width);
+	ImGui::Text("Texture height: %i", baboon_metadata.height);
+	ImGui::Text("Format: %i", baboon_metadata.format);
+
+	ImGui::SeparatorText("Texture settings");
+
+	static int wrap_mode = GL_CLAMP;
+	if (ImGui::CollapsingHeader("Wrap mode"))
+	{
+		ImGui::RadioButton("Repeat##2", &wrap_mode, GL_REPEAT);
+		ImGui::SameLine();
+		ImGui::RadioButton("Mirrored repeat##2", &wrap_mode, GL_MIRRORED_REPEAT);
+		ImGui::RadioButton("Clamp##2", &wrap_mode, GL_CLAMP);
+		ImGui::SameLine();
+		ImGui::RadioButton("Clamp to border##2", &wrap_mode, GL_CLAMP_TO_BORDER);
+	}
 
 	static int mag_filter = GL_NEAREST;
 	if (ImGui::CollapsingHeader("Mag Filter"))
@@ -160,8 +175,8 @@ void ModuleOpenGL::RenderVBO(unsigned vbo, unsigned program, unsigned texture) c
 
 	ImGui::End();
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap_mode);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap_mode);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, min_filter);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mag_filter);
 	
@@ -179,7 +194,7 @@ void ModuleOpenGL::DestroyTexture(unsigned texture) const
 	glDeleteTextures(1, &texture);
 }
 
-unsigned ModuleOpenGL::LoadTextureData(const DirectX::ScratchImage& image) const
+unsigned ModuleOpenGL::LoadTextureData(DirectX::ScratchImage& image) const
 {
 	// Generate textures
 	unsigned int texture;
@@ -187,6 +202,7 @@ unsigned ModuleOpenGL::LoadTextureData(const DirectX::ScratchImage& image) const
 	glBindTexture(GL_TEXTURE_2D, texture);
 
 	DirectX::TexMetadata metadata = image.GetMetadata();
+	baboon_metadata = metadata;
 
 	GLint internal_format;
 	GLenum format;

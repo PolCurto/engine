@@ -17,5 +17,4 @@ private:
 	unsigned int vbo;
 	unsigned int texture;
 	unsigned int program_id;
-
 };

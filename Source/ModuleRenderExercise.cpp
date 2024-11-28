@@ -8,7 +8,6 @@
 #include "GL/glew.h"
 #include "DirectXTex.h"
 
-
 ModuleRenderExercise::ModuleRenderExercise()
 {
 	program_id = 0;
