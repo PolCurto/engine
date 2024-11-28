@@ -23,6 +23,7 @@ public:
 	void DestroyVBO(unsigned vbo) const;
 
 	unsigned LoadTextureData(const DirectX::ScratchImage& image) const;
+	void DestroyTexture(unsigned texture) const;
 
 	void* GetContext() const { return context; }
 

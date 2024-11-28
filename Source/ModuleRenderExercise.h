@@ -14,7 +14,7 @@ public:
 	bool CleanUp();
 
 private:
-	std::vector<unsigned int> vbos;
+	unsigned int vbo;
 	unsigned int texture;
 	unsigned int program_id;
 

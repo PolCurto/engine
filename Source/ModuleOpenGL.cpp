@@ -112,7 +112,7 @@ void ModuleOpenGL::RenderVBO(unsigned vbo, unsigned program, unsigned texture) c
 {
 	float4x4 projection = App->GetCamera()->GetProjectionMatrix();
 	float4x4 view = App->GetCamera()->GetViewMatrix();
-	float4x4 model = math::float4x4::FromTRS(float3(0.0f, 2.0f, -3.0f), float4x4::RotateZ(0), float3(50.0f, 10.0f, 1.0f));
+	float4x4 model = math::float4x4::FromTRS(float3(0.0f, 2.0f, -3.0f), float4x4::RotateZ(0), float3(1.0f, 1.0f, 1.0f));
 
 	// Draw debug axis origin and square grid
 	App->GetDebug()->Draw(view, projection, App->GetWindow()->GetWidth(), App->GetWindow()->GetHeight());
@@ -129,19 +129,23 @@ void ModuleOpenGL::RenderVBO(unsigned vbo, unsigned program, unsigned texture) c
 
 	// Bind uvs
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)(sizeof(float) * 3 * 3));  // The pointer is in location sizeof(float) * 3 * 3 because we have already drawn the triangles,
-																						 // which are three positions with x, y and z values.
-
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)(sizeof(float) * 18));     // The pointer is in location sizeof(float) * 3 * 3 because we have already drawn the triangles,
+																						                 // which are three positions with x, y and z values.
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture);
 	
 	// 1 triangle to draw = 3 vertices
-	glDrawArrays(GL_TRIANGLES, 0, 3);
+	glDrawArrays(GL_TRIANGLES, 0, 6);
 }
 
 void ModuleOpenGL::DestroyVBO(unsigned vbo) const
 {
 	glDeleteBuffers(1, &vbo);
+}
+
+void ModuleOpenGL::DestroyTexture(unsigned texture) const
+{
+	glDeleteTextures(1, &texture);
 }
 
 unsigned ModuleOpenGL::LoadTextureData(const DirectX::ScratchImage& image) const
