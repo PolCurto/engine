@@ -95,8 +95,6 @@ update_status ModuleRenderExercise::Update()
 {
 	App->GetOpenGL()->RenderVBO(vbo, program_id, texture);
 
-	const uint8_t* keys = App->GetInput()->GetKeyboard();
-
 	return UPDATE_CONTINUE;
 }
 

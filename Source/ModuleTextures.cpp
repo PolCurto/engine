@@ -1,4 +1,6 @@
 #include "ModuleTextures.h"
+#include "DirectXTex.h";
+
 
 ModuleTextures::ModuleTextures()
 {

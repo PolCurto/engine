@@ -130,8 +130,8 @@ void ModuleOpenGL::RenderVBO(unsigned vbo, unsigned program, unsigned texture) c
 
 	// Bind uvs
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)(sizeof(float) * 36));     // The pointer is in location sizeof(float) * 3 * 3 because we have already drawn the triangles,
-																						 // which are three positions with x, y and z values.
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)(sizeof(float) * 3 * 12));     // The pointer is in location sizeof(float) * 3 * 12 because we have already drawn the triangles,
+																						     // which are three positions with x, y and z values.
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture);
 

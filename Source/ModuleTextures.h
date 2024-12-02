@@ -1,6 +1,11 @@
 #pragma once
 #include "Module.h"
-#include "DirectXTex.h"
+
+namespace DirectX
+{
+	class ScratchImage;
+}
+
 
 class ModuleTextures : public Module
 {
