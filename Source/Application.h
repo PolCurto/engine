@@ -42,8 +42,10 @@ public:
     ModuleTextures* GetTextures() const { return textures; }
 public:
     float delta = 0;
+    float fps = 0;
 
 private:
+    void CountFPS();
 
     ModuleOpenGL* render = nullptr;
     ModuleWindow* window = nullptr;
@@ -60,6 +62,8 @@ private:
 
     std::chrono::steady_clock::time_point last_time;
     std::chrono::duration<float, std::milli> time_lapse;
+    int frames = 0;
+    int sec_timer = 0;
 };
 
 extern Application* App;

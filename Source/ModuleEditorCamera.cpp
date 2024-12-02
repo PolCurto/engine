@@ -29,6 +29,8 @@ bool ModuleEditorCamera::Init()
 	aspect_ratio = static_cast<float>(SCREEN_WIDTH) / static_cast<float>(SCREEN_HEIGHT);
 	frustum.verticalFov = 2.0f * atanf(tanf(frustum.horizontalFov * 0.5f) * (1 / aspect_ratio));
 	frustum.pos = camera_position;
+	projection_matrix = frustum.ProjectionMatrix();
+
 
 	return true;
 }
@@ -132,13 +134,10 @@ void ModuleEditorCamera::ProcessInput()
 void ModuleEditorCamera::SetFrustum()
 {
 	// Get all the data using the frustrum class
-	frustum.pos = camera_position;
-
-	//LOG("Aspect ration: %f. Width: %d. Height: %d.", aspect_ratio, App->GetOpenGL()->GetWindowWidth(), App->GetOpenGL()->GetWindowHeight());
-	//LOG("Fov: %f", RadToDeg(frustum.horizontalFov));
-	projection_matrix = frustum.ProjectionMatrix();
-
+	frustum.pos = camera_position;;
+	//projection_matrix = frustum.ProjectionMatrix();
 	view_matrix = static_cast<float4x4>(frustum.ViewMatrix());
+
 	// TODO: Implement my own LookAt function
 
 }

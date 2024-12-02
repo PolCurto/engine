@@ -63,6 +63,7 @@ update_status Application::Update()
 	time_lapse = (std::chrono::steady_clock::now() - last_time);
 	last_time = std::chrono::steady_clock::now();
 	delta = time_lapse.count();
+	CountFPS();
 
 	//LOG("Delta: %f", GetDelta());
 
@@ -91,4 +92,20 @@ bool Application::CleanUp()
 void Application::RequestBrowser(const char* url) const
 {
 	ShellExecuteA(NULL, "open", url, NULL, NULL, SW_SHOWNORMAL);
+}
+
+void Application::CountFPS()
+{
+	if (sec_timer <= 1000)
+	{
+		sec_timer += delta;
+		++frames;
+	}
+	else
+	{
+		fps = frames;
+		frames = 0;
+		sec_timer = delta;
+	}
+	
 }

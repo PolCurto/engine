@@ -48,6 +48,9 @@ update_status ModuleEditor::PreUpdate()
 
 update_status ModuleEditor::Update()
 {
+	//bool focused = ImGui::GetPlatformIO().Platform_GetWindowFocus(ImGui::GetMainViewport());
+	//LOG("App focus: %d", focused);
+
 	Draw();
 
 	// Renders at the end
@@ -202,16 +205,24 @@ void ModuleEditor::FPSCount()
 	}
 	else
 	{
-
-	ms_log.pop_front();
-	ms_log.emplace_back(App->delta);
-
-		char title[25];
-		//sprintf_s(title, 25, "Framerate %.1f", fps_log.back());
-		//ImGui::PlotHistogram("framerate", &fps_log.front(), fps_log.size(), 0, title, 0.0f, 100.0f, ImVec2(310, 100));
-		sprintf_s(title, 25, "Milliseconds %0.1f", ms_log.back());
-		ImGui::PlotHistogram("##milliseconds", &ms_log[0], ms_log.size(), 0, title, 0.0f, 40.0f, ImVec2(310, 100), 0);
+		ms_log.pop_front();
+		ms_log.emplace_back(App->delta);		
 	}
+	char title[25];
+	sprintf_s(title, 25, "Milliseconds %0.1f", ms_log.back());
+	ImGui::PlotHistogram("##milliseconds", &ms_log[0], ms_log.size(), 0, title, 0.0f, 40.0f, ImVec2(310, 100), 4);
+
+	if (fps_log.size() < vectors_length)
+	{
+		fps_log.push_back(App->fps);
+	}
+	else
+	{
+		fps_log.pop_front();
+		fps_log.emplace_back(App->fps);
+	}
+	sprintf_s(title, 25, "Framerate %.1f", fps_log.back());
+	ImGui::PlotHistogram("framerate", &fps_log.front(), fps_log.size(), 0, title, 0.0f, 200.0f, ImVec2(310, 100), 0);
 }
 
 void ModuleEditor::AboutWindow() const
@@ -232,6 +243,12 @@ void ModuleEditor::Console() const
 	ImGui::Begin("Console");
 
 	ImGui::TextUnformatted(logs->begin(), logs->end());
+
+	// Autoscroll only if the scroll is in the bottom position
+	if (ImGui::GetScrollY() >= ImGui::GetScrollMaxY())    
+	{
+		ImGui::SetScrollHereY(1.0f);
+	}
 
 	ImGui::End();
 }
