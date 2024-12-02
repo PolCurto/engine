@@ -5,6 +5,7 @@
 #include "GL/glew.h"
 #include "ModuleWindow.h"
 #include "ModuleOpenGL.h"
+#include "ModuleEditorCamera.h"
 
 ModuleEditor::ModuleEditor()
 {
@@ -190,6 +191,30 @@ void ModuleEditor::SettingsWindow()
 		// Set Full Desktop
 		if (ImGui::Checkbox("Full Desktop", &full_desktop))
 			App->GetWindow()->SetFullDesktop(full_desktop);
+	}
+	if (ImGui::CollapsingHeader("Editor camera"))
+	{
+		// Camera position
+		float3 camera_pos = App->GetCamera()->GetCameraPosition();
+		float pos[] = { camera_pos.x, camera_pos.y, camera_pos.z };
+		if (ImGui::InputFloat3("Camera position", pos))
+		{
+			App->GetCamera()->SetPosition(pos[0], pos[1], pos[2]);
+		}
+
+		// Camera FOV
+		float fov = App->GetCamera()->GetFOV();
+		if (ImGui::SliderFloat("FOV", &fov, 30.0f, 180.0f))
+		{
+			App->GetCamera()->SetFOV(fov);
+		}
+
+		// Camera sensitivity
+
+		// Camera speed
+
+		// Frustum planes
+		
 	}
 
 	ImGui::End();

@@ -66,7 +66,7 @@ void ModuleEditorCamera::ProcessInput()
 	{
 		SDL_SetRelativeMouseMode(SDL_TRUE);
 		float drag_speed = 0.7f;
-		up_speed += App->GetInput()->GetMouseMotionY() * drag_speed;
+		camera_position += App->GetInput()->GetMouseMotionY() * drag_speed * frustum.up * delta * factor;
 		right_speed -= App->GetInput()->GetMouseMotionX() * drag_speed;
 	}
 	else if (keys[SDL_SCANCODE_LALT] && App->GetInput()->GetMouseButtons()[RIGHT_BUTTON])    // Zoom with vertical mouse motion
@@ -134,7 +134,7 @@ void ModuleEditorCamera::ProcessInput()
 void ModuleEditorCamera::SetFrustum()
 {
 	// Get all the data using the frustrum class
-	frustum.pos = camera_position;;
+	frustum.pos = camera_position;
 	//projection_matrix = frustum.ProjectionMatrix();
 	view_matrix = static_cast<float4x4>(frustum.ViewMatrix());
 
@@ -165,6 +165,12 @@ void ModuleEditorCamera::SetPlaneDistances(float near_plane_dist, float far_plan
 
 void ModuleEditorCamera::SetPosition(const float3& new_position)
 {
+	frustum.pos = camera_position = new_position;
+}
+
+void ModuleEditorCamera::SetPosition(const float x, const float y, const float z)
+{
+	float3 new_position(x, y, z);
 	frustum.pos = camera_position = new_position;
 }
 

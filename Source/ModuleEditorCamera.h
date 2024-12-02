@@ -20,7 +20,11 @@ public:
 	void SetAspectRatio(float new_aspect_ratio);
 	void SetPlaneDistances(float near_plane, float far_plane);
 	void SetPosition(const float3& new_position);
+	void SetPosition(const float x, const float y, const float z);
 	void SetOrientation(const float3& new_front);
+
+	float3 GetCameraPosition() const { return camera_position; }
+	float GetFOV() const { return RadToDeg(frustum.horizontalFov); }
 
 
 private:
