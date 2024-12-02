@@ -15,7 +15,9 @@ ModuleEditorCamera::~ModuleEditorCamera()
 
 bool ModuleEditorCamera::Init()
 {
-	movement_speed = 1;
+	free_movement_speed = 40;
+	zoom_speed = 50;
+	drag_speed = 10;
 	sensitivity = 0.4f;
 
 	frustum.type = FrustumType::PerspectiveFrustum;
@@ -56,8 +58,6 @@ void ModuleEditorCamera::ProcessInput()
 	float up_speed = 0;
 	float factor = 1;
 
-	float delta = 0.05f;
-
 	// Add the mouse wheel motion to the movement
 
 	float yaw_deg = 0;
@@ -65,15 +65,13 @@ void ModuleEditorCamera::ProcessInput()
 	if (App->GetInput()->GetMouseButtons()[MIDDLE_BUTTON])
 	{
 		SDL_SetRelativeMouseMode(SDL_TRUE);
-		float drag_speed = 0.7f;
-		camera_position += App->GetInput()->GetMouseMotionY() * drag_speed * frustum.up * delta * factor;
+		camera_position += App->GetInput()->GetMouseMotionY() * drag_speed * frustum.up * (App->delta/1000.0f) * factor;
 		right_speed -= App->GetInput()->GetMouseMotionX() * drag_speed;
 	}
 	else if (keys[SDL_SCANCODE_LALT] && App->GetInput()->GetMouseButtons()[RIGHT_BUTTON])    // Zoom with vertical mouse motion
 	{
 		SDL_SetRelativeMouseMode(SDL_TRUE);
-		float zoom_speed = 5;
-		front_speed -= App->GetInput()->GetMouseMotionY() * movement_speed * zoom_speed;
+		front_speed -= App->GetInput()->GetMouseMotionY() * zoom_speed;
 	}
 	else if (keys[SDL_SCANCODE_LALT] && App->GetInput()->GetMouseButtons()[LEFT_BUTTON])    // Orbit around the selected object
 	{
@@ -85,17 +83,17 @@ void ModuleEditorCamera::ProcessInput()
 		SDL_SetRelativeMouseMode(SDL_TRUE);
 
 		if (keys[SDL_SCANCODE_W])
-			front_speed += movement_speed;
+			front_speed += free_movement_speed;
 		if (keys[SDL_SCANCODE_S])
-			front_speed -= movement_speed;
+			front_speed -= free_movement_speed;
 		if (keys[SDL_SCANCODE_D])
-			right_speed += movement_speed;
+			right_speed += free_movement_speed;
 		if (keys[SDL_SCANCODE_A])
-			right_speed -= movement_speed;
+			right_speed -= free_movement_speed;
 		if (keys[SDL_SCANCODE_Q])
-			up_speed += movement_speed;
+			up_speed += free_movement_speed;
 		if (keys[SDL_SCANCODE_E])
-			up_speed -= movement_speed;
+			up_speed -= free_movement_speed;
 		if (keys[SDL_SCANCODE_LSHIFT])
 			factor = 3;
 
@@ -104,11 +102,11 @@ void ModuleEditorCamera::ProcessInput()
 	}
 	else
 	{
-		front_speed += App->GetInput()->GetMouseWheel() * 10;
+		front_speed += App->GetInput()->GetMouseWheel() * zoom_speed * 5;
 		SDL_SetRelativeMouseMode(SDL_FALSE);
 	}
 
-	camera_position += (front_speed * frustum.front + right_speed * frustum.WorldRight() + up_speed * float3::unitY) * delta * factor;
+	camera_position += (front_speed * frustum.front + right_speed * frustum.WorldRight() + up_speed * float3::unitY) * (App->delta / 1000.0f) * factor;
 
 	// Rotate around world Y axis
 	if (yaw_deg)

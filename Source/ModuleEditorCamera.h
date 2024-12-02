@@ -25,6 +25,17 @@ public:
 
 	float3 GetCameraPosition() const { return camera_position; }
 	float GetFOV() const { return RadToDeg(frustum.horizontalFov); }
+	float GetSensitivity() const { return sensitivity; }
+	float GetFreeMovementSpeed() const { return free_movement_speed; }
+	float GetZoomSpeed() const { return zoom_speed; }
+	float GetDragSpeed() const { return drag_speed; }
+	float GetNearPlaneDist() const { return frustum.nearPlaneDistance; }
+	float GetFarPlaneDist() const { return frustum.farPlaneDistance; }
+
+	void SetSensitivity(float new_sens) { sensitivity = new_sens; }
+	void SetFreeMovementSpeed(float new_speed) { free_movement_speed = new_speed; }
+	void SetZoomSpeed(float new_speed) { zoom_speed = new_speed; }
+	void SetDragSpeed(float new_speed) { drag_speed = new_speed; }
 
 
 private:
@@ -38,6 +49,8 @@ private:
 
 	float aspect_ratio = 0;
 
-	float movement_speed = 0;
+	float free_movement_speed = 0;
+	float zoom_speed = 0;
+	float drag_speed = 0;
 	float sensitivity = 0;
 };

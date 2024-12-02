@@ -192,6 +192,7 @@ void ModuleEditor::SettingsWindow()
 		if (ImGui::Checkbox("Full Desktop", &full_desktop))
 			App->GetWindow()->SetFullDesktop(full_desktop);
 	}
+
 	if (ImGui::CollapsingHeader("Editor camera"))
 	{
 		// Camera position
@@ -210,11 +211,44 @@ void ModuleEditor::SettingsWindow()
 		}
 
 		// Camera sensitivity
+		float sensitivity = App->GetCamera()->GetSensitivity();
+		if (ImGui::SliderFloat("Sensitivity", &sensitivity, 0.0f, 10.0f))
+		{
+			App->GetCamera()->SetSensitivity(sensitivity);
+		}
 
-		// Camera speed
+		// Camera free movement speed
+		float free_movement_speed = App->GetCamera()->GetFreeMovementSpeed();
+		if (ImGui::SliderFloat("Free movement speed", &free_movement_speed, 0.0f, 100.0f))
+		{
+			App->GetCamera()->SetFreeMovementSpeed(free_movement_speed);
+		}
+		
+		// Camera zoom speed
+		float zoom_speed = App->GetCamera()->GetZoomSpeed();
+		if (ImGui::SliderFloat("Zoom speed", &zoom_speed, 0.0f, 100.0f))
+		{
+			App->GetCamera()->SetZoomSpeed(zoom_speed);
+		}
+		
+		// Camera zoom speed
+		float drag_speed = App->GetCamera()->GetDragSpeed();
+		if (ImGui::SliderFloat("Drag speed", &drag_speed, 0.0f, 20.0f))
+		{
+			App->GetCamera()->SetDragSpeed(drag_speed);
+		}
 
 		// Frustum planes
-		
+		float near_plane_dist = App->GetCamera()->GetNearPlaneDist();
+		if (ImGui::InputFloat("Near plane distance", &near_plane_dist));
+		{
+			App->GetCamera()->SetPlaneDistances(near_plane_dist, App->GetCamera()->GetFarPlaneDist());
+		}
+		float far_plane_dist = App->GetCamera()->GetFarPlaneDist();
+		if (ImGui::InputFloat("Far plane distance", &far_plane_dist));
+		{
+			App->GetCamera()->SetPlaneDistances(App->GetCamera()->GetNearPlaneDist(), far_plane_dist);
+		}
 	}
 
 	ImGui::End();
