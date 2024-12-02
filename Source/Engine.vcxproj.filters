@@ -362,6 +362,7 @@
     <ClInclude Include="ModuleHardware.h" />
     <ClInclude Include="ModuleTextures.h" />
     <ClInclude Include="Model.h" />
+    <ClInclude Include="Mesh.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="MathGeoLib\include\Geometry\KDTree.inl">

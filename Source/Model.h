@@ -11,6 +11,7 @@ public:
 
 	void Load(const char* asset_filename);
 private:
+	
 };
 
 #endif // __MODEL_H__
