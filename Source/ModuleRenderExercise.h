@@ -1,6 +1,9 @@
 #pragma once
 #include "Module.h"
+#include <memory>
 #include <vector>
+
+class Mesh;
 
 class ModuleRenderExercise : public Module
 {
@@ -17,4 +20,6 @@ private:
 	unsigned int vbo;
 	unsigned int texture;
 	unsigned int program_id;
+
+	std::vector<std::unique_ptr<Mesh>> meshes;
 };

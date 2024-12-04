@@ -7,6 +7,8 @@
 #include "SDL.h"
 #include "GL/glew.h"
 #include "DirectXTex.h"
+#include "Model.h"
+#include "Mesh.h"
 
 ModuleRenderExercise::ModuleRenderExercise()
 {
@@ -58,6 +60,7 @@ bool ModuleRenderExercise::Init()
 
 	// Load the vertex data into a VBO
 	vbo = App->GetOpenGL()->CreateTriangleVBO(vtx_data, data_length);
+	LOG("VBO index: %d", vbo);
 
 	// Compile the vertex shader
 	char* vtx_source = App->GetProgram()->LoadShaderSource("default_vertex.glsl");
@@ -88,12 +91,21 @@ bool ModuleRenderExercise::Init()
 		LOG("Couldn't load texture");
 	}
 
+	// Load model
+	Model model;
+	model.Load("Models/Triangle/TriangleWithoutIndices.gltf", meshes);
+
 	return true;
 }
 
 update_status ModuleRenderExercise::Update()
 {
 	App->GetOpenGL()->RenderVBO(vbo, program_id, texture);
+
+	for (std::unique_ptr<Mesh>& mesh : meshes)
+	{
+		mesh->Render(program_id);
+	}
 
 	return UPDATE_CONTINUE;
 }

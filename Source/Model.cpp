@@ -33,7 +33,7 @@ void Model::Load(const char* asset_filename, std::vector<std::unique_ptr<Mesh>>&
 	}
 
 	if (warning.size() > 0)
-		LOG("Warning loading %s: %s", asset_filename, error);
+		LOG("Warning loading %s: %s", asset_filename, warning);
 
 
 	for (const tinygltf::Mesh& source_mesh : model.meshes)

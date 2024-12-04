@@ -77,6 +77,10 @@ update_status ModuleOpenGL::PreUpdate()
 // Called every draw update
 update_status ModuleOpenGL::Update()
 {
+	float4x4 projection = App->GetCamera()->GetProjectionMatrix();
+	float4x4 view = App->GetCamera()->GetViewMatrix();
+	// Draw debug axis origin and square grid
+	App->GetDebug()->Draw(view, projection, App->GetWindow()->GetWidth(), App->GetWindow()->GetHeight());
 	return UPDATE_CONTINUE;
 }
 
@@ -114,9 +118,6 @@ void ModuleOpenGL::RenderVBO(unsigned vbo, unsigned program, unsigned texture) c
 	float4x4 projection = App->GetCamera()->GetProjectionMatrix();
 	float4x4 view = App->GetCamera()->GetViewMatrix();
 	float4x4 model = math::float4x4::FromTRS(float3(0.0f, 2.0f, -3.0f), float4x4::RotateZ(0), float3(1.0f, 1.0f, 1.0f));
-
-	// Draw debug axis origin and square grid
-	App->GetDebug()->Draw(view, projection, App->GetWindow()->GetWidth(), App->GetWindow()->GetHeight());
 
 	glUseProgram(program);
 	glUniformMatrix4fv(0, 1, GL_TRUE, &projection[0][0]);
