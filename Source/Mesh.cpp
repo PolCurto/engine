@@ -30,17 +30,20 @@ void Mesh::Load(const tinygltf::Model& model, const tinygltf::Mesh& mesh, const 
 		const tinygltf::BufferView& position_view = model.bufferViews[position_accessor.bufferView];
 		const tinygltf::Buffer& position_buffer = model.buffers[position_view.buffer];
 		const unsigned char* buffer_position = &(position_buffer.data[position_accessor.byteOffset + position_view.byteOffset]);
+		size_t i = position_buffer.data.size();
+		LOG("buffer raw data size: %d", i);
 
 		glGenBuffers(1, &vbo);
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 3 * vertex_count, nullptr, GL_STATIC_DRAW);
-		float3* vbo_data_ptr = reinterpret_cast<float3*>(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
-		for (size_t i = 0; i < vertex_count; ++i)
-		{
-			vbo_data_ptr[i] = *reinterpret_cast<const float3*>(buffer_position);
-			buffer_position += position_view.byteStride;
-		}
-		glUnmapBuffer(GL_ARRAY_BUFFER);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 3 * position_accessor.count, buffer_position, GL_STATIC_DRAW);
+		//float3* vbo_data_ptr = reinterpret_cast<float3*>(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
+		//for (size_t i = 0; i < position_accessor.count; ++i)
+		//{
+		//	vbo_data_ptr[i] = *reinterpret_cast<const float3*>(buffer_position);
+		//	LOG("Vbo data ptr x: %d, y: %d, z: %d", vbo_data_ptr[i].x, vbo_data_ptr[i].y, vbo_data_ptr[i].z);
+		//	buffer_position += position_view.byteStride;
+		//}
+		//glUnmapBuffer(GL_ARRAY_BUFFER);
 	}
 	LOG("Load mesh with vbo index: %d. vertex count: %d", vbo, vertex_count);
 
@@ -50,15 +53,15 @@ void Mesh::Render(unsigned program)
 {
 	float4x4 projection = App->GetCamera()->GetProjectionMatrix();
 	float4x4 view = App->GetCamera()->GetViewMatrix();
-	float4x4 model = math::float4x4::FromTRS(float3(-4.0f, 2.0f, -3.0f), float4x4::RotateZ(0), float3(1.0f, 1.0f, 1.0f));
+	float4x4 model = math::float4x4::FromTRS(float3(0.0f, 1.0f, -2.0f), float4x4::RotateZ(0), float3(1.0f, 1.0f, 1.0f));
 
-	//glUseProgram(program);
-	//glUniformMatrix4fv(0, 1, GL_TRUE, &projection[0][0]);
-	//glUniformMatrix4fv(1, 1, GL_TRUE, &view[0][0]);
+	glUseProgram(program);
+	glUniformMatrix4fv(0, 1, GL_TRUE, &projection[0][0]);
+	glUniformMatrix4fv(1, 1, GL_TRUE, &view[0][0]);
 	glUniformMatrix4fv(2, 1, GL_TRUE, &model[0][0]);
 
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	//glEnableVertexAttribArray(0);
-	//glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 	glDrawArrays(GL_TRIANGLES, 0, vertex_count);
 }

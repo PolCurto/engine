@@ -115,74 +115,74 @@ unsigned ModuleOpenGL::CreateTriangleVBO(float vertex_data[], int data_length)
 
 void ModuleOpenGL::RenderVBO(unsigned vbo, unsigned program, unsigned texture) const
 {
-	float4x4 projection = App->GetCamera()->GetProjectionMatrix();
-	float4x4 view = App->GetCamera()->GetViewMatrix();
-	float4x4 model = math::float4x4::FromTRS(float3(0.0f, 2.0f, -3.0f), float4x4::RotateZ(0), float3(1.0f, 1.0f, 1.0f));
+	//float4x4 projection = App->GetCamera()->GetProjectionMatrix();
+	//float4x4 view = App->GetCamera()->GetViewMatrix();
+	//float4x4 model = math::float4x4::FromTRS(float3(0.0f, 2.0f, -3.0f), float4x4::RotateZ(0), float3(1.0f, 1.0f, 1.0f));
 
-	glUseProgram(program);
-	glUniformMatrix4fv(0, 1, GL_TRUE, &projection[0][0]);
-	glUniformMatrix4fv(1, 1, GL_TRUE, &view[0][0]);
-	glUniformMatrix4fv(2, 1, GL_TRUE, &model[0][0]);
+	//glUseProgram(program);
+	//glUniformMatrix4fv(0, 1, GL_TRUE, &projection[0][0]);
+	//glUniformMatrix4fv(1, 1, GL_TRUE, &view[0][0]);
+	//glUniformMatrix4fv(2, 1, GL_TRUE, &model[0][0]);
 
 	// Bind buffer and vertex attributes
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+	//glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	//glEnableVertexAttribArray(0);
+	//glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
 	// Bind uvs
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)(sizeof(float) * 3 * 12));     // The pointer is in location sizeof(float) * 3 * 12 because we have already drawn the triangles,
-																						     // which are three positions with x, y and z values.
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture);
-
-	ImGui::Begin("Baboon Texture");
-
-	ImGui::SeparatorText("Texture Data");
-
-	ImGui::Text("Texture width: %i", baboon_metadata.width);
-	ImGui::Text("Texture height: %i", baboon_metadata.height);
-	ImGui::Text("Format: %i", baboon_metadata.format);
-	ImGui::Text("Mipmaps: %i", baboon_metadata.mipLevels);
-
-	ImGui::SeparatorText("Texture settings");
-
-	static int wrap_mode = GL_CLAMP;
-	if (ImGui::CollapsingHeader("Wrap mode"))
-	{
-		ImGui::RadioButton("Repeat##2", &wrap_mode, GL_REPEAT);
-		ImGui::SameLine();
-		ImGui::RadioButton("Mirrored repeat##2", &wrap_mode, GL_MIRRORED_REPEAT);
-		ImGui::RadioButton("Clamp##2", &wrap_mode, GL_CLAMP);
-		ImGui::SameLine();
-		ImGui::RadioButton("Clamp to border##2", &wrap_mode, GL_CLAMP_TO_BORDER);
-	}
-
-	static int mag_filter = GL_NEAREST;
-	if (ImGui::CollapsingHeader("Mag Filter"))
-	{
-		ImGui::RadioButton("Nearest##1", &mag_filter, GL_NEAREST);
-		ImGui::SameLine();
-		ImGui::RadioButton("Linear##1", &mag_filter, GL_LINEAR);
-	}
-
-	static int min_filter = GL_NEAREST;
-	if (ImGui::CollapsingHeader("Min Filter"))
-	{
-		ImGui::RadioButton("Nearest##2", &min_filter, GL_NEAREST);
-		ImGui::SameLine();
-		ImGui::RadioButton("Linear##2", &min_filter, GL_LINEAR);
-	}
-
-	ImGui::End();
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap_mode);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap_mode);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, min_filter);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mag_filter);
+	//glEnableVertexAttribArray(1);
+	//glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)(sizeof(float) * 3 * 12));     // The pointer is in location sizeof(float) * 3 * 12 because we have already drawn the triangles,
+	//																					     // which are three positions with x, y and z values.
+	//glActiveTexture(GL_TEXTURE0);
+	//glBindTexture(GL_TEXTURE_2D, texture);
+	//
+	//ImGui::Begin("Baboon Texture");
+	//
+	//ImGui::SeparatorText("Texture Data");
+	//
+	//ImGui::Text("Texture width: %i", baboon_metadata.width);
+	//ImGui::Text("Texture height: %i", baboon_metadata.height);
+	//ImGui::Text("Format: %i", baboon_metadata.format);
+	//ImGui::Text("Mipmaps: %i", baboon_metadata.mipLevels);
+	//
+	//ImGui::SeparatorText("Texture settings");
+	//
+	//static int wrap_mode = GL_CLAMP;
+	//if (ImGui::CollapsingHeader("Wrap mode"))
+	//{
+	//	ImGui::RadioButton("Repeat##2", &wrap_mode, GL_REPEAT);
+	//	ImGui::SameLine();
+	//	ImGui::RadioButton("Mirrored repeat##2", &wrap_mode, GL_MIRRORED_REPEAT);
+	//	ImGui::RadioButton("Clamp##2", &wrap_mode, GL_CLAMP);
+	//	ImGui::SameLine();
+	//	ImGui::RadioButton("Clamp to border##2", &wrap_mode, GL_CLAMP_TO_BORDER);
+	//}
+	//
+	//static int mag_filter = GL_NEAREST;
+	//if (ImGui::CollapsingHeader("Mag Filter"))
+	//{
+	//	ImGui::RadioButton("Nearest##1", &mag_filter, GL_NEAREST);
+	//	ImGui::SameLine();
+	//	ImGui::RadioButton("Linear##1", &mag_filter, GL_LINEAR);
+	//}
+	//
+	//static int min_filter = GL_NEAREST;
+	//if (ImGui::CollapsingHeader("Min Filter"))
+	//{
+	//	ImGui::RadioButton("Nearest##2", &min_filter, GL_NEAREST);
+	//	ImGui::SameLine();
+	//	ImGui::RadioButton("Linear##2", &min_filter, GL_LINEAR);
+	//}
+	//
+	//ImGui::End();
+	//
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap_mode);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap_mode);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, min_filter);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mag_filter);
 	
 	// 1 triangle to draw = 3 vertices
-	glDrawArrays(GL_TRIANGLES, 0, 12);
+	//glDrawArrays(GL_TRIANGLES, 0, 12);
 }
 
 void ModuleOpenGL::DestroyVBO(unsigned vbo) const

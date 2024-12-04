@@ -82,14 +82,14 @@ bool ModuleRenderExercise::Init()
 
 	DirectX::ScratchImage image;
 
-	if (App->GetTextures()->LoadFile(L"Textures/Baboon.dds", image))
-	{
-		texture = App->GetOpenGL()->LoadTextureData(image);
-	}
-	else
-	{
-		LOG("Couldn't load texture");
-	}
+	//if (App->GetTextures()->LoadFile(L"Textures/Baboon.dds", image))
+	//{
+	//	texture = App->GetOpenGL()->LoadTextureData(image);
+	//}
+	//else
+	//{
+	//	LOG("Couldn't load texture");
+	//}
 
 	// Load model
 	Model model;
@@ -100,12 +100,12 @@ bool ModuleRenderExercise::Init()
 
 update_status ModuleRenderExercise::Update()
 {
-	App->GetOpenGL()->RenderVBO(vbo, program_id, texture);
-
 	for (std::unique_ptr<Mesh>& mesh : meshes)
 	{
 		mesh->Render(program_id);
 	}
+
+	App->GetOpenGL()->RenderVBO(vbo, program_id, texture);
 
 	return UPDATE_CONTINUE;
 }
