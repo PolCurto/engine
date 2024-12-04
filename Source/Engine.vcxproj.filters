@@ -132,6 +132,7 @@
     <ClCompile Include="ModuleHardware.cpp" />
     <ClCompile Include="ModuleTextures.cpp" />
     <ClCompile Include="Model.cpp" />
+    <ClCompile Include="Mesh.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Dummy.h" />

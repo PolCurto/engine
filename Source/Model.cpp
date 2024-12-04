@@ -17,7 +17,7 @@ Model::~Model()
 
 }
 
-void Model::Load(const char* asset_filename)
+void Model::Load(const char* asset_filename, std::vector<std::unique_ptr<Mesh>>& meshes_vector)
 {
 	tinygltf::TinyGLTF gltfObject;
 	tinygltf::Model model;
@@ -35,12 +35,14 @@ void Model::Load(const char* asset_filename)
 	if (warning.size() > 0)
 		LOG("Warning loading %s: %s", asset_filename, error);
 
-	for (const tinygltf::Mesh& mesh : model.meshes)
+
+	for (const tinygltf::Mesh& source_mesh : model.meshes)
 	{
-		for (const tinygltf::Primitive primitive : mesh.primitives)
+		for (const tinygltf::Primitive primitive : source_mesh.primitives)
 		{
-			Mesh* mesh = new Mesh();
-			mesh->Load(model, mesh, primitive);
+			std::unique_ptr<Mesh> mesh = std::make_unique<Mesh>();
+			mesh->Load(model, source_mesh, primitive);
+			meshes_vector.emplace_back(std::move(mesh));
 		}
 	}
 }

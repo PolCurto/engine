@@ -104,7 +104,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>.\glew-2.1.0\lib\64;.\DirectXTex\DirectXTex\Bin\Desktop_2019\x64\Debug</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>.\glew-2.1.0\lib\64;.\DirectXTex\DirectXTex\64;</AdditionalLibraryDirectories>
       <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);glew32.lib;opengl32.lib;DirectXTex.lib;</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -150,6 +150,7 @@
     <ClCompile Include="ImGui\imgui_impl_sdl2.cpp" />
     <ClCompile Include="ImGui\imgui_tables.cpp" />
     <ClCompile Include="ImGui\imgui_widgets.cpp" />
+    <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="ModuleEditor.cpp" />
     <ClCompile Include="log.cpp" />
