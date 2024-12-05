@@ -17,10 +17,13 @@ public:
 	Model();
 	~Model();
 
-	void Load(const char* asset_filename, std::vector<std::unique_ptr<Mesh>>& meshes_vector);
+	void Load(const char* asset_filename);
 	void LoadMaterials(const tinygltf::Model& src_model);
+	void Render(unsigned int program);
 
 private:
+	std::vector<std::unique_ptr<Mesh>> meshes;
+	std::vector<unsigned int> textures;
 	
 };
 

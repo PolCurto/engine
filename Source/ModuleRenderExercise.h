@@ -3,7 +3,7 @@
 #include <memory>
 #include <vector>
 
-class Mesh;
+class Model;
 
 class ModuleRenderExercise : public Module
 {
@@ -21,5 +21,5 @@ private:
 	int texture;
 	unsigned int program_id;
 
-	std::vector<std::unique_ptr<Mesh>> meshes;
+	Model* model;
 };

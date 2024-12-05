@@ -15,7 +15,7 @@ ModuleEditorCamera::~ModuleEditorCamera()
 
 bool ModuleEditorCamera::Init()
 {
-	free_movement_speed = 40;
+	free_movement_speed = 15;
 	zoom_speed = 50;
 	drag_speed = 10;
 	sensitivity = 0.4f;

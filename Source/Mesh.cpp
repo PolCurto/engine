@@ -104,11 +104,29 @@ void Mesh::LoadEBO(const tinygltf::Model& model, const tinygltf::Mesh& mesh, con
 	}
 }
 
-void Mesh::Render(unsigned program) const
+void Mesh::CreateVAO()
+{
+	glGenVertexArrays(1, &vao);
+
+	glBindVertexArray(vao);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)(0));
+
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)(sizeof(float) * 3 * vertex_count));
+
+	glBindVertexArray(0);
+
+}
+
+void Mesh::Render(unsigned int program, const std::vector<unsigned int>& textures) const
 {
 	float4x4 projection = App->GetCamera()->GetProjectionMatrix();
 	float4x4 view = App->GetCamera()->GetViewMatrix();
-	float4x4 model = math::float4x4::FromTRS(float3(0.0f, 1.0f, -2.0f), float4x4::RotateZ(0), float3(1.0f, 1.0f, 1.0f));
+	float4x4 model = math::float4x4::FromTRS(float3(0.0f, 0.5f, -4.0f), float4x4::RotateZ(0), float3(1.0f, 1.0f, 1.0f));
 
 	glUseProgram(program);
 	glUniformMatrix4fv(0, 1, GL_TRUE, &projection[0][0]);

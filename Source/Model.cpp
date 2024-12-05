@@ -19,7 +19,7 @@ Model::~Model()
 
 }
 
-void Model::Load(const char* asset_filename, std::vector<std::unique_ptr<Mesh>>& meshes_vector)
+void Model::Load(const char* asset_filename)
 {
 	tinygltf::TinyGLTF gltfObject;
 	tinygltf::Model model;
@@ -45,7 +45,7 @@ void Model::Load(const char* asset_filename, std::vector<std::unique_ptr<Mesh>>&
 			std::unique_ptr<Mesh> mesh = std::make_unique<Mesh>();
 			mesh->LoadVBO(model, source_mesh, primitive);
 			mesh->LoadEBO(model, source_mesh, primitive);
-			meshes_vector.emplace_back(std::move(mesh));
+			//meshes.emplace_back(std::move(mesh));		// TODO: Aqui peta
 		}
 	}
 }
@@ -62,6 +62,14 @@ void Model::LoadMaterials(const tinygltf::Model& src_model)
 
 			texture_id = App->GetTextures()->LoadFile(image.uri.c_str());
 		}
+		textures.push_back(texture_id);
 	}
 }
 
+void Model::Render(const unsigned int program)
+{
+	for (std::unique_ptr<Mesh>& mesh : meshes)
+	{
+		mesh->Render(program, textures);
+	}
+}
