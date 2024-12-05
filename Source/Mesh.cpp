@@ -46,12 +46,15 @@ void Mesh::LoadVBO(const tinygltf::Model& model, const tinygltf::Mesh& mesh, con
 		for (size_t i = 0; i < vertex_count; ++i)
 		{
 			vbo_ptr[i] = *reinterpret_cast<const float3*>(buffer_ptr);
-			LOG("Vbo data ptr x: %d, y: %d, z: %d", vbo_ptr[i].x, vbo_ptr[i].y, vbo_ptr[i].z);
 
 			if (position_view.byteStride == 0)
+			{
 				buffer_ptr += sizeof(float) * 3;
+			}
 			else
+			{
 				buffer_ptr += position_view.byteStride;
+			}
 		}
 		glUnmapBuffer(GL_ARRAY_BUFFER);
 	}
@@ -101,7 +104,7 @@ void Mesh::LoadEBO(const tinygltf::Model& model, const tinygltf::Mesh& mesh, con
 	}
 }
 
-void Mesh::Render(unsigned program)
+void Mesh::Render(unsigned program) const
 {
 	float4x4 projection = App->GetCamera()->GetProjectionMatrix();
 	float4x4 view = App->GetCamera()->GetViewMatrix();

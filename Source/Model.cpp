@@ -6,6 +6,8 @@
 
 #include "Model.h"
 #include "Mesh.h"
+#include "Application.h"
+#include "ModuleTextures.h"
 
 Model::Model()
 {
@@ -44,6 +46,21 @@ void Model::Load(const char* asset_filename, std::vector<std::unique_ptr<Mesh>>&
 			mesh->LoadVBO(model, source_mesh, primitive);
 			mesh->LoadEBO(model, source_mesh, primitive);
 			meshes_vector.emplace_back(std::move(mesh));
+		}
+	}
+}
+
+void Model::LoadMaterials(const tinygltf::Model& src_model)
+{
+	for (const tinygltf::Material& src_material : src_model.materials)
+	{
+		unsigned int texture_id = 0;
+		if (src_material.pbrMetallicRoughness.baseColorTexture.index >= 0)
+		{
+			const tinygltf::Texture& texture = src_model.textures[src_material.pbrMetallicRoughness.baseColorTexture.index];
+			const tinygltf::Image& image = src_model.images[texture.source];
+
+			texture_id = App->GetTextures()->LoadFile(image.uri.c_str());
 		}
 	}
 }

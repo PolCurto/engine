@@ -18,7 +18,7 @@ public:
 
 private:
 	unsigned int vbo;
-	unsigned int texture;
+	int texture;
 	unsigned int program_id;
 
 	std::vector<std::unique_ptr<Mesh>> meshes;

@@ -59,7 +59,7 @@ bool ModuleRenderExercise::Init()
 	int data_length = sizeof(vtx_data) / sizeof(vtx_data[0]);
 
 	// Load the vertex data into a VBO
-	//vbo = App->GetOpenGL()->CreateTriangleVBO(vtx_data, data_length);
+	vbo = App->GetOpenGL()->CreateTriangleVBO(vtx_data, data_length);
 	LOG("VBO index: %d", vbo);
 
 	// Compile the vertex shader
@@ -80,32 +80,27 @@ bool ModuleRenderExercise::Init()
 	program_id = App->GetProgram()->CreateProgram(vtx_id, frag_id);
 	LOG("Program id: %d", program_id);
 
-	DirectX::ScratchImage image;
-
-	//if (App->GetTextures()->LoadFile(L"Textures/Baboon.dds", image))
-	//{
-	//	texture = App->GetOpenGL()->LoadTextureData(image);
-	//}
-	//else
-	//{
-	//	LOG("Couldn't load texture");
-	//}
+	texture = App->GetTextures()->LoadFile("Textures/Baboon.dds");
+	if (texture < 0)
+	{
+		LOG("Couldn't load texture");
+	}
 
 	// Load model
 	Model model;
-	model.Load("Models/Triangles/Triangle.gltf", meshes);
+	//model.Load("Models/Boxes/BoxInterleaved.gltf", meshes);
 
 	return true;
 }
 
 update_status ModuleRenderExercise::Update()
 {
-	for (std::unique_ptr<Mesh>& mesh : meshes)
-	{
-		mesh->Render(program_id);
-	}
+	//for (std::unique_ptr<Mesh>& mesh : meshes)
+	//{
+	//	mesh->Render(program_id);
+	//}
 
-	//App->GetOpenGL()->RenderVBO(vbo, program_id, texture);
+	App->GetOpenGL()->RenderVBO(vbo, program_id, texture);
 
 	return UPDATE_CONTINUE;
 }

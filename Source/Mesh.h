@@ -18,7 +18,7 @@ public:
 
 	void LoadVBO(const tinygltf::Model& model, const tinygltf::Mesh& mesh, const tinygltf::Primitive& primitive);
 	void LoadEBO(const tinygltf::Model& model, const tinygltf::Mesh& mesh, const tinygltf::Primitive& primitive);
-	void Render(unsigned program);
+	void Render(unsigned program) const;
 
 private:
 	unsigned int vbo = 0;

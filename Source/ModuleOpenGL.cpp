@@ -6,7 +6,6 @@
 #include "SDL.h"
 #include "GL/glew.h"
 #include "Imgui/imgui.h"
-#include "DirectXTex.h"
 
 void __stdcall OpenGlDebugging(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam);
 
@@ -140,10 +139,10 @@ void ModuleOpenGL::RenderVBO(unsigned vbo, unsigned program, unsigned texture) c
 	
 	ImGui::SeparatorText("Texture Data");
 	
-	ImGui::Text("Texture width: %i", baboon_metadata.width);
-	ImGui::Text("Texture height: %i", baboon_metadata.height);
-	ImGui::Text("Format: %i", baboon_metadata.format);
-	ImGui::Text("Mipmaps: %i", baboon_metadata.mipLevels);
+	//ImGui::Text("Texture width: %i", baboon_metadata.width);
+	//ImGui::Text("Texture height: %i", baboon_metadata.height);
+	//ImGui::Text("Format: %i", baboon_metadata.format);
+	//ImGui::Text("Mipmaps: %i", baboon_metadata.mipLevels);
 	
 	ImGui::SeparatorText("Texture settings");
 	
@@ -193,69 +192,6 @@ void ModuleOpenGL::DestroyVBO(unsigned vbo) const
 void ModuleOpenGL::DestroyTexture(unsigned texture) const
 {
 	glDeleteTextures(1, &texture);
-}
-
-unsigned ModuleOpenGL::LoadTextureData(DirectX::ScratchImage& image) const
-{
-	// Generate textures
-	unsigned int texture;
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
-
-	DirectX::TexMetadata metadata = image.GetMetadata();
-	baboon_metadata = metadata;
-
-	GLint internal_format;
-	GLenum format;
-	GLenum type;
-
-	// Get the texture formats
-	switch (metadata.format)
-	{
-	case DXGI_FORMAT_R8G8B8A8_UNORM_SRGB:
-	case DXGI_FORMAT_R8G8B8A8_UNORM:
-		internal_format = GL_RGBA8;
-		format = GL_RGBA;
-		type = GL_UNSIGNED_BYTE;
-		break;
-	case DXGI_FORMAT_B8G8R8A8_UNORM_SRGB:
-	case DXGI_FORMAT_B8G8R8A8_UNORM:
-		internal_format = GL_RGBA8;
-		format = GL_BGRA;
-		type = GL_UNSIGNED_BYTE;
-		break;
-	case DXGI_FORMAT_B5G6R5_UNORM:
-		internal_format = GL_RGB8;
-		format = GL_BGR;
-		type = GL_UNSIGNED_BYTE;
-		break;
-	default:
-		assert(false && "Unsupported format");
-	}
-
-	// Load texture data to VRAM
-	for (size_t i = 0; i < metadata.mipLevels; ++i)
-	{
-		const DirectX::Image* mip = image.GetImage(i, 0, 0);
-		glTexImage2D(GL_TEXTURE_2D, i, internal_format, mip->width, mip->height, 0, format, type, mip->pixels);
-	}
-
-	if (metadata.mipLevels == 1)
-	{
-		glGenerateMipmap(GL_TEXTURE_2D);
-	}
-
-	// Texture parameters
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
-	if (metadata.mipLevels > 1)
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, metadata.mipLevels - 1);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-	return texture;
 }
 
 void __stdcall OpenGlDebugging(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)

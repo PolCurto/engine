@@ -1,12 +1,6 @@
 #pragma once
 #include "Module.h"
 
-namespace DirectX
-{
-	class ScratchImage;
-}
-
-
 class ModuleTextures : public Module
 {
 public:
@@ -18,7 +12,7 @@ public:
 	update_status Update();
 	bool CleanUp();
 
-	bool LoadFile(const wchar_t* filename, DirectX::ScratchImage& image) const;
+	int LoadFile(const char* filename) const;
 
 private:
 

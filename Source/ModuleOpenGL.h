@@ -1,6 +1,5 @@
 #pragma once
 #include "Module.h"
-#include "DirectXTex.h"
 
 struct SDL_Texture;
 struct SDL_Renderer;
@@ -22,7 +21,6 @@ public:
 	void RenderVBO(unsigned vbo, unsigned program, unsigned texture) const;
 	void DestroyVBO(unsigned vbo) const;
 
-	unsigned LoadTextureData(DirectX::ScratchImage& image) const;
 	void DestroyTexture(unsigned texture) const;
 
 	void* GetContext() const { return context; }
@@ -31,6 +29,4 @@ public:
 
 private:
 	void* context;
-	mutable DirectX::TexMetadata baboon_metadata;
-
 };
