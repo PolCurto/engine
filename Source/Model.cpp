@@ -41,7 +41,8 @@ void Model::Load(const char* asset_filename, std::vector<std::unique_ptr<Mesh>>&
 		for (const tinygltf::Primitive primitive : source_mesh.primitives)
 		{
 			std::unique_ptr<Mesh> mesh = std::make_unique<Mesh>();
-			mesh->Load(model, source_mesh, primitive);
+			mesh->LoadVBO(model, source_mesh, primitive);
+			mesh->LoadEBO(model, source_mesh, primitive);
 			meshes_vector.emplace_back(std::move(mesh));
 		}
 	}

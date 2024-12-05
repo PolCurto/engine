@@ -59,7 +59,7 @@ bool ModuleRenderExercise::Init()
 	int data_length = sizeof(vtx_data) / sizeof(vtx_data[0]);
 
 	// Load the vertex data into a VBO
-	vbo = App->GetOpenGL()->CreateTriangleVBO(vtx_data, data_length);
+	//vbo = App->GetOpenGL()->CreateTriangleVBO(vtx_data, data_length);
 	LOG("VBO index: %d", vbo);
 
 	// Compile the vertex shader
@@ -93,7 +93,7 @@ bool ModuleRenderExercise::Init()
 
 	// Load model
 	Model model;
-	model.Load("Models/Triangle/TriangleWithoutIndices.gltf", meshes);
+	model.Load("Models/Triangles/Triangle.gltf", meshes);
 
 	return true;
 }
@@ -105,7 +105,7 @@ update_status ModuleRenderExercise::Update()
 		mesh->Render(program_id);
 	}
 
-	App->GetOpenGL()->RenderVBO(vbo, program_id, texture);
+	//App->GetOpenGL()->RenderVBO(vbo, program_id, texture);
 
 	return UPDATE_CONTINUE;
 }
