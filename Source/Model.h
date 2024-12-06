@@ -3,6 +3,7 @@
 
 #include "Globals.h"
 #include <vector>
+#include "DirectXTex.h"
 
 namespace tinygltf
 {
@@ -20,11 +21,13 @@ public:
 	void Load(const char* asset_filename);
 	void LoadMaterials(const tinygltf::Model& src_model);
 	void Render(unsigned int program);
+	void ShowInformation();
 	void Delete();
 
 private:
 	std::vector<std::unique_ptr<Mesh>> meshes;
 	std::vector<unsigned int> textures;
+	std::vector<DirectX::ScratchImage> images;
 	
 };
 

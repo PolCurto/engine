@@ -22,6 +22,12 @@ public:
 	void Render(const unsigned int program, const std::vector<unsigned int>& textures) const;
 	void Delete() const;
 
+	size_t GetVertexCount() const { return vertex_count; }
+	size_t GetTrianglesCount() const { return vertex_count / 3; }
+	size_t GetIndicesCount() const { return vertex_count; }
+
+	std::string name;
+
 private:
 	unsigned int vbo = 0;
 	unsigned int ebo = 0;

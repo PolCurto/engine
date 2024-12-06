@@ -8,6 +8,8 @@
 #include "Mesh.h"
 #include "Application.h"
 #include "ModuleTextures.h"
+#include "ImGui/imgui.h"
+#include "DirectXTex.h"
 
 Model::Model()
 {
@@ -57,6 +59,7 @@ void Model::LoadMaterials(const tinygltf::Model& src_model)
 {
 	for (const tinygltf::Material& src_material : src_model.materials)
 	{
+		DirectX::ScratchImage scratch_image;
 		unsigned int texture_id = 0;
 		if (src_material.pbrMetallicRoughness.baseColorTexture.index >= 0)
 		{
@@ -64,10 +67,11 @@ void Model::LoadMaterials(const tinygltf::Model& src_model)
 			const tinygltf::Image& image = src_model.images[texture.source];
 
 			std::string texture_folder = "./Textures/";
-			texture_id = App->GetTextures()->LoadFile(texture_folder.append(image.uri).c_str());
+			texture_id = App->GetTextures()->LoadFile(texture_folder.append(image.uri).c_str(), scratch_image);
 			//texture_id = App->GetTextures()->LoadFile("./Textures/Baboon.dds");
 		}
 		textures.push_back(texture_id);
+		images.emplace_back(std::move(scratch_image));
 	}
 }
 
@@ -77,6 +81,25 @@ void Model::Render(const unsigned int program)
 	{
 		mesh->Render(program, textures);
 	}
+}
+
+void Model::ShowInformation()
+{
+	ImGui::Begin("Properties");
+
+	for (std::unique_ptr<Mesh>& mesh : meshes)
+	{
+		ImGui::SeparatorText("Geometry properties");
+		ImGui::Text("Mesh name: %s", mesh->name);
+		ImGui::Text("Number of vertices: %d", mesh->GetVertexCount());
+		ImGui::Text("Number of triangles: %d", mesh->GetTrianglesCount());
+	}
+
+	ImGui::SeparatorText("Texture properties");
+
+	for (unsigned int)
+
+	ImGui::End();
 }
 
 void Model::Delete()

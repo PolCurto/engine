@@ -1,6 +1,11 @@
 #pragma once
 #include "Module.h"
 
+namespace DirectX
+{
+	class ScratchImage;
+}
+
 class ModuleTextures : public Module
 {
 public:
@@ -12,7 +17,7 @@ public:
 	update_status Update();
 	bool CleanUp();
 
-	int LoadFile(const char* filename) const;
+	int LoadFile(const char* filename, DirectX::ScratchImage& scratch_image) const;
 	void DestroyTexture(unsigned int texture) const;
 
 private:

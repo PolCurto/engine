@@ -80,6 +80,7 @@ bool ModuleRenderExercise::Init()
 
 	// Load model
 	model->Load("Models/BakerHouse.gltf");
+	//model->Load("Models/Boxes/BoxTextured.gltf");
 
 	return true;
 }
@@ -87,6 +88,7 @@ bool ModuleRenderExercise::Init()
 update_status ModuleRenderExercise::Update()
 {
 	model->Render(program_id);
+	model->ShowInformation();
 
 	//App->GetOpenGL()->RenderVBO(vbo, program_id, texture);
 

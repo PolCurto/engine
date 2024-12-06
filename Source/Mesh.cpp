@@ -7,8 +7,8 @@
 #include "SDL.h"
 #include "GL/glew.h"
 #include "ModuleEditorCamera.h"
-#include <map>
 #include <Math/MathAll.h>	
+#include "ImGui/imgui.h"
 
 
 Mesh::Mesh()
@@ -24,6 +24,8 @@ Mesh::~Mesh()
 
 void Mesh::LoadVBO(const tinygltf::Model& model, const tinygltf::Mesh& mesh, const tinygltf::Primitive& primitive)
 {
+	name = mesh.name;
+
 	// Load vertex positions to vbo
 	const auto& it_pos = primitive.attributes.find("POSITION");
 	if (it_pos != primitive.attributes.end())
@@ -191,6 +193,7 @@ void Mesh::Render(unsigned int program, const std::vector<unsigned int>& texture
 	float4x4 projection = App->GetCamera()->GetProjectionMatrix();
 	float4x4 view = App->GetCamera()->GetViewMatrix();
 	float4x4 model = math::float4x4::FromTRS(float3(0.0f, 1.0f, -4.0f), float4x4::RotateZ(0), float3(100.0f, 100.0f, 100.0f));
+	//float4x4 model = math::float4x4::FromTRS(float3(0.0f, 1.0f, -4.0f), float4x4::RotateZ(0), float3(1.0f, 1.0f, 1.0f));
 
 	glUseProgram(program);
 	glUniformMatrix4fv(0, 1, GL_TRUE, &projection[0][0]);
@@ -199,6 +202,51 @@ void Mesh::Render(unsigned int program, const std::vector<unsigned int>& texture
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, textures[material_index]);
+
+	ImGui::Begin("Baboon Texture");
+	
+	ImGui::SeparatorText("Texture Data");
+	
+	//ImGui::Text("Texture width: %i", baboon_metadata.width);
+	//ImGui::Text("Texture height: %i", baboon_metadata.height);
+	//ImGui::Text("Format: %i", baboon_metadata.format);
+	//ImGui::Text("Mipmaps: %i", baboon_metadata.mipLevels);
+	
+	ImGui::SeparatorText("Texture settings");
+	
+	static int wrap_mode = GL_CLAMP;
+	if (ImGui::CollapsingHeader("Wrap mode"))
+	{
+		ImGui::RadioButton("Repeat##2", &wrap_mode, GL_REPEAT);
+		ImGui::SameLine();
+		ImGui::RadioButton("Mirrored repeat##2", &wrap_mode, GL_MIRRORED_REPEAT);
+		ImGui::RadioButton("Clamp##2", &wrap_mode, GL_CLAMP);
+		ImGui::SameLine();
+		ImGui::RadioButton("Clamp to border##2", &wrap_mode, GL_CLAMP_TO_BORDER);
+	}
+	
+	static int mag_filter = GL_NEAREST;
+	if (ImGui::CollapsingHeader("Mag Filter"))
+	{
+		ImGui::RadioButton("Nearest##1", &mag_filter, GL_NEAREST);
+		ImGui::SameLine();
+		ImGui::RadioButton("Linear##1", &mag_filter, GL_LINEAR);
+	}
+	
+	static int min_filter = GL_NEAREST;
+	if (ImGui::CollapsingHeader("Min Filter"))
+	{
+		ImGui::RadioButton("Nearest##2", &min_filter, GL_NEAREST);
+		ImGui::SameLine();
+		ImGui::RadioButton("Linear##2", &min_filter, GL_LINEAR);
+	}
+	
+	ImGui::End();
+	
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap_mode);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap_mode);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, min_filter);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mag_filter);
 
 	if (indices_count > 0)
 	{

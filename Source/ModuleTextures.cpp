@@ -29,7 +29,7 @@ bool ModuleTextures::CleanUp()
 }
 
 
-int ModuleTextures::LoadFile(const char* filename) const
+int ModuleTextures::LoadFile(const char* filename, DirectX::ScratchImage& scratch_image) const
 {
 	// Convert char* to wchar_t*
 	size_t size = strlen(filename) + 1;
@@ -120,6 +120,7 @@ int ModuleTextures::LoadFile(const char* filename) const
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
+	scratch_image = std::move(image);
 	return texture;
 }
 
