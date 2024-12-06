@@ -13,6 +13,7 @@
 ModuleRenderExercise::ModuleRenderExercise()
 {
 	program_id = 0;
+	model = std::make_unique<Model>();
 }
 
 ModuleRenderExercise::~ModuleRenderExercise()
@@ -58,9 +59,6 @@ bool ModuleRenderExercise::Init()
 
 	int data_length = sizeof(vtx_data) / sizeof(vtx_data[0]);
 
-	// Load the vertex data into a VBO
-	//vbo = App->GetOpenGL()->CreateTriangleVBO(vtx_data, data_length);
-	LOG("VBO index: %d", vbo);
 
 	// Compile the vertex shader
 	char* vtx_source = App->GetProgram()->LoadShaderSource("default_vertex.glsl");
@@ -80,14 +78,8 @@ bool ModuleRenderExercise::Init()
 	program_id = App->GetProgram()->CreateProgram(vtx_id, frag_id);
 	LOG("Program id: %d", program_id);
 
-	//texture = App->GetTextures()->LoadFile("Textures/Baboon.dds");
-	if (texture < 0)
-	{
-		LOG("Couldn't load texture");
-	}
-
 	// Load model
-	model->Load("Models/Boxes/BoxInterleaved.gltf");
+	model->Load("Models/BakerHouse.gltf");
 
 	return true;
 }
@@ -103,10 +95,8 @@ update_status ModuleRenderExercise::Update()
 
 bool ModuleRenderExercise::CleanUp()
 {
-	delete model;
-	App->GetOpenGL()->DestroyVBO(vbo);
-	App->GetOpenGL()->DestroyTexture(texture);
 	App->GetProgram()->DeleteProgram(program_id);
+	model->Delete();
 
 	return true;
 }

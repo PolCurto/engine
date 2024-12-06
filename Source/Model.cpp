@@ -45,9 +45,12 @@ void Model::Load(const char* asset_filename)
 			std::unique_ptr<Mesh> mesh = std::make_unique<Mesh>();
 			mesh->LoadVBO(model, source_mesh, primitive);
 			mesh->LoadEBO(model, source_mesh, primitive);
-			//meshes.emplace_back(std::move(mesh));		// TODO: Aqui peta
+			mesh->CreateVAO();
+			meshes.push_back(std::move(mesh));
 		}
 	}
+
+	LoadMaterials(model);
 }
 
 void Model::LoadMaterials(const tinygltf::Model& src_model)
@@ -60,7 +63,9 @@ void Model::LoadMaterials(const tinygltf::Model& src_model)
 			const tinygltf::Texture& texture = src_model.textures[src_material.pbrMetallicRoughness.baseColorTexture.index];
 			const tinygltf::Image& image = src_model.images[texture.source];
 
-			texture_id = App->GetTextures()->LoadFile(image.uri.c_str());
+			std::string texture_folder = "./Textures/";
+			texture_id = App->GetTextures()->LoadFile(texture_folder.append(image.uri).c_str());
+			//texture_id = App->GetTextures()->LoadFile("./Textures/Baboon.dds");
 		}
 		textures.push_back(texture_id);
 	}
@@ -71,5 +76,17 @@ void Model::Render(const unsigned int program)
 	for (std::unique_ptr<Mesh>& mesh : meshes)
 	{
 		mesh->Render(program, textures);
+	}
+}
+
+void Model::Delete()
+{
+	for (std::unique_ptr<Mesh>& mesh : meshes)
+	{
+		mesh->Delete();
+	}
+	for (unsigned int& texture : textures)
+	{
+		App->GetTextures()->DestroyTexture(texture);
 	}
 }

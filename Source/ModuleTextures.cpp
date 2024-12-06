@@ -122,3 +122,8 @@ int ModuleTextures::LoadFile(const char* filename) const
 
 	return texture;
 }
+
+void ModuleTextures::DestroyTexture(unsigned int texture) const
+{
+	glDeleteTextures(1, &texture);
+}

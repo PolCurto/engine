@@ -13,6 +13,7 @@ public:
 	bool CleanUp();
 
 	int LoadFile(const char* filename) const;
+	void DestroyTexture(unsigned int texture) const;
 
 private:
 

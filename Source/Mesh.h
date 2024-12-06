@@ -20,6 +20,7 @@ public:
 	void LoadEBO(const tinygltf::Model& model, const tinygltf::Mesh& mesh, const tinygltf::Primitive& primitive);
 	void CreateVAO();
 	void Render(const unsigned int program, const std::vector<unsigned int>& textures) const;
+	void Delete() const;
 
 private:
 	unsigned int vbo = 0;
@@ -29,5 +30,6 @@ private:
 
 	size_t vertex_count = 0;
 	size_t indices_count = 0;
+	size_t uvs_count = 0;
 };
 #endif // __MESH_H__

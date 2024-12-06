@@ -17,9 +17,7 @@ public:
 	bool CleanUp();
 
 private:
-	unsigned int vbo;
-	int texture;
 	unsigned int program_id;
 
-	Model* model;
+	std::unique_ptr<Model> model;
 };

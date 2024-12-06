@@ -20,6 +20,7 @@ public:
 	void Load(const char* asset_filename);
 	void LoadMaterials(const tinygltf::Model& src_model);
 	void Render(unsigned int program);
+	void Delete();
 
 private:
 	std::vector<std::unique_ptr<Mesh>> meshes;

@@ -24,41 +24,105 @@ Mesh::~Mesh()
 
 void Mesh::LoadVBO(const tinygltf::Model& model, const tinygltf::Mesh& mesh, const tinygltf::Primitive& primitive)
 {
+	// Load vertex positions to vbo
 	const auto& it_pos = primitive.attributes.find("POSITION");
-
 	if (it_pos != primitive.attributes.end())
 	{
 		const tinygltf::Accessor& position_accessor = model.accessors[it_pos->second];
 		SDL_assert(position_accessor.type == TINYGLTF_TYPE_VEC3, "Accesor type not Vec3");
 		SDL_assert(position_accessor.componentType == GL_FLOAT, "Accesor component type not float");
 		vertex_count = position_accessor.count;
+
 		const tinygltf::BufferView& position_view = model.bufferViews[position_accessor.bufferView];
 		const tinygltf::Buffer& position_buffer = model.buffers[position_view.buffer];
 		const unsigned char* buffer_ptr = &(position_buffer.data[position_accessor.byteOffset + position_view.byteOffset]);
 		size_t i = position_buffer.data.size();
-		LOG("Buffer raw data size: %d", i);
-		LOG("Byte stride: %d", position_view.byteStride);
+		LOG("Positions buffer raw data size: %d", i);
+		LOG("Positions byte stride: %d", position_view.byteStride);
 
-		glGenBuffers(1, &vbo);
-		glBindBuffer(GL_ARRAY_BUFFER, vbo);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 3 * vertex_count, nullptr, GL_STATIC_DRAW);
-		float3* vbo_ptr = reinterpret_cast<float3*>(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
-		for (size_t i = 0; i < vertex_count; ++i)
+		// Load UVs positions to vbo
+		const auto& it_tex = primitive.attributes.find("TEXCOORD_0");
+		if (it_tex != primitive.attributes.end())
 		{
-			vbo_ptr[i] = *reinterpret_cast<const float3*>(buffer_ptr);
+			material_index = primitive.material;
+			const tinygltf::Accessor& uvs_accessor = model.accessors[it_tex->second];
+			SDL_assert(uvs_accessor.type == TINYGLTF_TYPE_VEC2, "Accesor type not Vec2");
+			SDL_assert(uvs_accessor.componentType == GL_FLOAT, "Accesor component type not float");
+			uvs_count = uvs_accessor.count;
 
-			if (position_view.byteStride == 0)
+			const tinygltf::BufferView& uvs_view = model.bufferViews[uvs_accessor.bufferView];
+			const tinygltf::Buffer& uvs_buffer = model.buffers[uvs_view.buffer];
+			const unsigned char* uvs_buffer_ptr = &(uvs_buffer.data[uvs_accessor.byteOffset + uvs_view.byteOffset]);
+			size_t j = uvs_buffer.data.size();
+			LOG("Uvs buffer raw data size: %d", j);
+			LOG("Uvs byte stride: %d", uvs_view.byteStride);
+
+			glGenBuffers(1, &vbo);
+			glBindBuffer(GL_ARRAY_BUFFER, vbo);
+			int buffer_size = sizeof(float) * ((3 * vertex_count) + (2 * uvs_count));
+			glBufferData(GL_ARRAY_BUFFER, buffer_size, nullptr, GL_STATIC_DRAW);
+
+			float3* vbo_pos_ptr = reinterpret_cast<float3*>(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
+			for (size_t i = 0; i < vertex_count; ++i)
 			{
-				buffer_ptr += sizeof(float) * 3;
+				//LOG("pos loop i: %d", i);
+				vbo_pos_ptr[i] = *reinterpret_cast<const float3*>(buffer_ptr);
+
+				if (position_view.byteStride == 0)
+				{
+					buffer_ptr += sizeof(float) * 3;
+				}
+				else
+				{
+					buffer_ptr += position_view.byteStride;
+				}
 			}
-			else
+			glUnmapBuffer(GL_ARRAY_BUFFER);
+
+			float2* vbo_uvs_ptr = reinterpret_cast<float2*>(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
+			size_t offset = (vertex_count * 3) / 2;
+			for (i = offset; i < offset + uvs_count; ++i)
 			{
-				buffer_ptr += position_view.byteStride;
+				//LOG("uvs loop i: %d", i);
+				vbo_uvs_ptr[i] = *reinterpret_cast<const float2*>(uvs_buffer_ptr);
+
+				if (uvs_view.byteStride == 0)
+				{
+					uvs_buffer_ptr += sizeof(float) * 2;
+				}
+				else
+				{
+					uvs_buffer_ptr += uvs_view.byteStride;
+				}
 			}
+			glUnmapBuffer(GL_ARRAY_BUFFER);
 		}
-		glUnmapBuffer(GL_ARRAY_BUFFER);
+		else
+		{
+			glGenBuffers(1, &vbo);
+			glBindBuffer(GL_ARRAY_BUFFER, vbo);
+			int buffer_size = sizeof(float) * 3 * vertex_count;
+			glBufferData(GL_ARRAY_BUFFER, buffer_size, nullptr, GL_STATIC_DRAW);
+
+			float3* vbo_pos_ptr = reinterpret_cast<float3*>(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
+			for (size_t i = 0; i < vertex_count; ++i)
+			{
+				vbo_pos_ptr[i] = *reinterpret_cast<const float3*>(buffer_ptr);
+
+				if (position_view.byteStride == 0)
+				{
+					buffer_ptr += sizeof(float) * 3;
+				}
+				else
+				{
+					buffer_ptr += position_view.byteStride;
+				}
+			}
+			glUnmapBuffer(GL_ARRAY_BUFFER);
+		}
 	}
-	LOG("Load mesh with vbo index: %d. vertex count: %d", vbo, vertex_count);
+
+	LOG("Load mesh with vbo index: %d. vertex count: %d. uvs count: %d", vbo, vertex_count, uvs_count);
 }
 
 void Mesh::LoadEBO(const tinygltf::Model& model, const tinygltf::Mesh& mesh, const tinygltf::Primitive& primitive)
@@ -126,28 +190,37 @@ void Mesh::Render(unsigned int program, const std::vector<unsigned int>& texture
 {
 	float4x4 projection = App->GetCamera()->GetProjectionMatrix();
 	float4x4 view = App->GetCamera()->GetViewMatrix();
-	float4x4 model = math::float4x4::FromTRS(float3(0.0f, 0.5f, -4.0f), float4x4::RotateZ(0), float3(1.0f, 1.0f, 1.0f));
+	float4x4 model = math::float4x4::FromTRS(float3(0.0f, 1.0f, -4.0f), float4x4::RotateZ(0), float3(100.0f, 100.0f, 100.0f));
 
 	glUseProgram(program);
 	glUniformMatrix4fv(0, 1, GL_TRUE, &projection[0][0]);
 	glUniformMatrix4fv(1, 1, GL_TRUE, &view[0][0]);
 	glUniformMatrix4fv(2, 1, GL_TRUE, &model[0][0]);
 
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)(sizeof(float) * 3 * vertex_count));
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, textures[material_index]);
 
 	if (indices_count > 0)
 	{
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+		glBindVertexArray(vao);
 		glDrawElements(GL_TRIANGLES, indices_count, GL_UNSIGNED_INT, 0);
 	}
 	else
 	{
+		glBindBuffer(GL_ARRAY_BUFFER, vbo);
+
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)(sizeof(float) * 3 * vertex_count));
 		glDrawArrays(GL_TRIANGLES, 0, vertex_count);
 	}
+}
+
+void Mesh::Delete() const
+{
+	glDeleteBuffers(1, &vbo);
+	glDeleteBuffers(1, &ebo);
+	glDeleteVertexArrays(1, &vao);
 }
