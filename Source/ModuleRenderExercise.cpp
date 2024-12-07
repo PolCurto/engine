@@ -88,7 +88,8 @@ bool ModuleRenderExercise::Init()
 update_status ModuleRenderExercise::Update()
 {
 	model->Render(program_id);
-	model->ShowInformation();
+	model->ShowModelInformation();
+	model->TextureOptions();
 
 	//App->GetOpenGL()->RenderVBO(vbo, program_id, texture);
 

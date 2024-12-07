@@ -10,6 +10,7 @@
 #include "ModuleTextures.h"
 #include "ImGui/imgui.h"
 #include "DirectXTex.h"
+#include "GL/glew.h"
 
 Model::Model()
 {
@@ -70,24 +71,24 @@ void Model::LoadMaterials(const tinygltf::Model& src_model)
 			texture_id = App->GetTextures()->LoadFile(texture_folder.append(image.uri).c_str(), scratch_image);
 			//texture_id = App->GetTextures()->LoadFile("./Textures/Baboon.dds");
 		}
-		textures.push_back(texture_id);
-		images.emplace_back(std::move(scratch_image));
+		textures_id.push_back(texture_id);
+		textures_data.emplace(std::make_pair(texture_id, std::make_unique<DirectX::ScratchImage>(std::move(scratch_image))));
 	}
 }
 
-void Model::Render(const unsigned int program)
+void Model::Render(const unsigned int program) const
 {
-	for (std::unique_ptr<Mesh>& mesh : meshes)
+	for (const std::unique_ptr<Mesh>& mesh : meshes)
 	{
-		mesh->Render(program, textures);
+		mesh->Render(program, textures_id);
 	}
 }
 
-void Model::ShowInformation()
+void Model::ShowModelInformation() const
 {
 	ImGui::Begin("Properties");
 
-	for (std::unique_ptr<Mesh>& mesh : meshes)
+	for (const std::unique_ptr<Mesh>& mesh : meshes)
 	{
 		ImGui::SeparatorText("Geometry properties");
 		ImGui::Text("Mesh name: %s", mesh->name);
@@ -97,18 +98,67 @@ void Model::ShowInformation()
 
 	ImGui::SeparatorText("Texture properties");
 
-	for (unsigned int)
+	for (const auto& data : textures_data)
+	{
+		DirectX::TexMetadata metadata = data.second->GetMetadata();
+		ImGui::Text("Texture width: %d", metadata.width);
+		ImGui::Text("Texture height: %d", metadata.height);
+	}
 
 	ImGui::End();
 }
 
-void Model::Delete()
+void Model::TextureOptions()
 {
-	for (std::unique_ptr<Mesh>& mesh : meshes)
+	ImGui::Begin("Textures parameters");
+
+	for (const unsigned int& id : textures_id)
+	{
+		glBindTexture(GL_TEXTURE_2D, id);
+
+		static int wrap_mode = GL_CLAMP;
+		if (ImGui::CollapsingHeader("Wrap mode"))
+		{
+			ImGui::RadioButton("Repeat##2", &wrap_mode, GL_REPEAT);
+			ImGui::SameLine();
+			ImGui::RadioButton("Mirrored repeat##2", &wrap_mode, GL_MIRRORED_REPEAT);
+			ImGui::RadioButton("Clamp##2", &wrap_mode, GL_CLAMP);
+			ImGui::SameLine();
+			ImGui::RadioButton("Clamp to border##2", &wrap_mode, GL_CLAMP_TO_BORDER);
+		}
+
+		static int mag_filter = GL_NEAREST;
+		if (ImGui::CollapsingHeader("Mag Filter"))
+		{
+			ImGui::RadioButton("Nearest##1", &mag_filter, GL_NEAREST);
+			ImGui::SameLine();
+			ImGui::RadioButton("Linear##1", &mag_filter, GL_LINEAR);
+		}
+
+		static int min_filter = GL_NEAREST;
+		if (ImGui::CollapsingHeader("Min Filter"))
+		{
+			ImGui::RadioButton("Nearest##2", &min_filter, GL_NEAREST);
+			ImGui::SameLine();
+			ImGui::RadioButton("Linear##2", &min_filter, GL_LINEAR);
+		}
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap_mode);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap_mode);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, min_filter);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mag_filter);
+	}
+
+	ImGui::End();	
+}
+
+void Model::Delete() const
+{
+	for (const std::unique_ptr<Mesh>& mesh : meshes)
 	{
 		mesh->Delete();
 	}
-	for (unsigned int& texture : textures)
+	for (const unsigned int& texture : textures_id)
 	{
 		App->GetTextures()->DestroyTexture(texture);
 	}
