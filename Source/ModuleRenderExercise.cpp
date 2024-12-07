@@ -79,7 +79,9 @@ bool ModuleRenderExercise::Init()
 	LOG("Program id: %d", program_id);
 
 	// Load model
-	model->Load("Models/BakerHouse.gltf");
+	//model->Load("Models/Avocado/Avocado.gltf");
+	//model->Load("Models/BakerHouse/BakerHouse.gltf");
+	model->Load("Models/Helmet/SciFiHelmet.gltf");
 	//model->Load("Models/Boxes/BoxTextured.gltf");
 
 	return true;

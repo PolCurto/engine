@@ -192,8 +192,8 @@ void Mesh::Render(unsigned int program, const std::vector<unsigned int>& texture
 {
 	float4x4 projection = App->GetCamera()->GetProjectionMatrix();
 	float4x4 view = App->GetCamera()->GetViewMatrix();
-	float4x4 model = math::float4x4::FromTRS(float3(0.0f, 1.0f, -4.0f), float4x4::RotateZ(0), float3(100.0f, 100.0f, 100.0f));
-	//float4x4 model = math::float4x4::FromTRS(float3(0.0f, 1.0f, -4.0f), float4x4::RotateZ(0), float3(1.0f, 1.0f, 1.0f));
+	//float4x4 model = math::float4x4::FromTRS(float3(0.0f, 1.0f, -4.0f), float4x4::RotateZ(0), float3(100.0f, 100.0f, 100.0f));
+	float4x4 model = math::float4x4::FromTRS(float3(0.0f, 1.0f, -4.0f), float4x4::RotateZ(0), float3(1.0f, 1.0f, 1.0f));
 
 	glUseProgram(program);
 	glUniformMatrix4fv(0, 1, GL_TRUE, &projection[0][0]);

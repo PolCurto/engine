@@ -279,7 +279,6 @@ void ModuleEditor::FPSCount()
 void ModuleEditor::AddFPS(float new_fps)
 {
 	int vectors_length = 50;
-	LOG("Add fps: %f", new_fps);
 
 	if (fps_log.size() < vectors_length)
 	{
