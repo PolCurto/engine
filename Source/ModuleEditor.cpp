@@ -256,11 +256,10 @@ void ModuleEditor::SettingsWindow()
 
 void ModuleEditor::FPSCount()
 {
-	int vectors_length = 100;
+	int vectors_length = 50;
 	if (ms_log.size() < vectors_length)
 	{
 		ms_log.push_back(App->delta);
-		//LOG("MS LOG: %f", ms_log.back());
 	}
 	else
 	{
@@ -268,20 +267,29 @@ void ModuleEditor::FPSCount()
 		ms_log.emplace_back(App->delta);		
 	}
 	char title[25];
+	std::vector<float> ms_log_vector(ms_log.begin(), ms_log.end());
 	sprintf_s(title, 25, "Milliseconds %0.1f", ms_log.back());
-	ImGui::PlotHistogram("##milliseconds", &ms_log[0], ms_log.size(), 0, title, 0.0f, 40.0f, ImVec2(310, 100), 4);
+	ImGui::PlotHistogram("##milliseconds", &ms_log_vector[0], ms_log_vector.size(), 0, title, 0.0f, 40.0f, ImVec2(310, 100));
+
+	std::vector<float> fps_log_vector(fps_log.begin(), fps_log.end());
+	sprintf_s(title, 25, "Framerate %.1f", fps_log.back());
+	ImGui::PlotHistogram("framerate", &fps_log_vector.front(), fps_log_vector.size(), 0, title, 0.0f, 200.0f, ImVec2(310, 100));
+}
+
+void ModuleEditor::AddFPS(float new_fps)
+{
+	int vectors_length = 50;
+	LOG("Add fps: %f", new_fps);
 
 	if (fps_log.size() < vectors_length)
 	{
-		fps_log.push_back(App->fps);
+		fps_log.push_back(new_fps);
 	}
 	else
 	{
 		fps_log.pop_front();
-		fps_log.emplace_back(App->fps);
+		fps_log.emplace_back(new_fps);
 	}
-	sprintf_s(title, 25, "Framerate %.1f", fps_log.back());
-	ImGui::PlotHistogram("framerate", &fps_log.front(), fps_log.size(), 0, title, 0.0f, 200.0f, ImVec2(310, 100), 0);
 }
 
 void ModuleEditor::AboutWindow() const
@@ -291,7 +299,7 @@ void ModuleEditor::AboutWindow() const
 	ImGui::Text("Engine name: %s", TITLE);
 	ImGui::Text("Description: rock solid");
 	ImGui::Text("Author: Pol Curto");
-	ImGui::Text("Libraries: SDL, Glew, MathGeoLig, ImGui, DirectXTex");
+	ImGui::Text("Libraries: SDL, Glew, MathGeoLib, ImGui, DirectXTex");
 	ImGui::Text("License: ");
 
 	ImGui::End();

@@ -63,7 +63,7 @@ private:
     std::chrono::steady_clock::time_point last_time;
     std::chrono::duration<float, std::milli> time_lapse;
     int frames = 0;
-    int sec_timer = 0;
+    float sec_timer = 0;
 };
 
 extern Application* App;

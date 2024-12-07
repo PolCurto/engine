@@ -96,7 +96,7 @@ void Application::RequestBrowser(const char* url) const
 
 void Application::CountFPS()
 {
-	if (sec_timer <= 1000)
+	if (sec_timer <= 1000.0f)
 	{
 		sec_timer += delta;
 		++frames;
@@ -104,8 +104,9 @@ void Application::CountFPS()
 	else
 	{
 		fps = frames;
-		frames = 0;
 		sec_timer = delta;
+		editor->AddFPS(fps);
+		frames = 0;
 	}
 	
 }

@@ -21,6 +21,7 @@ public:
 	bool CleanUp();
 
 	void AddLog(const char* new_log) const;
+	void AddFPS(float new_fps);
 
 private:
 	void Draw();
