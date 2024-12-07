@@ -15,9 +15,10 @@ public:
 	bool Init();
 	update_status Update();
 	bool CleanUp();
+	void OnFileDropped(const char* filename);
 
 private:
-	unsigned int program_id;
 
+	unsigned int program_id;
 	std::unique_ptr<Model> model;
 };

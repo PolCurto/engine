@@ -40,6 +40,7 @@ public:
     ModuleEditorCamera* GetCamera() const { return camera; }
     ModuleEditor* GetEditor() const { return editor; }
     ModuleTextures* GetTextures() const { return textures; }
+    ModuleRenderExercise* GetRenderExercise() const { return exercise; }
 public:
     float delta = 0;
     float fps = 0;

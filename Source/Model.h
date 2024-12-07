@@ -28,7 +28,8 @@ public:
 	void Render(unsigned int program) const;
 	void ShowModelInformation() const;
 	void TextureOptions();
-	void Delete() const;
+	void Delete();
+	void OnFileDropped();
 
 private:
 	std::vector<std::unique_ptr<Mesh>> meshes;

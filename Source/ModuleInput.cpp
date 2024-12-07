@@ -4,6 +4,7 @@
 #include "ModuleWindow.h"
 #include "SDL/include/SDL.h"
 #include "ImGui/imgui_impl_sdl2.h"
+#include "ModuleRenderExercise.h"
 
 ModuleInput::ModuleInput()
 {}
@@ -80,6 +81,11 @@ update_status ModuleInput::Update()
 
             case SDL_MOUSEWHEEL:
                 mouse_wheel = sdlEvent.wheel.y;
+                break;
+
+            case SDL_DROPFILE:
+                LOG("File %s dropped", sdlEvent.drop.file);
+                App->GetRenderExercise()->OnFileDropped(sdlEvent.drop.file);
                 break;
         }
     }

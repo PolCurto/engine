@@ -105,3 +105,9 @@ bool ModuleRenderExercise::CleanUp()
 
 	return true;
 }
+
+void ModuleRenderExercise::OnFileDropped(const char* filename)
+{
+	model->Delete();
+	model->Load(filename);
+}

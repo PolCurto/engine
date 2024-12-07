@@ -152,14 +152,15 @@ void Model::TextureOptions()
 	ImGui::End();	
 }
 
-void Model::Delete() const
+void Model::Delete()
 {
 	for (const std::unique_ptr<Mesh>& mesh : meshes)
-	{
 		mesh->Delete();
-	}
+
 	for (const unsigned int& texture : textures_id)
-	{
 		App->GetTextures()->DestroyTexture(texture);
-	}
+	
+	meshes.clear();
+	textures_id.clear();
+	textures_data.clear();
 }
