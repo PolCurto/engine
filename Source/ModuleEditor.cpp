@@ -6,6 +6,8 @@
 #include "ModuleWindow.h"
 #include "ModuleOpenGL.h"
 #include "ModuleEditorCamera.h"
+#include "DirectXTex.h"
+#include "tiny_gltf.h"
 
 ModuleEditor::ModuleEditor()
 {
@@ -49,9 +51,6 @@ update_status ModuleEditor::PreUpdate()
 
 update_status ModuleEditor::Update()
 {
-	//bool focused = ImGui::GetPlatformIO().Platform_GetWindowFocus(ImGui::GetMainViewport());
-	//LOG("App focus: %d", focused);
-
 	Draw();
 
 	// Renders at the end
@@ -85,7 +84,6 @@ bool ModuleEditor::CleanUp()
 	ImGui_ImplSDL2_Shutdown();
 	ImGui::DestroyContext();
 
-
 	return true;
 }
 
@@ -118,6 +116,9 @@ void ModuleEditor::MainMenu()
 	{
 		if (ImGui::MenuItem("Editor settings"))
 			show_settings = !show_settings;
+
+		if (ImGui::MenuItem("Geometry properties"))
+			show_properties = !show_properties;
 
 		ImGui::EndMenu();
 	}
@@ -302,6 +303,32 @@ void ModuleEditor::AboutWindow() const
 	ImGui::Text("License: ");
 
 	ImGui::End();
+}
+
+void ModuleEditor::ShowModelProperties(const std::vector<std::vector<int>>& meshes_data, const std::vector<std::vector<int>>& textures_data) const
+{
+	if (show_properties)
+	{
+		ImGui::Begin("Properties");
+
+		ImGui::SeparatorText("Geometry properties");
+		for (int i = 0; i < meshes_data.size(); ++i)
+		{
+			ImGui::Text("Mesh %d", i + 1);
+			ImGui::Text("Number of vertices: %d", meshes_data[i][0]);
+			ImGui::Text("Number of triangles: %d", meshes_data[i][1]);
+		}
+
+		ImGui::SeparatorText("Texture properties");
+		for (int i = 0; i < textures_data.size(); ++i)
+		{
+			ImGui::Text("Texture %d", i + 1);
+			ImGui::Text("Texture width: %d", textures_data[i][0]);
+			ImGui::Text("Texture height: %d", textures_data[i][1]);
+		}
+
+		ImGui::End();
+	}	
 }
 
 void ModuleEditor::Console() const

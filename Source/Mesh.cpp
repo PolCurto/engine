@@ -13,8 +13,7 @@
 
 Mesh::Mesh()
 {
-	ebo = 0;
-	indices_count = 0;
+
 }
 
 Mesh::~Mesh()
@@ -131,6 +130,7 @@ void Mesh::LoadEBO(const tinygltf::Model& model, const tinygltf::Mesh& mesh, con
 {
 	if (primitive.indices >= 0)
 	{
+		LOG("Loading EBO");
 		const tinygltf::Accessor& indices_accessor = model.accessors[primitive.indices];
 		indices_count = indices_accessor.count;
 		const tinygltf::BufferView& indices_view = model.bufferViews[indices_accessor.bufferView];
@@ -172,6 +172,8 @@ void Mesh::LoadEBO(const tinygltf::Model& model, const tinygltf::Mesh& mesh, con
 
 void Mesh::CreateVAO()
 {
+	LOG("Creating VAO");
+
 	glGenVertexArrays(1, &vao);
 
 	glBindVertexArray(vao);
@@ -200,15 +202,18 @@ void Mesh::Render(unsigned int program, const std::vector<unsigned int>& texture
 	glUniformMatrix4fv(1, 1, GL_TRUE, &view[0][0]);
 	glUniformMatrix4fv(2, 1, GL_TRUE, &model[0][0]);
 
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, textures[material_index]);
+	if (material_index >= 0) // Only if mesh has texture
+	{
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, textures[material_index]);
+	}
 
-	if (indices_count > 0)
+	if (indices_count > 0) // If mesh has indices
 	{
 		glBindVertexArray(vao);
 		glDrawElements(GL_TRIANGLES, indices_count, GL_UNSIGNED_INT, 0);
 	}
-	else
+	else // If mesh has no indices
 	{
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
 

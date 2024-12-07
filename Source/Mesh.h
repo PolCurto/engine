@@ -32,7 +32,7 @@ private:
 	unsigned int vbo = 0;
 	unsigned int ebo = 0;
 	unsigned int vao = 0;
-	unsigned int material_index = 0;
+	int material_index = -1;
 
 	size_t vertex_count = 0;
 	size_t indices_count = 0;

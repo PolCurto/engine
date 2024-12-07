@@ -11,6 +11,7 @@
 #include "ImGui/imgui.h"
 #include "DirectXTex.h"
 #include "GL/glew.h"
+#include "ModuleEditor.h"
 
 Model::Model()
 {
@@ -58,6 +59,8 @@ void Model::Load(const char* asset_filename)
 
 void Model::LoadMaterials(const tinygltf::Model& src_model)
 {
+	LOG("Loading materials");
+
 	for (const tinygltf::Material& src_material : src_model.materials)
 	{
 		DirectX::ScratchImage scratch_image;
@@ -69,11 +72,12 @@ void Model::LoadMaterials(const tinygltf::Model& src_model)
 
 			std::string texture_folder = "./Textures/";
 			texture_id = App->GetTextures()->LoadFile(texture_folder.append(image.uri).c_str(), scratch_image);
-			//texture_id = App->GetTextures()->LoadFile("./Textures/Baboon.dds");
 		}
 		textures_id.push_back(texture_id);
 		textures_data.emplace(std::make_pair(texture_id, std::make_unique<DirectX::ScratchImage>(std::move(scratch_image))));
 	}
+
+	LOG("Materials loaded");
 }
 
 void Model::Render(const unsigned int program) const
@@ -86,26 +90,28 @@ void Model::Render(const unsigned int program) const
 
 void Model::ShowModelInformation() const
 {
-	ImGui::Begin("Properties");
+	std::vector<int> data;
 
+	std::vector<std::vector<int>> meshes_data;
 	for (const std::unique_ptr<Mesh>& mesh : meshes)
 	{
-		ImGui::SeparatorText("Geometry properties");
-		ImGui::Text("Mesh name: %s", mesh->name);
-		ImGui::Text("Number of vertices: %d", mesh->GetVertexCount());
-		ImGui::Text("Number of triangles: %d", mesh->GetTrianglesCount());
+		data.emplace_back(mesh->GetVertexCount());
+		data.emplace_back(mesh->GetTrianglesCount());
+		meshes_data.emplace_back(data);
+		data.clear();
 	}
 
-	ImGui::SeparatorText("Texture properties");
-
-	for (const auto& data : textures_data)
+	std::vector<std::vector<int>> textures_metadata;
+	for (const auto& tex_data : textures_data)
 	{
-		DirectX::TexMetadata metadata = data.second->GetMetadata();
-		ImGui::Text("Texture width: %d", metadata.width);
-		ImGui::Text("Texture height: %d", metadata.height);
+		DirectX::TexMetadata metadata = tex_data.second->GetMetadata();
+		data.emplace_back(metadata.width);
+		data.emplace_back(metadata.height);
+		textures_metadata.emplace_back(data);
+		data.clear();
 	}
 
-	ImGui::End();
+	App->GetEditor()->ShowModelProperties(meshes_data, textures_metadata);
 }
 
 void Model::TextureOptions()
@@ -117,31 +123,25 @@ void Model::TextureOptions()
 		glBindTexture(GL_TEXTURE_2D, id);
 
 		static int wrap_mode = GL_CLAMP;
-		if (ImGui::CollapsingHeader("Wrap mode"))
-		{
-			ImGui::RadioButton("Repeat##2", &wrap_mode, GL_REPEAT);
-			ImGui::SameLine();
-			ImGui::RadioButton("Mirrored repeat##2", &wrap_mode, GL_MIRRORED_REPEAT);
-			ImGui::RadioButton("Clamp##2", &wrap_mode, GL_CLAMP);
-			ImGui::SameLine();
-			ImGui::RadioButton("Clamp to border##2", &wrap_mode, GL_CLAMP_TO_BORDER);
-		}
-
+		ImGui::SeparatorText("Wrap mode");
+		ImGui::RadioButton("Repeat##2", &wrap_mode, GL_REPEAT);
+		ImGui::SameLine();
+		ImGui::RadioButton("Mirrored repeat##2", &wrap_mode, GL_MIRRORED_REPEAT);
+		ImGui::RadioButton("Clamp##2", &wrap_mode, GL_CLAMP);
+		ImGui::SameLine();
+		ImGui::RadioButton("Clamp to border##2", &wrap_mode, GL_CLAMP_TO_BORDER);
+		
 		static int mag_filter = GL_NEAREST;
-		if (ImGui::CollapsingHeader("Mag Filter"))
-		{
-			ImGui::RadioButton("Nearest##1", &mag_filter, GL_NEAREST);
-			ImGui::SameLine();
-			ImGui::RadioButton("Linear##1", &mag_filter, GL_LINEAR);
-		}
-
+		ImGui::SeparatorText("Mag Filter");
+		ImGui::RadioButton("Nearest##1", &mag_filter, GL_NEAREST);
+		ImGui::SameLine();
+		ImGui::RadioButton("Linear##1", &mag_filter, GL_LINEAR);
+		
 		static int min_filter = GL_NEAREST;
-		if (ImGui::CollapsingHeader("Min Filter"))
-		{
-			ImGui::RadioButton("Nearest##2", &min_filter, GL_NEAREST);
-			ImGui::SameLine();
-			ImGui::RadioButton("Linear##2", &min_filter, GL_LINEAR);
-		}
+		ImGui::SeparatorText("Min Filter");
+		ImGui::RadioButton("Nearest##2", &min_filter, GL_NEAREST);
+		ImGui::SameLine();
+		ImGui::RadioButton("Linear##2", &min_filter, GL_LINEAR);
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap_mode);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap_mode);
