@@ -30,8 +30,8 @@ void Mesh::LoadVBO(const tinygltf::Model& model, const tinygltf::Mesh& mesh, con
 	if (it_pos != primitive.attributes.end())
 	{
 		const tinygltf::Accessor& position_accessor = model.accessors[it_pos->second];
-		SDL_assert(position_accessor.type == TINYGLTF_TYPE_VEC3, "Accesor type not Vec3");
-		SDL_assert(position_accessor.componentType == GL_FLOAT, "Accesor component type not float");
+		SDL_assert(position_accessor.type == TINYGLTF_TYPE_VEC3);
+		SDL_assert(position_accessor.componentType == GL_FLOAT);
 		vertex_count = position_accessor.count;
 
 		const tinygltf::BufferView& position_view = model.bufferViews[position_accessor.bufferView];
@@ -47,8 +47,8 @@ void Mesh::LoadVBO(const tinygltf::Model& model, const tinygltf::Mesh& mesh, con
 		{
 			material_index = primitive.material;
 			const tinygltf::Accessor& uvs_accessor = model.accessors[it_tex->second];
-			SDL_assert(uvs_accessor.type == TINYGLTF_TYPE_VEC2, "Accesor type not Vec2");
-			SDL_assert(uvs_accessor.componentType == GL_FLOAT, "Accesor component type not float");
+			SDL_assert(uvs_accessor.type == TINYGLTF_TYPE_VEC2);
+			SDL_assert(uvs_accessor.componentType == GL_FLOAT);
 			uvs_count = uvs_accessor.count;
 
 			const tinygltf::BufferView& uvs_view = model.bufferViews[uvs_accessor.bufferView];
@@ -66,7 +66,6 @@ void Mesh::LoadVBO(const tinygltf::Model& model, const tinygltf::Mesh& mesh, con
 			float3* vbo_pos_ptr = reinterpret_cast<float3*>(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
 			for (size_t i = 0; i < vertex_count; ++i)
 			{
-				//LOG("pos loop i: %d", i);
 				vbo_pos_ptr[i] = *reinterpret_cast<const float3*>(buffer_ptr);
 
 				if (position_view.byteStride == 0)
@@ -84,7 +83,6 @@ void Mesh::LoadVBO(const tinygltf::Model& model, const tinygltf::Mesh& mesh, con
 			size_t offset = (vertex_count * 3) / 2;
 			for (i = offset; i < offset + uvs_count; ++i)
 			{
-				//LOG("uvs loop i: %d", i);
 				vbo_uvs_ptr[i] = *reinterpret_cast<const float2*>(uvs_buffer_ptr);
 
 				if (uvs_view.byteStride == 0)
@@ -211,7 +209,7 @@ void Mesh::Render(unsigned int program, const std::vector<unsigned int>& texture
 	if (indices_count > 0) // If mesh has indices
 	{
 		glBindVertexArray(vao);
-		glDrawElements(GL_TRIANGLES, indices_count, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indices_count), GL_UNSIGNED_INT, 0);
 	}
 	else // If mesh has no indices
 	{
@@ -222,7 +220,7 @@ void Mesh::Render(unsigned int program, const std::vector<unsigned int>& texture
 
 		glEnableVertexAttribArray(1);
 		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)(sizeof(float) * 3 * vertex_count));
-		glDrawArrays(GL_TRIANGLES, 0, vertex_count);
+		glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(vertex_count));
 	}
 }
 

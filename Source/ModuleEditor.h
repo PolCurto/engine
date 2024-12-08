@@ -4,6 +4,7 @@
 #include "Module.h"
 #include <deque>
 #include <vector>
+#include <string>
 
 struct ImGuiTextBuffer;
 
@@ -29,7 +30,13 @@ public:
 private:
 	void Draw();
 	void MainMenu();
-	void SettingsWindow();
+
+	void SettingsMenu();
+	void WindowConfig();
+	void CameraConfig();
+	void OpenGLConfig();
+	void TexturesConfig();
+
 	void FPSCount();
 	void AboutWindow() const;
 	void Console() const;
@@ -41,6 +48,8 @@ private:
 
 	bool fullscreen = false;
 	bool resizable = true;
+
+	bool quit = false;
 
 	int fps_counter = 0;
 	std::deque<float> fps_log;

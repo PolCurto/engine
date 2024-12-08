@@ -41,6 +41,8 @@ public:
     ModuleEditor* GetEditor() const { return editor; }
     ModuleTextures* GetTextures() const { return textures; }
     ModuleRenderExercise* GetRenderExercise() const { return exercise; }
+    ModuleHardware* GetHardware() const { return hardware; }
+
 public:
     float delta = 0;
     float fps = 0;
@@ -63,7 +65,7 @@ private:
 
     std::chrono::steady_clock::time_point last_time;
     std::chrono::duration<float, std::milli> time_lapse;
-    int frames = 0;
+    float frames = 0;
     float sec_timer = 0;
 };
 

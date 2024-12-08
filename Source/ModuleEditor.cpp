@@ -6,12 +6,13 @@
 #include "ModuleWindow.h"
 #include "ModuleOpenGL.h"
 #include "ModuleEditorCamera.h"
+#include "ModuleHardware.h"
 #include "DirectXTex.h"
 #include "tiny_gltf.h"
 
 ModuleEditor::ModuleEditor()
 {
-
+	quit = false;
 }
 
 ModuleEditor::~ModuleEditor()
@@ -52,6 +53,9 @@ update_status ModuleEditor::PreUpdate()
 update_status ModuleEditor::Update()
 {
 	Draw();
+
+	if (quit)
+		return UPDATE_STOP;
 
 	// Renders at the end
 	ImGui::Render();
@@ -98,7 +102,7 @@ void ModuleEditor::Draw()
 	MainMenu();
 
 	if (show_settings)
-		SettingsWindow();
+		SettingsMenu();
 
 	if (show_demo)
 		ImGui::ShowDemoWindow();
@@ -119,6 +123,9 @@ void ModuleEditor::MainMenu()
 
 		if (ImGui::MenuItem("Geometry properties"))
 			show_properties = !show_properties;
+
+		if (ImGui::MenuItem("Quit"))
+			quit = true;
 
 		ImGui::EndMenu();
 	}
@@ -145,114 +152,127 @@ void ModuleEditor::MainMenu()
 	ImGui::EndMainMenuBar();
 }
 
-void ModuleEditor::SettingsWindow()
+void ModuleEditor::SettingsMenu()
 {
 	ImGui::Begin("Settings");
-	ImGui::Text("Options");
 
-	if (ImGui::CollapsingHeader("Application"))
-		FPSCount();
+	ImGui::SeparatorText("Ms and Fps Graph");
+	FPSCount();
+	ImGui::Spacing();
 
+	ImGui::SeparatorText("Modules Configuration");
+	if (ImGui::CollapsingHeader("Window"))
+	{
+		WindowConfig();
+	}
+	if (ImGui::CollapsingHeader("Editor camera"))
+	{
+		CameraConfig();
+	}
+
+	ImGui::SeparatorText("Hardware Info");
+	App->GetHardware()->ShowHardwareInfo();
+
+	ImGui::End();
+}
+
+void ModuleEditor::WindowConfig()
+{
 	static bool borderless = false;
 	static bool full_desktop = false;
 
-	if (ImGui::CollapsingHeader("Window"))
+	// Brightness Slider
+	float brightness = App->GetWindow()->GetBrightness();
+	if (ImGui::SliderFloat("Brightness", &brightness, 0, 1))
+		App->GetWindow()->SetBrightness(brightness);
+
+	// Width Slider
+	int width = App->GetWindow()->GetWidth();
+	if (ImGui::SliderInt("Width", &width, 0, 2000))
+		App->GetWindow()->SetWidth(width);
+
+	// Height Slider
+	int height = App->GetWindow()->GetHeight();
+	if (ImGui::SliderInt("Height", &height, 0, 2000))
+		App->GetWindow()->SetHeight(height);
+
+	// Set Fullscreen
+	if (ImGui::Checkbox("Fullscreen", &fullscreen))
+		App->GetWindow()->SetFullscreen(fullscreen);
+	ImGui::SameLine();
+
+	// Set Resizable
+	if (ImGui::Checkbox("Resizable", &resizable))
+		App->GetWindow()->SetResizable(resizable);
+	if (ImGui::IsItemHovered())
+		ImGui::SetTooltip("Restart to apply");
+
+	// Set Borderless
+	if (ImGui::Checkbox("Borderless", &borderless))
+		App->GetWindow()->SetBorderless(borderless);
+	ImGui::SameLine();
+
+	// Set Full Desktop
+	if (ImGui::Checkbox("Full Desktop", &full_desktop))
+		App->GetWindow()->SetFullDesktop(full_desktop);
+}
+
+void ModuleEditor::CameraConfig()
+{
+	// Camera position
+	float3 camera_pos = App->GetCamera()->GetCameraPosition();
+	float pos[] = { camera_pos.x, camera_pos.y, camera_pos.z };
+	if (ImGui::InputFloat3("Camera position", pos))
 	{
-		// Brightness Slider
-		float brightness = App->GetWindow()->GetBrightness();
-		if (ImGui::SliderFloat("Brightness", &brightness, 0, 1))
-			App->GetWindow()->SetBrightness(brightness);
-
-		//// Width Slider
-		int width = App->GetWindow()->GetWidth();
-		if (ImGui::SliderInt("Width", &width, 0, 2000))
-			App->GetWindow()->SetWidth(width);
-
-		// Height Slider
-		int height = App->GetWindow()->GetHeight();
-		if (ImGui::SliderInt("Height", &height, 0, 2000))
-			App->GetWindow()->SetHeight(height);
-
-		// Set Fullscreen
-		if (ImGui::Checkbox("Fullscreen", &fullscreen))
-			App->GetWindow()->SetFullscreen(fullscreen);
-		ImGui::SameLine();
-
-		// Set Resizable
-		if (ImGui::Checkbox("Resizable", &resizable))
-			App->GetWindow()->SetResizable(resizable);
-		if (ImGui::IsItemHovered())
-			ImGui::SetTooltip("Restart to apply");
-
-		// Set Borderless
-		if (ImGui::Checkbox("Borderless", &borderless))
-			App->GetWindow()->SetBorderless(borderless);
-		ImGui::SameLine();
-
-		// Set Full Desktop
-		if (ImGui::Checkbox("Full Desktop", &full_desktop))
-			App->GetWindow()->SetFullDesktop(full_desktop);
+		App->GetCamera()->SetPosition(pos[0], pos[1], pos[2]);
 	}
 
-	if (ImGui::CollapsingHeader("Editor camera"))
+	// Camera FOV
+	float fov = App->GetCamera()->GetFOV();
+	if (ImGui::SliderFloat("FOV", &fov, 30.0f, 180.0f))
 	{
-		// Camera position
-		float3 camera_pos = App->GetCamera()->GetCameraPosition();
-		float pos[] = { camera_pos.x, camera_pos.y, camera_pos.z };
-		if (ImGui::InputFloat3("Camera position", pos))
-		{
-			App->GetCamera()->SetPosition(pos[0], pos[1], pos[2]);
-		}
-
-		// Camera FOV
-		float fov = App->GetCamera()->GetFOV();
-		if (ImGui::SliderFloat("FOV", &fov, 30.0f, 180.0f))
-		{
-			App->GetCamera()->SetFOV(fov);
-		}
-
-		// Camera sensitivity
-		float sensitivity = App->GetCamera()->GetSensitivity();
-		if (ImGui::SliderFloat("Sensitivity", &sensitivity, 0.0f, 10.0f))
-		{
-			App->GetCamera()->SetSensitivity(sensitivity);
-		}
-
-		// Camera free movement speed
-		float free_movement_speed = App->GetCamera()->GetFreeMovementSpeed();
-		if (ImGui::SliderFloat("Free movement speed", &free_movement_speed, 0.0f, 100.0f))
-		{
-			App->GetCamera()->SetFreeMovementSpeed(free_movement_speed);
-		}
-		
-		// Camera zoom speed
-		float zoom_speed = App->GetCamera()->GetZoomSpeed();
-		if (ImGui::SliderFloat("Zoom speed", &zoom_speed, 0.0f, 100.0f))
-		{
-			App->GetCamera()->SetZoomSpeed(zoom_speed);
-		}
-		
-		// Camera zoom speed
-		float drag_speed = App->GetCamera()->GetDragSpeed();
-		if (ImGui::SliderFloat("Drag speed", &drag_speed, 0.0f, 20.0f))
-		{
-			App->GetCamera()->SetDragSpeed(drag_speed);
-		}
-
-		// Frustum planes
-		float near_plane_dist = App->GetCamera()->GetNearPlaneDist();
-		if (ImGui::InputFloat("Near plane distance", &near_plane_dist));
-		{
-			App->GetCamera()->SetPlaneDistances(near_plane_dist, App->GetCamera()->GetFarPlaneDist());
-		}
-		float far_plane_dist = App->GetCamera()->GetFarPlaneDist();
-		if (ImGui::InputFloat("Far plane distance", &far_plane_dist));
-		{
-			App->GetCamera()->SetPlaneDistances(App->GetCamera()->GetNearPlaneDist(), far_plane_dist);
-		}
+		App->GetCamera()->SetFOV(fov);
 	}
 
-	ImGui::End();
+	// Camera sensitivity
+	float sensitivity = App->GetCamera()->GetSensitivity();
+	if (ImGui::SliderFloat("Sensitivity", &sensitivity, 0.0f, 10.0f))
+	{
+		App->GetCamera()->SetSensitivity(sensitivity);
+	}
+
+	// Camera free movement speed
+	float free_movement_speed = App->GetCamera()->GetFreeMovementSpeed();
+	if (ImGui::SliderFloat("Free movement speed", &free_movement_speed, 0.0f, 100.0f))
+	{
+		App->GetCamera()->SetFreeMovementSpeed(free_movement_speed);
+	}
+
+	// Camera zoom speed
+	float zoom_speed = App->GetCamera()->GetZoomSpeed();
+	if (ImGui::SliderFloat("Zoom speed", &zoom_speed, 0.0f, 100.0f))
+	{
+		App->GetCamera()->SetZoomSpeed(zoom_speed);
+	}
+
+	// Camera zoom speed
+	float drag_speed = App->GetCamera()->GetDragSpeed();
+	if (ImGui::SliderFloat("Drag speed", &drag_speed, 0.0f, 20.0f))
+	{
+		App->GetCamera()->SetDragSpeed(drag_speed);
+	}
+
+	// Frustum planes
+	float near_plane_dist = App->GetCamera()->GetNearPlaneDist();
+	if (ImGui::InputFloat("Near plane distance", &near_plane_dist))
+	{
+		App->GetCamera()->SetPlaneDistances(near_plane_dist, App->GetCamera()->GetFarPlaneDist());
+	}
+	float far_plane_dist = App->GetCamera()->GetFarPlaneDist();
+	if (ImGui::InputFloat("Far plane distance", &far_plane_dist))
+	{
+		App->GetCamera()->SetPlaneDistances(App->GetCamera()->GetNearPlaneDist(), far_plane_dist);
+	}
 }
 
 void ModuleEditor::FPSCount()
@@ -317,6 +337,7 @@ void ModuleEditor::ShowModelProperties(const std::vector<std::vector<int>>& mesh
 			ImGui::Text("Mesh %d", i + 1);
 			ImGui::Text("Number of vertices: %d", meshes_data[i][0]);
 			ImGui::Text("Number of triangles: %d", meshes_data[i][1]);
+			ImGui::Spacing();
 		}
 
 		ImGui::SeparatorText("Texture properties");
@@ -325,6 +346,7 @@ void ModuleEditor::ShowModelProperties(const std::vector<std::vector<int>>& mesh
 			ImGui::Text("Texture %d", i + 1);
 			ImGui::Text("Texture width: %d", textures_data[i][0]);
 			ImGui::Text("Texture height: %d", textures_data[i][1]);
+			ImGui::Spacing();
 		}
 
 		ImGui::End();
