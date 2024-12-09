@@ -41,6 +41,9 @@ void Mesh::LoadVBO(const tinygltf::Model& model, const tinygltf::Mesh& mesh, con
 		LOG("Positions buffer raw data size: %d", i);
 		LOG("Positions byte stride: %d", position_view.byteStride);
 
+		int stride = 3;
+		bool uvs_exist = false;
+
 		// Load UVs positions to vbo
 		const auto& it_tex = primitive.attributes.find("TEXCOORD_0");
 		if (it_tex != primitive.attributes.end())
@@ -58,6 +61,40 @@ void Mesh::LoadVBO(const tinygltf::Model& model, const tinygltf::Mesh& mesh, con
 			LOG("Uvs buffer raw data size: %d", j);
 			LOG("Uvs byte stride: %d", uvs_view.byteStride);
 
+			stride = 5;
+
+			glGenBuffers(1, &vbo);
+			glBindBuffer(GL_ARRAY_BUFFER, vbo);
+			int buffer_size = sizeof(float) * ((3 * vertex_count) + (2 * uvs_count));
+			glBufferData(GL_ARRAY_BUFFER, buffer_size, nullptr, GL_STATIC_DRAW);
+
+			float* vbo_pos_ptr = reinterpret_cast<float*>(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
+			for (size_t i = 0; i < vertex_count + uvs_count; i += stride)
+			{
+				// Vertex data
+				float3 vtx_pos = *reinterpret_cast<const float3*>(buffer_ptr);
+				vbo_pos_ptr[i] = vtx_pos[0];
+				vbo_pos_ptr[i + 1] = vtx_pos[1];
+				vbo_pos_ptr[i + 2] = vtx_pos[2];
+
+				if (position_view.byteStride == 0)
+					buffer_ptr += sizeof(float) * 3;
+				else
+					buffer_ptr += position_view.byteStride;
+
+				// Uvs data
+				float2 uvs_pos = *reinterpret_cast<const float2*>(uvs_buffer_ptr);
+				vbo_pos_ptr[i + 3] = uvs_pos[0];
+				vbo_pos_ptr[i + 4] = uvs_pos[1];
+
+				if (uvs_view.byteStride == 0)
+					uvs_buffer_ptr += sizeof(float) * 2;
+				else
+					uvs_buffer_ptr += uvs_view.byteStride;
+			}
+		}
+		else
+		{
 			glGenBuffers(1, &vbo);
 			glBindBuffer(GL_ARRAY_BUFFER, vbo);
 			int buffer_size = sizeof(float) * ((3 * vertex_count) + (2 * uvs_count));
@@ -69,58 +106,13 @@ void Mesh::LoadVBO(const tinygltf::Model& model, const tinygltf::Mesh& mesh, con
 				vbo_pos_ptr[i] = *reinterpret_cast<const float3*>(buffer_ptr);
 
 				if (position_view.byteStride == 0)
-				{
 					buffer_ptr += sizeof(float) * 3;
-				}
 				else
-				{
 					buffer_ptr += position_view.byteStride;
-				}
-			}
-			glUnmapBuffer(GL_ARRAY_BUFFER);
-
-			float2* vbo_uvs_ptr = reinterpret_cast<float2*>(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
-			size_t offset = (vertex_count * 3) / 2;
-			for (i = offset; i < offset + uvs_count; ++i)
-			{
-				vbo_uvs_ptr[i] = *reinterpret_cast<const float2*>(uvs_buffer_ptr);
-
-				if (uvs_view.byteStride == 0)
-				{
-					uvs_buffer_ptr += sizeof(float) * 2;
-				}
-				else
-				{
-					uvs_buffer_ptr += uvs_view.byteStride;
-				}
-			}
-			glUnmapBuffer(GL_ARRAY_BUFFER);
-		}
-		else
-		{
-			glGenBuffers(1, &vbo);
-			glBindBuffer(GL_ARRAY_BUFFER, vbo);
-			int buffer_size = sizeof(float) * 3 * vertex_count;
-			glBufferData(GL_ARRAY_BUFFER, buffer_size, nullptr, GL_STATIC_DRAW);
-
-			float3* vbo_pos_ptr = reinterpret_cast<float3*>(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
-			for (size_t i = 0; i < vertex_count; ++i)
-			{
-				vbo_pos_ptr[i] = *reinterpret_cast<const float3*>(buffer_ptr);
-
-				if (position_view.byteStride == 0)
-				{
-					buffer_ptr += sizeof(float) * 3;
-				}
-				else
-				{
-					buffer_ptr += position_view.byteStride;
-				}
 			}
 			glUnmapBuffer(GL_ARRAY_BUFFER);
 		}
 	}
-
 	LOG("Load mesh with vbo index: %d. vertex count: %d. uvs count: %d", vbo, vertex_count, uvs_count);
 }
 
@@ -216,10 +208,10 @@ void Mesh::Render(unsigned int program, const std::vector<unsigned int>& texture
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
 		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3 * sizeof(float) * 2, (void*)0);
 
 		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)(sizeof(float) * 3 * vertex_count));
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 3 * sizeof(float) * 2, (void*)(sizeof(float) * 3));
 		glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(vertex_count));
 	}
 }
