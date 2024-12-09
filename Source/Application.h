@@ -2,6 +2,7 @@
 
 #include <list>
 #include <chrono>
+#include <memory>
 #include "Globals.h"
 #include "Module.h"
 
@@ -17,6 +18,7 @@ class ModuleEditorCamera;
 class ModuleEditor;
 class ModuleHardware;
 class ModuleTextures;
+class Model;
 
 class Application
 {
@@ -46,6 +48,7 @@ public:
 public:
     float delta = 0;
     float fps = 0;
+    std::unique_ptr<Model> model;
 
 private:
     void CountFPS();

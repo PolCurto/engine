@@ -45,8 +45,6 @@ void ModuleHardware::ShowHardwareInfo() const
 		glGetIntegerv(GL_GPU_MEMORY_INFO_TOTAL_AVAILABLE_MEMORY_NVX, &total_memory);
 		glGetIntegerv(GL_GPU_MEMORY_INFO_CURRENT_AVAILABLE_VIDMEM_NVX, &available_memory);
 		glGetIntegerv(GL_GPU_MEMORY_INFO_DEDICATED_VIDMEM_NVX, &dedicated_memory);
-
-		LOG("Total memory %d", dedicated_memory);
 		
 		ImGui::Text("Total VRAM: %.2f MB", static_cast<float>(total_memory) / 1024.0f);
 		ImGui::Text("Dedicated VRAM: %.2f MB", static_cast<float>(dedicated_memory) / 1024.0f);

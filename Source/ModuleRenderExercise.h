@@ -20,5 +20,4 @@ public:
 private:
 
 	unsigned int program_id;
-	std::unique_ptr<Model> model;
 };

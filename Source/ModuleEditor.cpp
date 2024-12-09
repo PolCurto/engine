@@ -9,6 +9,7 @@
 #include "ModuleHardware.h"
 #include "DirectXTex.h"
 #include "tiny_gltf.h"
+#include "Model.h"
 
 ModuleEditor::ModuleEditor()
 {
@@ -110,22 +111,31 @@ void ModuleEditor::Draw()
 	if (show_about)
 		AboutWindow();
 
-	Console();
+	if (show_console)
+		Console();
 }
 
 void ModuleEditor::MainMenu()
 {
 	ImGui::BeginMainMenuBar();
-	if (ImGui::BeginMenu("Editor"))
+	if (ImGui::BeginMenu("General"))
 	{
-		if (ImGui::MenuItem("Editor settings"))
-			show_settings = !show_settings;
-
 		if (ImGui::MenuItem("Geometry properties"))
 			show_properties = !show_properties;
 
+		if (ImGui::MenuItem("Console"))
+			show_console = !show_console;
+
 		if (ImGui::MenuItem("Quit"))
 			quit = true;
+
+		ImGui::EndMenu();
+	}
+
+	if (ImGui::BeginMenu("Settings"))
+	{
+		if (ImGui::MenuItem("Editor settings"))
+			show_settings = !show_settings;
 
 		ImGui::EndMenu();
 	}
@@ -154,7 +164,7 @@ void ModuleEditor::MainMenu()
 
 void ModuleEditor::SettingsMenu()
 {
-	ImGui::Begin("Settings");
+	ImGui::Begin("Editor settings");
 
 	ImGui::SeparatorText("Ms and Fps Graph");
 	FPSCount();
@@ -165,11 +175,24 @@ void ModuleEditor::SettingsMenu()
 	{
 		WindowConfig();
 	}
+	ImGui::Spacing();
 	if (ImGui::CollapsingHeader("Editor camera"))
 	{
 		CameraConfig();
 	}
+	ImGui::Spacing();
+	if (ImGui::CollapsingHeader("OpenGL"))
+	{
+		OpenGLConfig();
+	}
+	ImGui::Spacing();
+	if (ImGui::CollapsingHeader("Textures"))
+	{
+		TexturesConfig();
+	}
+	ImGui::Spacing();
 
+	ImGui::Separator();
 	ImGui::SeparatorText("Hardware Info");
 	App->GetHardware()->ShowHardwareInfo();
 
@@ -275,6 +298,43 @@ void ModuleEditor::CameraConfig()
 	}
 }
 
+void ModuleEditor::OpenGLConfig()
+{
+
+}
+
+void ModuleEditor::TexturesConfig() 
+{
+	static int wrap_mode = GL_CLAMP;
+	static int mag_filter = GL_NEAREST;
+	static int min_filter = GL_NEAREST;
+
+	for (int i = 0; i < App->model->GetTexturesIDCount(); ++i)
+	{
+		ImGui::Text("Texture %d", i + 1);
+
+		ImGui::Text("Wrap mode");
+		ImGui::RadioButton("Repeat##2", &wrap_mode, GL_REPEAT);
+		ImGui::SameLine();
+		ImGui::RadioButton("Mirrored repeat##2", &wrap_mode, GL_MIRRORED_REPEAT);
+		ImGui::RadioButton("Clamp##2", &wrap_mode, GL_CLAMP);
+		ImGui::SameLine();
+		ImGui::RadioButton("Clamp to border##2", &wrap_mode, GL_CLAMP_TO_BORDER);
+
+		ImGui::Text("Min Filter");
+		ImGui::RadioButton("Nearest##2", &min_filter, GL_NEAREST);
+		ImGui::SameLine();
+		ImGui::RadioButton("Linear##2", &min_filter, GL_LINEAR);
+
+		ImGui::Text("Mag Filter");
+		ImGui::RadioButton("Nearest##1", &mag_filter, GL_NEAREST);
+		ImGui::SameLine();
+		ImGui::RadioButton("Linear##1", &mag_filter, GL_LINEAR);
+
+		App->model->SetTextureParameters({ i, wrap_mode, min_filter, mag_filter });
+	}
+}
+
 void ModuleEditor::FPSCount()
 {
 	int vectors_length = 50;
@@ -294,7 +354,7 @@ void ModuleEditor::FPSCount()
 
 	std::vector<float> fps_log_vector(fps_log.begin(), fps_log.end());
 	sprintf_s(title, 25, "Framerate %.1f", fps_log.back());
-	ImGui::PlotHistogram("framerate", &fps_log_vector.front(), fps_log_vector.size(), 0, title, 0.0f, 200.0f, ImVec2(310, 100));
+	ImGui::PlotHistogram("##framerate", &fps_log_vector.front(), fps_log_vector.size(), 0, title, 0.0f, 200.0f, ImVec2(310, 100));
 }
 
 void ModuleEditor::AddFPS(float new_fps)

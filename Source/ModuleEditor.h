@@ -45,6 +45,7 @@ private:
 	bool show_about = false;
 	bool show_settings = false;
 	bool show_properties = false;
+	bool show_console = true;
 
 	bool fullscreen = false;
 	bool resizable = true;

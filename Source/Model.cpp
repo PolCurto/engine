@@ -114,42 +114,13 @@ void Model::ShowModelInformation() const
 	App->GetEditor()->ShowModelProperties(meshes_data, textures_metadata);
 }
 
-void Model::TextureOptions()
+void Model::SetTextureParameters(const std::vector<int>&& params)
 {
-	ImGui::Begin("Textures parameters");
-
-	for (const unsigned int& id : textures_id)
-	{
-		glBindTexture(GL_TEXTURE_2D, id);
-
-		static int wrap_mode = GL_CLAMP;
-		ImGui::SeparatorText("Wrap mode");
-		ImGui::RadioButton("Repeat##2", &wrap_mode, GL_REPEAT);
-		ImGui::SameLine();
-		ImGui::RadioButton("Mirrored repeat##2", &wrap_mode, GL_MIRRORED_REPEAT);
-		ImGui::RadioButton("Clamp##2", &wrap_mode, GL_CLAMP);
-		ImGui::SameLine();
-		ImGui::RadioButton("Clamp to border##2", &wrap_mode, GL_CLAMP_TO_BORDER);
-		
-		static int mag_filter = GL_NEAREST;
-		ImGui::SeparatorText("Mag Filter");
-		ImGui::RadioButton("Nearest##1", &mag_filter, GL_NEAREST);
-		ImGui::SameLine();
-		ImGui::RadioButton("Linear##1", &mag_filter, GL_LINEAR);
-		
-		static int min_filter = GL_NEAREST;
-		ImGui::SeparatorText("Min Filter");
-		ImGui::RadioButton("Nearest##2", &min_filter, GL_NEAREST);
-		ImGui::SameLine();
-		ImGui::RadioButton("Linear##2", &min_filter, GL_LINEAR);
-
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap_mode);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap_mode);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, min_filter);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mag_filter);
-	}
-
-	ImGui::End();	
+	glBindTexture(GL_TEXTURE_2D, textures_id[params[0]]);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, params[1]);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, params[1]);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, params[2]);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, params[3]);
 }
 
 void Model::Delete()

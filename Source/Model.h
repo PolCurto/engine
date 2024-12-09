@@ -27,9 +27,10 @@ public:
 	void LoadMaterials(const tinygltf::Model& src_model);
 	void Render(unsigned int program) const;
 	void ShowModelInformation() const;
-	void TextureOptions();
+	void SetTextureParameters(const std::vector<int>&& params);
 	void Delete();
-	void OnFileDropped();
+
+	int GetTexturesIDCount() const { return textures_id.size(); }
 
 private:
 	std::vector<std::unique_ptr<Mesh>> meshes;
