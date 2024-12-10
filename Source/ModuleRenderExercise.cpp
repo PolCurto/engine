@@ -13,6 +13,7 @@
 ModuleRenderExercise::ModuleRenderExercise()
 {
 	program_id = 0;
+	model = std::make_unique<Model>();
 	
 }
 
@@ -80,7 +81,7 @@ bool ModuleRenderExercise::Init()
 
 	// Load model
 	//model->Load("Models/Avocado/Avocado.gltf");
-	App->model->Load("Models/BakerHouse/BakerHouse.gltf");
+	model->Load("Models/BakerHouse/BakerHouse.gltf");
 	//model->Load("Models/Helmet/SciFiHelmet.gltf");
 	//model->Load("Models/Boxes/BoxTextured.gltf");
 
@@ -89,8 +90,8 @@ bool ModuleRenderExercise::Init()
 
 update_status ModuleRenderExercise::Update()
 {
-	App->model->Render(program_id);
-	App->model->ShowModelInformation();
+	model->Render(program_id);
+	model->ShowModelInformation();
 
 	//App->GetOpenGL()->RenderVBO(vbo, program_id, texture);
 
@@ -100,13 +101,13 @@ update_status ModuleRenderExercise::Update()
 bool ModuleRenderExercise::CleanUp()
 {
 	App->GetProgram()->DeleteProgram(program_id);
-	App->model->Delete();
+	model->Delete();
 
 	return true;
 }
 
 void ModuleRenderExercise::OnFileDropped(const char* filename)
 {
-	App->model->Delete();
-	App->model->Load(filename);
+	model->Delete();
+	model->Load(filename);
 }

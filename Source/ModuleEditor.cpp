@@ -7,6 +7,7 @@
 #include "ModuleOpenGL.h"
 #include "ModuleEditorCamera.h"
 #include "ModuleHardware.h"
+#include "ModuleRenderExercise.h"
 #include "DirectXTex.h"
 #include "tiny_gltf.h"
 #include "Model.h"
@@ -309,7 +310,7 @@ void ModuleEditor::TexturesConfig()
 	static int mag_filter = GL_NEAREST;
 	static int min_filter = GL_NEAREST;
 
-	for (int i = 0; i < App->model->GetTexturesIDCount(); ++i)
+	for (int i = 0; i < App->GetRenderExercise()->model->GetTexturesIDCount(); ++i)
 	{
 		ImGui::Text("Texture %d", i + 1);
 
@@ -331,7 +332,7 @@ void ModuleEditor::TexturesConfig()
 		ImGui::SameLine();
 		ImGui::RadioButton("Linear##1", &mag_filter, GL_LINEAR);
 
-		App->model->SetTextureParameters({ i, wrap_mode, min_filter, mag_filter });
+		App->GetRenderExercise()->model->SetTextureParameters({ i, wrap_mode, min_filter, mag_filter });
 	}
 }
 

@@ -2,7 +2,6 @@
 
 #include <list>
 #include <chrono>
-#include <memory>
 #include "Globals.h"
 #include "Module.h"
 
@@ -48,7 +47,6 @@ public:
 public:
     float delta = 0;
     float fps = 0;
-    std::unique_ptr<Model> model;
 
 private:
     void CountFPS();

@@ -17,7 +17,10 @@ public:
 	bool CleanUp();
 	void OnFileDropped(const char* filename);
 
-private:
 
+	std::unique_ptr<Model> model;
+
+private:
 	unsigned int program_id;
+
 };

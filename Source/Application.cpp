@@ -27,8 +27,6 @@ Application::Application()
 	modules.push_back(exercise = new ModuleRenderExercise());
 	modules.push_back(hardware = new ModuleHardware());
 	modules.push_back(editor = new ModuleEditor());
-
-	model = std::make_unique<Model>();
 }
 
 Application::~Application()
