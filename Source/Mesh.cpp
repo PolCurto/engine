@@ -7,7 +7,6 @@
 #include "SDL.h"
 #include "GL/glew.h"
 #include "ModuleEditorCamera.h"
-#include <Math/MathAll.h>	
 #include "ImGui/imgui.h"
 
 
@@ -77,6 +76,32 @@ void Mesh::LoadVBO(const tinygltf::Model& model, const tinygltf::Mesh& mesh, con
 				vbo_pos_ptr[i] = vtx_pos.x;
 				vbo_pos_ptr[i + 1] = vtx_pos.y;
 				vbo_pos_ptr[i + 2] = vtx_pos.z;
+				
+				if (i == 0)
+				{
+					max_positions = vtx_pos;
+					min_positions = vtx_pos;
+				}
+				else
+				{
+					if (vtx_pos.x > max_positions.x)
+						max_positions.x = vtx_pos.x;
+
+					if (vtx_pos.x < min_positions.x)
+						min_positions.x = vtx_pos.x;
+
+					if (vtx_pos.y > max_positions.y)
+						max_positions.y = vtx_pos.y;
+
+					if (vtx_pos.y < min_positions.y)
+						min_positions.y = vtx_pos.y;
+
+					if (vtx_pos.z > max_positions.z)
+						max_positions.z = vtx_pos.z;
+
+					if (vtx_pos.z < min_positions.z)
+						min_positions.z = vtx_pos.z;
+				}
 
 				if (position_view.byteStride == 0)
 					buffer_ptr += sizeof(float) * 3;
@@ -94,6 +119,8 @@ void Mesh::LoadVBO(const tinygltf::Model& model, const tinygltf::Mesh& mesh, con
 					uvs_buffer_ptr += uvs_view.byteStride;
 			}
 			glUnmapBuffer(GL_ARRAY_BUFFER);
+			LOG("Max positions: %f, %f, %f", max_positions.x, max_positions.y, max_positions.z);
+			LOG("Min positions: %f, %f, %f", min_positions.x, min_positions.y, min_positions.z);
 		}
 		else
 		{

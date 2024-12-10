@@ -2,6 +2,7 @@
 #define __MESH_H__
 
 #include "Globals.h"
+#include <Math/MathAll.h>	
 
 namespace tinygltf
 {
@@ -33,6 +34,9 @@ private:
 	unsigned int ebo = 0;
 	unsigned int vao = 0;
 	int material_index = -1;
+
+	float3 max_positions = float3::zero;
+	float3 min_positions = float3::zero;
 
 	size_t vertex_count = 0;
 	size_t indices_count = 0;

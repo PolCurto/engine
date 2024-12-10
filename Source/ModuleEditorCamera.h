@@ -16,6 +16,7 @@ public:
 	float4x4 GetProjectionMatrix() const { return projection_matrix; }
 	float4x4 GetViewMatrix() const { return view_matrix; }
 
+	void FocusGeometry();
 	void SetFOV(float new_fov);
 	void SetAspectRatio(float new_aspect_ratio);
 	void SetPlaneDistances(float near_plane, float far_plane);

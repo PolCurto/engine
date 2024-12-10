@@ -63,7 +63,12 @@ void ModuleEditorCamera::ProcessInput()
 
 	float yaw_deg = 0;
 	float pitch_deg = 0;
-	if (App->GetInput()->GetMouseButtons()[MIDDLE_BUTTON])
+
+	if (keys[SDL_SCANCODE_F])
+	{
+		FocusGeometry();
+	}
+	else if (App->GetInput()->GetMouseButtons()[MIDDLE_BUTTON])
 	{
 		SDL_SetRelativeMouseMode(SDL_TRUE);
 		camera_position += App->GetInput()->GetMouseMotionY() * drag_speed * frustum.up * (App->delta/1000.0f) * factor;
@@ -128,6 +133,11 @@ void ModuleEditorCamera::ProcessInput()
 		frustum.up = pitch_rotation.MulDir(oldUp);
 		frustum.front = pitch_rotation.MulDir(oldFront);
 	}
+}
+
+void ModuleEditorCamera::FocusGeometry()
+{
+
 }
 
 void ModuleEditorCamera::SetFrustum()

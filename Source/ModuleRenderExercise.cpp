@@ -14,7 +14,6 @@ ModuleRenderExercise::ModuleRenderExercise()
 {
 	program_id = 0;
 	model = std::make_unique<Model>();
-	
 }
 
 ModuleRenderExercise::~ModuleRenderExercise()
@@ -106,7 +105,7 @@ bool ModuleRenderExercise::CleanUp()
 	return true;
 }
 
-void ModuleRenderExercise::OnFileDropped(const char* filename)
+void ModuleRenderExercise::OnFileDropped(const char* filename) const
 {
 	model->Delete();
 	model->Load(filename);
