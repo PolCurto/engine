@@ -143,12 +143,16 @@ void Model::Delete()
 
 void Model::UpdatePosition()
 {
+	float3 world_positions_sum(0, 0, 0);
+	float3 local_positions_sum(0, 0, 0);
+
 	for (int i = 0; i < meshes.size(); ++i)
 	{
+		world_positions_sum += *meshes[i]->world_position;
+		local_positions_sum += *meshes[i]->world_position + *meshes[i]->mesh_center;
+	
 		if (i == 0)
 		{
-			*world_position = *meshes[i]->world_position;
-			*local_position = *world_position + *meshes[i]->mesh_center;
 			*max_positions = *meshes[i]->max_positions_world;
 			*min_positions = *meshes[i]->min_positions_world;
 		}
@@ -174,6 +178,9 @@ void Model::UpdatePosition()
 				min_positions->z = meshes[i]->min_positions_world->z;
 		}
 	}
+
+	*world_position = world_positions_sum / meshes.size();;
+	*local_position = local_positions_sum / meshes.size();
 
 	//LOG("Max model positions: %f, %f, %f", max_positions->x, max_positions->y, max_positions->z);
 	//LOG("Min model positions: %f, %f, %f", min_positions->x, min_positions->y, min_positions->z);
