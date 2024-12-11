@@ -2,6 +2,8 @@
 #include "ModuleOpenGL.h"
 #include "ModuleInput.h"
 #include "SDL.h"
+#include "Model.h"
+#include "ModuleRenderExercise.h"
 
 ModuleEditorCamera::ModuleEditorCamera()
 {
@@ -137,7 +139,13 @@ void ModuleEditorCamera::ProcessInput()
 
 void ModuleEditorCamera::FocusGeometry()
 {
+	float z_dist = App->GetRenderExercise()->model->max_positions->Distance(*App->GetRenderExercise()->model->min_positions);
+	float3 pos = *App->GetRenderExercise()->model->position;
+	LOG("Distance: %f", z_dist);
+	LOG("Mesh position: %f, %f, %f", pos.x, pos.y, pos.z);
 
+	//camera_position
+	
 }
 
 void ModuleEditorCamera::SetFrustum()

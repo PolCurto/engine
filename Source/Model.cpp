@@ -12,10 +12,13 @@
 #include "DirectXTex.h"
 #include "GL/glew.h"
 #include "ModuleEditor.h"
+#include "Math/MathAll.h"
 
 Model::Model()
 {
-	
+	position = std::make_unique<float3>();
+	max_positions = std::make_unique<float3>();
+	min_positions = std::make_unique<float3>();
 }
 
 Model::~Model()
@@ -53,7 +56,7 @@ void Model::Load(const char* asset_filename)
 			meshes.push_back(std::move(mesh));
 		}
 	}
-
+	UpdatePosition();
 	LoadMaterials(model);
 }
 
@@ -80,12 +83,13 @@ void Model::LoadMaterials(const tinygltf::Model& src_model)
 	LOG("Materials loaded");
 }
 
-void Model::Render(const unsigned int program) const
+void Model::Render(const unsigned int program)
 {
 	for (const std::unique_ptr<Mesh>& mesh : meshes)
 	{
 		mesh->Render(program, textures_id);
 	}
+	UpdatePosition();
 }
 
 void Model::ShowModelInformation() const
@@ -134,4 +138,41 @@ void Model::Delete()
 	meshes.clear();
 	textures_id.clear();
 	textures_data.clear();
+}
+
+void Model::UpdatePosition()
+{
+	for (int i = 0; i < meshes.size(); ++i)
+	{
+		if (i == 0)
+		{
+			*position = *meshes[i]->position;
+			*max_positions = *meshes[i]->max_positions_world;
+			*min_positions = *meshes[i]->min_positions_world;
+		}
+		else
+		{
+
+			if (meshes[i]->max_positions_world->x > max_positions->x)
+				max_positions->x = meshes[i]->max_positions_world->x;
+
+			if (meshes[i]->min_positions_world->x < min_positions->x)
+				min_positions->x = meshes[i]->min_positions_world->x;
+
+			if (meshes[i]->max_positions_world->y > max_positions->y)
+				max_positions->y = meshes[i]->max_positions_world->y;
+
+			if (meshes[i]->min_positions_world->y < min_positions->y)
+				min_positions->y = meshes[i]->min_positions_world->y;
+
+			if (meshes[i]->max_positions_world->z > max_positions->z)
+				max_positions->z = meshes[i]->max_positions_world->z;
+
+			if (meshes[i]->min_positions_world->z < min_positions->z)
+				min_positions->z = meshes[i]->min_positions_world->z;
+		}
+	}
+
+	//LOG("Max positions: %f, %f, %f", max_positions->x, max_positions->y, max_positions->z);
+	//LOG("Min positions: %f, %f, %f", min_positions->x, min_positions->y, min_positions->z);
 }

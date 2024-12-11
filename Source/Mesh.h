@@ -2,7 +2,7 @@
 #define __MESH_H__
 
 #include "Globals.h"
-#include <Math/MathAll.h>	
+#include "memory"
 
 namespace tinygltf
 {
@@ -10,6 +10,12 @@ namespace tinygltf
 	struct Mesh;
 	struct Primitive;
 }
+
+namespace math
+{
+	class float3;
+}
+
 
 class Mesh
 {
@@ -27,7 +33,9 @@ public:
 	size_t GetTrianglesCount() const { return vertex_count / 3; }
 	size_t GetIndicesCount() const { return vertex_count; }
 
-	std::string name;
+	std::unique_ptr<math::float3> position;
+	std::unique_ptr<math::float3> max_positions_world;
+	std::unique_ptr<math::float3> min_positions_world;
 
 private:
 	unsigned int vbo = 0;
@@ -35,11 +43,13 @@ private:
 	unsigned int vao = 0;
 	int material_index = -1;
 
-	float3 max_positions = float3::zero;
-	float3 min_positions = float3::zero;
-
 	size_t vertex_count = 0;
 	size_t indices_count = 0;
 	size_t uvs_count = 0;
+
+	std::unique_ptr<math::float3> max_positions_local;
+	std::unique_ptr<math::float3> min_positions_local;
+
+	std::unique_ptr<math::float3> translate;
 };
 #endif // __MESH_H__

@@ -80,8 +80,8 @@ bool ModuleRenderExercise::Init()
 
 	// Load model
 	//model->Load("Models/Avocado/Avocado.gltf");
-	model->Load("Models/BakerHouse/BakerHouse.gltf");
-	//model->Load("Models/Helmet/SciFiHelmet.gltf");
+	//model->Load("Models/BakerHouse/BakerHouse.gltf");
+	model->Load("Models/Helmet/SciFiHelmet.gltf");
 	//model->Load("Models/Boxes/BoxTextured.gltf");
 
 	return true;

@@ -8,11 +8,19 @@
 #include "GL/glew.h"
 #include "ModuleEditorCamera.h"
 #include "ImGui/imgui.h"
+#include <Math/MathAll.h>	
 
 
 Mesh::Mesh()
 {
+	position = std::make_unique<float3>();
 
+	max_positions_local = std::make_unique<float3>();
+	min_positions_local = std::make_unique<float3>();
+	max_positions_world = std::make_unique<float3>();
+	min_positions_world = std::make_unique<float3>();
+
+	translate = std::make_unique<float3>(0.0f, 1.0f, -4.0f);
 }
 
 Mesh::~Mesh()
@@ -22,8 +30,6 @@ Mesh::~Mesh()
 
 void Mesh::LoadVBO(const tinygltf::Model& model, const tinygltf::Mesh& mesh, const tinygltf::Primitive& primitive)
 {
-	name = mesh.name;
-
 	// Load vertex positions to vbo
 	const auto& it_pos = primitive.attributes.find("POSITION");
 	if (it_pos != primitive.attributes.end())
@@ -79,28 +85,28 @@ void Mesh::LoadVBO(const tinygltf::Model& model, const tinygltf::Mesh& mesh, con
 				
 				if (i == 0)
 				{
-					max_positions = vtx_pos;
-					min_positions = vtx_pos;
+					*max_positions_local = vtx_pos;
+					*min_positions_local = vtx_pos;
 				}
 				else
 				{
-					if (vtx_pos.x > max_positions.x)
-						max_positions.x = vtx_pos.x;
+					if (vtx_pos.x > max_positions_local->x)
+						max_positions_local->x = vtx_pos.x;
 
-					if (vtx_pos.x < min_positions.x)
-						min_positions.x = vtx_pos.x;
+					if (vtx_pos.x < min_positions_local->x)
+						min_positions_local->x = vtx_pos.x;
 
-					if (vtx_pos.y > max_positions.y)
-						max_positions.y = vtx_pos.y;
+					if (vtx_pos.y > max_positions_local->y)
+						max_positions_local->y = vtx_pos.y;
 
-					if (vtx_pos.y < min_positions.y)
-						min_positions.y = vtx_pos.y;
+					if (vtx_pos.y < min_positions_local->y)
+						min_positions_local->y = vtx_pos.y;
 
-					if (vtx_pos.z > max_positions.z)
-						max_positions.z = vtx_pos.z;
+					if (vtx_pos.z > max_positions_local->z)
+						max_positions_local->z = vtx_pos.z;
 
-					if (vtx_pos.z < min_positions.z)
-						min_positions.z = vtx_pos.z;
+					if (vtx_pos.z < min_positions_local->z)
+						min_positions_local->z = vtx_pos.z;
 				}
 
 				if (position_view.byteStride == 0)
@@ -119,8 +125,8 @@ void Mesh::LoadVBO(const tinygltf::Model& model, const tinygltf::Mesh& mesh, con
 					uvs_buffer_ptr += uvs_view.byteStride;
 			}
 			glUnmapBuffer(GL_ARRAY_BUFFER);
-			LOG("Max positions: %f, %f, %f", max_positions.x, max_positions.y, max_positions.z);
-			LOG("Min positions: %f, %f, %f", min_positions.x, min_positions.y, min_positions.z);
+			LOG("Max positions: %f, %f, %f", max_positions_local->x, max_positions_local->y, max_positions_local->z);
+			LOG("Min positions: %f, %f, %f", min_positions_local->x, min_positions_local->y, min_positions_local->z);
 		}
 		else
 		{
@@ -132,10 +138,36 @@ void Mesh::LoadVBO(const tinygltf::Model& model, const tinygltf::Mesh& mesh, con
 			float* vbo_pos_ptr = reinterpret_cast<float*>(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
 			for (size_t i = 0; i < 3 * vertex_count; i += 3)
 			{
-				 float3 pos = *reinterpret_cast<const float3*>(buffer_ptr);
-				 vbo_pos_ptr[i] = pos.x;
-				 vbo_pos_ptr[i + 1] = pos.y;
-				 vbo_pos_ptr[i + 2] = pos.z;
+				 float3 vtx_pos = *reinterpret_cast<const float3*>(buffer_ptr);
+				 vbo_pos_ptr[i] = vtx_pos.x;
+				 vbo_pos_ptr[i + 1] = vtx_pos.y;
+				 vbo_pos_ptr[i + 2] = vtx_pos.z;
+
+				 if (i == 0)
+				 {
+					 *max_positions_local = vtx_pos;
+					 *min_positions_local = vtx_pos;
+				 }
+				 else
+				 {
+					 if (vtx_pos.x > max_positions_local->x)
+						 max_positions_local->x = vtx_pos.x;
+
+					 if (vtx_pos.x < min_positions_local->x)
+						 min_positions_local->x = vtx_pos.x;
+
+					 if (vtx_pos.y > max_positions_local->y)
+						 max_positions_local->y = vtx_pos.y;
+
+					 if (vtx_pos.y < min_positions_local->y)
+						 min_positions_local->y = vtx_pos.y;
+
+					 if (vtx_pos.z > max_positions_local->z)
+						 max_positions_local->z = vtx_pos.z;
+
+					 if (vtx_pos.z < min_positions_local->z)
+						 min_positions_local->z = vtx_pos.z;
+				 }
 
 				if (position_view.byteStride == 0)
 					buffer_ptr += sizeof(float) * 3;
@@ -217,12 +249,19 @@ void Mesh::Render(unsigned int program, const std::vector<unsigned int>& texture
 	float4x4 projection = App->GetCamera()->GetProjectionMatrix();
 	float4x4 view = App->GetCamera()->GetViewMatrix();
 	//float4x4 model = math::float4x4::FromTRS(float3(0.0f, 1.0f, -4.0f), float4x4::RotateZ(0), float3(100.0f, 100.0f, 100.0f));
-	float4x4 model = math::float4x4::FromTRS(float3(0.0f, 1.0f, -4.0f), float4x4::RotateZ(0), float3(1.0f, 1.0f, 1.0f));
+	float4x4 model = math::float4x4::FromTRS(*translate, float4x4::RotateZ(0), float3(1.0f, 1.0f, 1.0f));
 
 	glUseProgram(program);
 	glUniformMatrix4fv(0, 1, GL_TRUE, &projection[0][0]);
 	glUniformMatrix4fv(1, 1, GL_TRUE, &view[0][0]);
 	glUniformMatrix4fv(2, 1, GL_TRUE, &model[0][0]);
+
+	*position = *translate;
+	//float4 max_pos = model * float4(*max_positions_local, 1.0f);
+	//*max_positions_world = float3(max_pos.x, max_pos.y, max_pos.z);
+	//
+	//float4 min_pos = model * float4(*min_positions_local, 1.0f);
+	//*min_positions_world = float3(min_pos.x, min_pos.y, min_pos.z);
 
 	if (material_index >= 0) // Only if mesh has texture
 	{
