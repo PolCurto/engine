@@ -33,7 +33,8 @@ public:
 	size_t GetTrianglesCount() const { return vertex_count / 3; }
 	size_t GetIndicesCount() const { return vertex_count; }
 
-	std::unique_ptr<math::float3> position;
+	std::unique_ptr<math::float3> mesh_center;
+	std::unique_ptr<math::float3> world_position;
 	std::unique_ptr<math::float3> max_positions_world;
 	std::unique_ptr<math::float3> min_positions_world;
 

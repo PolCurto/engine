@@ -37,7 +37,8 @@ public:
 
 	int GetTexturesIDCount() const { return textures_id.size(); }
 
-	std::unique_ptr<math::float3> position;
+	std::unique_ptr<math::float3> local_position;
+	std::unique_ptr<math::float3> world_position;
 	std::unique_ptr<math::float3> max_positions;
 	std::unique_ptr<math::float3> min_positions;
 

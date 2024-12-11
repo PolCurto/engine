@@ -13,7 +13,8 @@
 
 Mesh::Mesh()
 {
-	position = std::make_unique<float3>();
+	mesh_center = std::make_unique<float3>();
+	world_position = std::make_unique<float3>();
 
 	max_positions_local = std::make_unique<float3>();
 	min_positions_local = std::make_unique<float3>();
@@ -125,6 +126,8 @@ void Mesh::LoadVBO(const tinygltf::Model& model, const tinygltf::Mesh& mesh, con
 					uvs_buffer_ptr += uvs_view.byteStride;
 			}
 			glUnmapBuffer(GL_ARRAY_BUFFER);
+
+			*mesh_center = float3((max_positions_local->x + min_positions_local->x) / 2, (max_positions_local->y + min_positions_local->y) / 2, (max_positions_local->z + min_positions_local->z));
 			LOG("Max positions: %f, %f, %f", max_positions_local->x, max_positions_local->y, max_positions_local->z);
 			LOG("Min positions: %f, %f, %f", min_positions_local->x, min_positions_local->y, min_positions_local->z);
 		}
@@ -256,12 +259,13 @@ void Mesh::Render(unsigned int program, const std::vector<unsigned int>& texture
 	glUniformMatrix4fv(1, 1, GL_TRUE, &view[0][0]);
 	glUniformMatrix4fv(2, 1, GL_TRUE, &model[0][0]);
 
-	*position = *translate;
-	//float4 max_pos = model * float4(*max_positions_local, 1.0f);
-	//*max_positions_world = float3(max_pos.x, max_pos.y, max_pos.z);
-	//
-	//float4 min_pos = model * float4(*min_positions_local, 1.0f);
-	//*min_positions_world = float3(min_pos.x, min_pos.y, min_pos.z);
+	*world_position = *translate;
+
+	float4 max_pos = model * float4(*max_positions_local, 1.0f);
+	*max_positions_world = float3(max_pos.x, max_pos.y, max_pos.z);
+	
+	float4 min_pos = model * float4(*min_positions_local, 1.0f);
+	*min_positions_world = float3(min_pos.x, min_pos.y, min_pos.z);
 
 	if (material_index >= 0) // Only if mesh has texture
 	{

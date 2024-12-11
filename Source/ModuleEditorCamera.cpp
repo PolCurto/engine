@@ -27,7 +27,7 @@ bool ModuleEditorCamera::Init()
 	frustum.front = math::float3(0, 0, -1);
 	frustum.up = math::float3::unitY;
 
-	frustum.nearPlaneDistance = 0.1f;
+	frustum.nearPlaneDistance = 0.01f;
 	frustum.farPlaneDistance = 100.0f;
 	frustum.horizontalFov = DegToRad(90);
 
@@ -120,32 +120,38 @@ void ModuleEditorCamera::ProcessInput()
 	if (yaw_deg)
 	{
 		float4x4 yaw_rotation = float4x4::RotateY(math::DegToRad(yaw_deg));
-		float3 oldFront = frustum.front.Normalized();
-		float3 oldUp = frustum.up.Normalized();
-		frustum.up = yaw_rotation.MulDir(oldUp);
-		frustum.front = yaw_rotation.MulDir(oldFront);
+		float3 oldFront = frustum.front;
+		float3 oldUp = frustum.up;
+		frustum.up = yaw_rotation.MulDir(oldUp).Normalized();
+		frustum.front = yaw_rotation.MulDir(oldFront).Normalized();
 	}
 
 	// Rotate around local X axis
 	if ((pitch_deg < 0 && frustum.front.y > -0.9f) || (pitch_deg > 0 && frustum.front.y < 0.9f))
 	{
 		float4x4 pitch_rotation = float4x4::RotateAxisAngle(frustum.WorldRight(), math::DegToRad(pitch_deg));
-		float3 oldFront = frustum.front.Normalized();
-		float3 oldUp = frustum.up.Normalized();
-		frustum.up = pitch_rotation.MulDir(oldUp);
-		frustum.front = pitch_rotation.MulDir(oldFront);
+		float3 oldFront = frustum.front;
+		float3 oldUp = frustum.up;
+		frustum.up = pitch_rotation.MulDir(oldUp).Normalized();
+		frustum.front = pitch_rotation.MulDir(oldFront).Normalized();
 	}
 }
 
 void ModuleEditorCamera::FocusGeometry()
 {
 	float z_dist = App->GetRenderExercise()->model->max_positions->Distance(*App->GetRenderExercise()->model->min_positions);
-	float3 pos = *App->GetRenderExercise()->model->position;
+	float3 pos = *App->GetRenderExercise()->model->local_position;
 	LOG("Distance: %f", z_dist);
 	LOG("Mesh position: %f, %f, %f", pos.x, pos.y, pos.z);
 
-	//camera_position
-	
+	camera_position.x = pos.x;
+	camera_position.y = pos.y;
+	camera_position.z = pos.z + z_dist;
+
+	LOG("Camera position: %f, %f, %f", camera_position.x, camera_position.y, camera_position.z);
+
+	frustum.front = math::float3(0, 0, -1);
+	frustum.up = math::float3::unitY;
 }
 
 void ModuleEditorCamera::SetFrustum()
@@ -193,7 +199,8 @@ void ModuleEditorCamera::SetPosition(const float x, const float y, const float z
 
 void ModuleEditorCamera::SetOrientation(const float3& new_front)
 {
-	frustum.front = new_front;
+	frustum.front = new_front.Normalized();
+	LOG("New front: %f, %f, %f", frustum.front.x, frustum.front.y, frustum.front.z);
 }
 
 

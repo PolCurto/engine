@@ -16,7 +16,8 @@
 
 Model::Model()
 {
-	position = std::make_unique<float3>();
+	local_position = std::make_unique<float3>();
+	world_position = std::make_unique<float3>();
 	max_positions = std::make_unique<float3>();
 	min_positions = std::make_unique<float3>();
 }
@@ -56,7 +57,7 @@ void Model::Load(const char* asset_filename)
 			meshes.push_back(std::move(mesh));
 		}
 	}
-	UpdatePosition();
+	//UpdatePosition();
 	LoadMaterials(model);
 }
 
@@ -146,7 +147,8 @@ void Model::UpdatePosition()
 	{
 		if (i == 0)
 		{
-			*position = *meshes[i]->position;
+			*world_position = *meshes[i]->world_position;
+			*local_position = *world_position + *meshes[i]->mesh_center;
 			*max_positions = *meshes[i]->max_positions_world;
 			*min_positions = *meshes[i]->min_positions_world;
 		}
@@ -173,6 +175,6 @@ void Model::UpdatePosition()
 		}
 	}
 
-	//LOG("Max positions: %f, %f, %f", max_positions->x, max_positions->y, max_positions->z);
-	//LOG("Min positions: %f, %f, %f", min_positions->x, min_positions->y, min_positions->z);
+	//LOG("Max model positions: %f, %f, %f", max_positions->x, max_positions->y, max_positions->z);
+	//LOG("Min model positions: %f, %f, %f", min_positions->x, min_positions->y, min_positions->z);
 }
