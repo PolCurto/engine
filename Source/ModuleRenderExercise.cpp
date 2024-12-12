@@ -109,4 +109,5 @@ void ModuleRenderExercise::OnFileDropped(const char* filename) const
 {
 	model->Delete();
 	model->Load(filename);
+	App->GetCamera()->FocusGeometry();
 }

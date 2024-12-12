@@ -179,6 +179,18 @@ void Mesh::LoadVBO(const tinygltf::Model& model, const tinygltf::Mesh& mesh, con
 			}
 			glUnmapBuffer(GL_ARRAY_BUFFER);
 		}
+		float4x4 model = math::float4x4::FromTRS(*translate, float4x4::RotateZ(0), float3(1.0f, 1.0f, 1.0f));
+		float4 max_pos = model * float4(*max_positions_local, 1.0f);
+		*max_positions_world = float3(max_pos.x, max_pos.y, max_pos.z);
+
+		float4 min_pos = model * float4(*min_positions_local, 1.0f);
+		*min_positions_world = float3(min_pos.x, min_pos.y, min_pos.z);
+
+		*world_position = *translate;
+
+		LOG("Max positions world: %f, %f, %f", max_positions_world->x, max_positions_world->y, max_positions_world->z);
+		LOG("Min positions world: %f, %f, %f", min_positions_world->x, min_positions_world->y, min_positions_world->z);
+		LOG("World pos: %f, %f, %f", world_position->x, world_position->y, world_position->z);
 	}
 	LOG("Load mesh with vbo index: %d. vertex count: %d. uvs count: %d", vbo, vertex_count, uvs_count);
 }

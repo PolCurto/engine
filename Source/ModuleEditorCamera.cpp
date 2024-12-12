@@ -124,7 +124,7 @@ void ModuleEditorCamera::ProcessInput()
 		if (keys[SDL_SCANCODE_E])
 			up_speed -= free_movement_speed;
 		if (keys[SDL_SCANCODE_LSHIFT])
-			factor = 3;
+			factor = 2;
 
 		yaw_deg = -App->GetInput()->GetMouseMotionX() * sensitivity;
 		pitch_deg = -App->GetInput()->GetMouseMotionY() * sensitivity;
@@ -159,14 +159,14 @@ void ModuleEditorCamera::FocusGeometry()
 {
 	float z_dist = App->GetRenderExercise()->model->max_positions->Distance(*App->GetRenderExercise()->model->min_positions);
 	float3 pos = *App->GetRenderExercise()->model->local_position;
-	//LOG("Distance: %f", z_dist);
-	//LOG("Mesh position: %f, %f, %f", pos.x, pos.y, pos.z);
+	LOG("Distance: %f", z_dist);
+	LOG("Mesh position: %f, %f, %f", pos.x, pos.y, pos.z);
 
 	camera_position.x = pos.x;
 	camera_position.y = pos.y;
 	camera_position.z = pos.z + z_dist;
 
-	//LOG("Camera position: %f, %f, %f", camera_position.x, camera_position.y, camera_position.z);
+	LOG("Camera position: %f, %f, %f", camera_position.x, camera_position.y, camera_position.z);
 
 	SetOrientation(pos);
 

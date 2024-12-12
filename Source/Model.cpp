@@ -57,7 +57,7 @@ void Model::Load(const char* asset_filename)
 			meshes.push_back(std::move(mesh));
 		}
 	}
-	//UpdatePosition();
+	UpdatePosition();
 	LoadMaterials(model);
 }
 
