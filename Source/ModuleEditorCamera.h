@@ -56,7 +56,4 @@ private:
 	float sensitivity = 0;
 	float distance_from_model = 0;
 	float3 model_front = float3::zero;
-
-	bool dummy = true;
-	bool is_orbiting = false;
 };

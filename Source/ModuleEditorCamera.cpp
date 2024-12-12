@@ -66,10 +66,6 @@ void ModuleEditorCamera::ProcessInput()
 	float yaw_deg = 0;
 	float pitch_deg = 0;
 
-	if (keys[SDL_SCANCODE_0])
-	{
-		dummy = true;
-	}
 	if (keys[SDL_SCANCODE_F])
 	{
 		FocusGeometry();
@@ -88,29 +84,28 @@ void ModuleEditorCamera::ProcessInput()
 	else if (keys[SDL_SCANCODE_LALT] && App->GetInput()->GetMouseButtons()[LEFT_BUTTON])    // Orbit around the selected object
 	{
 		SDL_SetRelativeMouseMode(SDL_TRUE);
-		
+
+		float3 model_pos = *App->GetRenderExercise()->model->local_position;
+		distance_from_model = (camera_position - model_pos).Length();
+		model_front = (camera_position - model_pos).Normalized();
+
 		float yaw_rot = DegToRad(-App->GetInput()->GetMouseMotionX());
 		float pitch_rot = DegToRad(-App->GetInput()->GetMouseMotionY());
 
-		if (yaw_rot || pitch_rot)
+		if (yaw_rot)
 		{
-			float3 model_pos = *App->GetRenderExercise()->model->local_position;
-
-			distance_from_model = (camera_position - model_pos).Length();
-			model_front = (camera_position - model_pos).Normalized();
-
 			float4x4 yaw_rotation = float4x4::RotateY(yaw_rot);
 			model_front = yaw_rotation.MulDir(model_front).Normalized();
-
-			float4x4 pitch_rotation = float4x4::RotateAxisAngle(frustum.WorldRight(), pitch_deg);
-			model_front = pitch_rotation.MulDir(model_front).Normalized();
-
-			LOG("Dist: %f", distance_from_model);
-
-			camera_position = model_pos + model_front * distance_from_model;
-
-			SetOrientation(model_pos);
 		}
+
+		if ((pitch_rot < 0 && frustum.front.y > -0.9f) || (pitch_rot > 0 && frustum.front.y < 0.9f))
+		{
+			float4x4 pitch_rotation = float4x4::RotateAxisAngle(frustum.WorldRight(), pitch_rot);
+			model_front = pitch_rotation.MulDir(model_front).Normalized();
+		}
+
+		camera_position = model_pos + model_front * (camera_position - model_pos).Length();
+		SetOrientation(model_pos);
 	}
 	else if (App->GetInput()->GetMouseButtons()[RIGHT_BUTTON])    // Enables WASD movement and mouse motion camera movement
 	{
@@ -133,6 +128,22 @@ void ModuleEditorCamera::ProcessInput()
 
 		yaw_deg = -App->GetInput()->GetMouseMotionX() * sensitivity;
 		pitch_deg = -App->GetInput()->GetMouseMotionY() * sensitivity;
+
+		// Rotate around world Y axis
+		if (yaw_deg)
+		{
+			float4x4 yaw_rotation = float4x4::RotateY(math::DegToRad(yaw_deg));
+			frustum.up = yaw_rotation.MulDir(frustum.up).Normalized();
+			frustum.front = yaw_rotation.MulDir(frustum.front).Normalized();
+		}
+
+		// Rotate around local X axis
+		if ((pitch_deg < 0 && frustum.front.y > -0.9f) || (pitch_deg > 0 && frustum.front.y < 0.9f))
+		{
+			float4x4 pitch_rotation = float4x4::RotateAxisAngle(frustum.WorldRight(), math::DegToRad(pitch_deg));
+			frustum.up = pitch_rotation.MulDir(frustum.up).Normalized();
+			frustum.front = pitch_rotation.MulDir(frustum.front).Normalized();
+		}
 	}
 	else
 	{
@@ -142,31 +153,10 @@ void ModuleEditorCamera::ProcessInput()
 
 	camera_position += (front_speed * frustum.front + right_speed * frustum.WorldRight() + up_speed * float3::unitY) * (App->delta / 1000.0f) * factor;
 
-	// Rotate around world Y axis
-	if (yaw_deg)
-	{
-		float4x4 yaw_rotation = float4x4::RotateY(math::DegToRad(yaw_deg));
-		float3 oldFront = frustum.front;
-		float3 oldUp = frustum.up;
-		frustum.up = yaw_rotation.MulDir(oldUp).Normalized();
-		frustum.front = yaw_rotation.MulDir(oldFront).Normalized();
-	}
-
-	// Rotate around local X axis
-	if ((pitch_deg < 0 && frustum.front.y > -0.9f) || (pitch_deg > 0 && frustum.front.y < 0.9f))
-	{
-		float4x4 pitch_rotation = float4x4::RotateAxisAngle(frustum.WorldRight(), math::DegToRad(pitch_deg));
-		float3 oldFront = frustum.front;
-		float3 oldUp = frustum.up;
-		frustum.up = pitch_rotation.MulDir(oldUp).Normalized();
-		frustum.front = pitch_rotation.MulDir(oldFront).Normalized();
-	}
 }
 
 void ModuleEditorCamera::FocusGeometry()
 {
-	if (!dummy) return;
-	dummy = false;
 	float z_dist = App->GetRenderExercise()->model->max_positions->Distance(*App->GetRenderExercise()->model->min_positions);
 	float3 pos = *App->GetRenderExercise()->model->local_position;
 	//LOG("Distance: %f", z_dist);
