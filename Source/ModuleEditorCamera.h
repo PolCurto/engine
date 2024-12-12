@@ -54,4 +54,6 @@ private:
 	float zoom_speed = 0;
 	float drag_speed = 0;
 	float sensitivity = 0;
+
+	bool dummy = true;
 };

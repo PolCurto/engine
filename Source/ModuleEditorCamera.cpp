@@ -66,6 +66,10 @@ void ModuleEditorCamera::ProcessInput()
 	float yaw_deg = 0;
 	float pitch_deg = 0;
 
+	if (keys[SDL_SCANCODE_0])
+	{
+		dummy = true;
+	}
 	if (keys[SDL_SCANCODE_F])
 	{
 		FocusGeometry();
@@ -84,7 +88,9 @@ void ModuleEditorCamera::ProcessInput()
 	else if (keys[SDL_SCANCODE_LALT] && App->GetInput()->GetMouseButtons()[LEFT_BUTTON])    // Orbit around the selected object
 	{
 		SDL_SetRelativeMouseMode(SDL_TRUE);
-		LOG("ALT");
+		SetOrientation(*App->GetRenderExercise()->model->local_position);
+		//camera_position += App->GetInput()->GetMouseMotionY() * drag_speed * frustum.up * (App->delta / 1000.0f) * factor;
+		right_speed -= App->GetInput()->GetMouseMotionX() * drag_speed;
 	}
 	else if (App->GetInput()->GetMouseButtons()[RIGHT_BUTTON])    // Enables WASD movement and mouse motion camera movement
 	{
@@ -139,19 +145,23 @@ void ModuleEditorCamera::ProcessInput()
 
 void ModuleEditorCamera::FocusGeometry()
 {
+	if (!dummy) return;
+	dummy = false;
 	float z_dist = App->GetRenderExercise()->model->max_positions->Distance(*App->GetRenderExercise()->model->min_positions);
 	float3 pos = *App->GetRenderExercise()->model->local_position;
-	LOG("Distance: %f", z_dist);
-	LOG("Mesh position: %f, %f, %f", pos.x, pos.y, pos.z);
+	//LOG("Distance: %f", z_dist);
+	//LOG("Mesh position: %f, %f, %f", pos.x, pos.y, pos.z);
 
 	camera_position.x = pos.x;
 	camera_position.y = pos.y;
 	camera_position.z = pos.z + z_dist;
 
-	LOG("Camera position: %f, %f, %f", camera_position.x, camera_position.y, camera_position.z);
+	//LOG("Camera position: %f, %f, %f", camera_position.x, camera_position.y, camera_position.z);
 
-	frustum.front = math::float3(0, 0, -1);
-	frustum.up = math::float3::unitY;
+	SetOrientation(pos);
+
+	//frustum.front = math::float3(0, 0, -1);
+	//frustum.up = math::float3::unitY;
 }
 
 void ModuleEditorCamera::SetFrustum()
@@ -197,10 +207,48 @@ void ModuleEditorCamera::SetPosition(const float x, const float y, const float z
 	frustum.pos = camera_position = new_position;
 }
 
-void ModuleEditorCamera::SetOrientation(const float3& new_front)
+void ModuleEditorCamera::SetOrientation(const float3& target)
 {
-	frustum.front = new_front.Normalized();
-	LOG("New front: %f, %f, %f", frustum.front.x, frustum.front.y, frustum.front.z);
+	if (!frustum.front.Equals(target))
+	{
+		float3 new_dir = (target - camera_position).Normalized();
+		float3 middlepoint_dir = float3(new_dir.x, frustum.front.y, new_dir.z);
+
+		if (!frustum.front.Equals(middlepoint_dir))
+		{
+			float angle = frustum.front.AngleBetweenNorm(middlepoint_dir);
+			LOG("Angle: %f", angle);
+			if (angle > math::pi)
+				angle = angle - (2 * math::pi);
+			LOG("Angle after: %f", angle);
+
+			//new_dir.
+			float4x4 yaw_rotation = float4x4::RotateY(angle);
+			float3 oldFront = frustum.front;
+			float3 oldUp = frustum.up;
+			frustum.up = yaw_rotation.MulDir(oldUp).Normalized();
+			frustum.front = yaw_rotation.MulDir(oldFront).Normalized();
+		}
+		else
+		{
+			//LOG("Middlepoint equals front");
+		}
+
+		if (!middlepoint_dir.Equals(new_dir)) // If not equal vectors
+		{
+			float angle = middlepoint_dir.AngleBetweenNorm(new_dir);
+
+			float4x4 pitch_rotation = float4x4::RotateAxisAngle(frustum.WorldRight(), angle);
+			float3 oldFront = frustum.front;
+			float3 oldUp = frustum.up;
+			frustum.up = pitch_rotation.MulDir(oldUp).Normalized();
+			frustum.front = pitch_rotation.MulDir(oldFront).Normalized();
+		}
+		else
+		{
+			//LOG("Middlepoint equals new dir");
+		}
+	}
 }
 
 
