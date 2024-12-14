@@ -2,7 +2,9 @@
 #define __ModuleWindow_H__
 
 #include "Module.h"
-#include "SDL/include/SDL.h"
+
+struct SDL_Window;
+struct SDL_Surface;
 
 class Application;
 
@@ -26,7 +28,7 @@ public:
 	int GetWidth() const { return window_width; }
 	int GetHeight() const { return window_height; }
 
-	float GetBrightness() const { return SDL_GetWindowBrightness(window); }
+	float GetBrightness() const;
 
 	void SetBrightness(float brightness) const;
 	void SetWidth(int width);
@@ -39,10 +41,10 @@ public:
 
 public:
 	//The window we'll be rendering to
-	SDL_Window* window = NULL;
+	SDL_Window* window = nullptr;
 
 	//The surface contained by the window
-	SDL_Surface* screen_surface = NULL;
+	SDL_Surface* screen_surface = nullptr;
 
 private:
 	int window_width;

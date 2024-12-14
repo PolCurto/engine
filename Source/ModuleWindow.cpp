@@ -2,6 +2,7 @@
 #include "Application.h"
 #include "ModuleWindow.h"
 #include "ModuleEditorCamera.h"
+#include "SDL.h"
 
 ModuleWindow::ModuleWindow()
 {
@@ -26,8 +27,11 @@ bool ModuleWindow::Init()
 	else
 	{
 		//Create window
-		window_width = SCREEN_WIDTH;
-		window_height = SCREEN_HEIGHT;
+		SDL_DisplayMode display;
+		SDL_GetDesktopDisplayMode(0, &display);
+		window_width = display.w / 2;
+		window_height = display.h / 2;
+
 		Uint32 flags = SDL_WINDOW_SHOWN |  SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE;
 
 		if(FULLSCREEN == true)
@@ -75,6 +79,11 @@ void ModuleWindow::WindowResized(unsigned width, unsigned height)
 	window_height = height;
 
 	App->GetCamera()->SetAspectRatio(static_cast<float>(window_width) / static_cast<float>(window_height));
+}
+
+float ModuleWindow::GetBrightness() const
+{
+	return SDL_GetWindowBrightness(window);
 }
 
 void ModuleWindow::SetBrightness(float brightness) const

@@ -11,6 +11,8 @@
 #include "DirectXTex.h"
 #include "tiny_gltf.h"
 #include "Model.h"
+#include "SDL.h"
+
 
 ModuleEditor::ModuleEditor()
 {
