@@ -25,6 +25,10 @@ public:
 
 	void* GetContext() const { return context; }
 
+	void SetDepthTest(bool enable) const;
+	void SetFaceCull(bool enable) const;
+	void SetFrontFaceMode(int mode) const;
+
 	//void __stdcall OpenGlDebugging(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam);
 
 private:

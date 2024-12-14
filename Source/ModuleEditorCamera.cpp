@@ -36,14 +36,12 @@ bool ModuleEditorCamera::Init()
 	frustum.pos = camera_position;
 	projection_matrix = frustum.ProjectionMatrix();
 
-
 	return true;
 }
 
 update_status ModuleEditorCamera::Update()
 {	
 	ProcessInput();
-	SetFrustum();
 	return UPDATE_CONTINUE;
 }
 
@@ -62,7 +60,6 @@ void ModuleEditorCamera::ProcessInput()
 	float factor = 1;
 
 	// Add the mouse wheel motion to the movement
-
 	float yaw_deg = 0;
 	float pitch_deg = 0;
 
@@ -70,24 +67,23 @@ void ModuleEditorCamera::ProcessInput()
 	{
 		FocusGeometry();
 	}
-	else if (App->GetInput()->GetMouseButtons()[MIDDLE_BUTTON])
+	else if (App->GetInput()->GetMouseButtons()[MIDDLE_BUTTON]) // Drag
 	{
 		SDL_SetRelativeMouseMode(SDL_TRUE);
 		camera_position += App->GetInput()->GetMouseMotionY() * drag_speed * frustum.up * (App->delta/1000.0f) * factor;
 		right_speed -= App->GetInput()->GetMouseMotionX() * drag_speed;
 	}
-	else if (keys[SDL_SCANCODE_LALT] && App->GetInput()->GetMouseButtons()[RIGHT_BUTTON])    // Zoom with vertical mouse motion
+	else if (keys[SDL_SCANCODE_LALT] && App->GetInput()->GetMouseButtons()[RIGHT_BUTTON]) // Zoom with vertical mouse motion
 	{
 		SDL_SetRelativeMouseMode(SDL_TRUE);
 		front_speed -= App->GetInput()->GetMouseMotionY() * zoom_speed;
 	}
-	else if (keys[SDL_SCANCODE_LALT] && App->GetInput()->GetMouseButtons()[LEFT_BUTTON])    // Orbit around the selected object
+	else if (keys[SDL_SCANCODE_LALT] && App->GetInput()->GetMouseButtons()[LEFT_BUTTON]) // Orbit around the selected object
 	{
 		SDL_SetRelativeMouseMode(SDL_TRUE);
 
 		float3 model_pos = *App->GetRenderExercise()->model->local_position;
-		distance_from_model = (camera_position - model_pos).Length();
-		model_front = (camera_position - model_pos).Normalized();
+		float3 model_front = (camera_position - model_pos).Normalized();
 
 		float yaw_rot = DegToRad(-App->GetInput()->GetMouseMotionX());
 		float pitch_rot = DegToRad(-App->GetInput()->GetMouseMotionY());
@@ -107,7 +103,7 @@ void ModuleEditorCamera::ProcessInput()
 		camera_position = model_pos + model_front * (camera_position - model_pos).Length();
 		SetOrientation(model_pos);
 	}
-	else if (App->GetInput()->GetMouseButtons()[RIGHT_BUTTON])    // Enables WASD movement and mouse motion camera movement
+	else if (App->GetInput()->GetMouseButtons()[RIGHT_BUTTON]) // Enables WASD movement and mouse motion camera movement
 	{
 		SDL_SetRelativeMouseMode(SDL_TRUE);
 
@@ -145,44 +141,30 @@ void ModuleEditorCamera::ProcessInput()
 			frustum.front = pitch_rotation.MulDir(frustum.front).Normalized();
 		}
 	}
-	else
+	else // Mouse wheel zoom
 	{
 		front_speed += App->GetInput()->GetMouseWheel() * zoom_speed * 5;
 		SDL_SetRelativeMouseMode(SDL_FALSE);
 	}
 
 	camera_position += (front_speed * frustum.front + right_speed * frustum.WorldRight() + up_speed * float3::unitY) * (App->delta / 1000.0f) * factor;
+	frustum.pos = camera_position;
+	view_matrix = static_cast<float4x4>(frustum.ViewMatrix());
 
 }
 
 void ModuleEditorCamera::FocusGeometry()
 {
-	float z_dist = App->GetRenderExercise()->model->max_positions->Distance(*App->GetRenderExercise()->model->min_positions);
+	float diagonal = App->GetRenderExercise()->model->max_positions->Distance(*App->GetRenderExercise()->model->min_positions);
 	float3 pos = *App->GetRenderExercise()->model->local_position;
-	LOG("Distance: %f", z_dist);
-	LOG("Mesh position: %f, %f, %f", pos.x, pos.y, pos.z);
 
 	camera_position.x = pos.x;
 	camera_position.y = pos.y;
-	camera_position.z = pos.z + z_dist;
+	camera_position.z = pos.z + diagonal;
 
-	LOG("Camera position: %f, %f, %f", camera_position.x, camera_position.y, camera_position.z);
+	//LOG("Camera position: %f, %f, %f", camera_position.x, camera_position.y, camera_position.z);
 
 	SetOrientation(pos);
-
-	//frustum.front = math::float3(0, 0, -1);
-	//frustum.up = math::float3::unitY;
-}
-
-void ModuleEditorCamera::SetFrustum()
-{
-	// Get all the data using the frustrum class
-	frustum.pos = camera_position;
-	//projection_matrix = frustum.ProjectionMatrix();
-	view_matrix = static_cast<float4x4>(frustum.ViewMatrix());
-
-	// TODO: Implement my own LookAt function
-
 }
 
 void ModuleEditorCamera::SetFOV(float new_fov)
@@ -209,12 +191,14 @@ void ModuleEditorCamera::SetPlaneDistances(float near_plane_dist, float far_plan
 void ModuleEditorCamera::SetPosition(const float3& new_position)
 {
 	frustum.pos = camera_position = new_position;
+	view_matrix = static_cast<float4x4>(frustum.ViewMatrix());
 }
 
 void ModuleEditorCamera::SetPosition(const float x, const float y, const float z)
 {
 	float3 new_position(x, y, z);
 	frustum.pos = camera_position = new_position;
+	view_matrix = static_cast<float4x4>(frustum.ViewMatrix());
 }
 
 void ModuleEditorCamera::SetOrientation(const float3& target)
@@ -223,4 +207,5 @@ void ModuleEditorCamera::SetOrientation(const float3& target)
 	
 	float3 frustum_right = float3::unitY.Cross(frustum.front).Normalized();
 	frustum.up = frustum.front.Cross(frustum_right).Normalized();
+	view_matrix = static_cast<float4x4>(frustum.ViewMatrix());
 }

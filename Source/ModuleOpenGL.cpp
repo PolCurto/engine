@@ -107,6 +107,27 @@ void ModuleOpenGL::DestroyVBO(unsigned vbo) const
 	glDeleteBuffers(1, &vbo);
 }
 
+void ModuleOpenGL::SetDepthTest(bool enable) const
+{
+	if (enable)
+		glEnable(GL_DEPTH_TEST);
+	else
+		glDisable(GL_DEPTH_TEST);
+}
+
+void ModuleOpenGL::SetFaceCull(bool enable) const
+{
+	if (enable)
+		glEnable(GL_CULL_FACE);
+	else
+		glDisable(GL_CULL_FACE);
+}
+
+void ModuleOpenGL::SetFrontFaceMode(int mode) const
+{
+	glFrontFace(mode);
+}
+
 void __stdcall OpenGlDebugging(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
 {
 	const char* tmp_source = "", * tmp_type = "", * tmp_severity = "";
