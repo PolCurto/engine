@@ -317,12 +317,16 @@ void ModuleEditor::OpenGLConfig()
 
 	static int front_face_mode = GL_CCW;
 	bool changed = false;
-	ImGui::Text("Front fae mode");
-	changed = ImGui::RadioButton("Counter clock-wise", &front_face_mode, GL_CCW);
-	ImGui::SameLine();
-	changed = ImGui::RadioButton("Clock-wise", &front_face_mode, GL_CW);
-	if (changed)
+	ImGui::Text("Front face mode");
+	if (ImGui::RadioButton("Counter clock-wise", &front_face_mode, GL_CCW))
+	{
 		App->GetOpenGL()->SetFrontFaceMode(front_face_mode);
+	}
+	ImGui::SameLine();
+	if (ImGui::RadioButton("Clock-wise", &front_face_mode, GL_CW))
+	{
+		App->GetOpenGL()->SetFrontFaceMode(front_face_mode);
+	}	
 }
 
 void ModuleEditor::TexturesConfig() 
@@ -333,30 +337,27 @@ void ModuleEditor::TexturesConfig()
 
 	for (int i = 0; i < App->GetRenderExercise()->model->GetTexturesIDCount(); ++i)
 	{
-		bool changed = false;
-
 		ImGui::Text("Texture %d", i + 1);
 
 		ImGui::Text("Wrap mode");
-		changed = ImGui::RadioButton("Repeat##2", &wrap_mode, GL_REPEAT);
+		ImGui::RadioButton("Repeat##2", &wrap_mode, GL_REPEAT);
 		ImGui::SameLine();
-		changed = ImGui::RadioButton("Mirrored repeat##2", &wrap_mode, GL_MIRRORED_REPEAT);
-		changed = ImGui::RadioButton("Clamp##2", &wrap_mode, GL_CLAMP);
+		ImGui::RadioButton("Mirrored repeat##2", &wrap_mode, GL_MIRRORED_REPEAT);
+		ImGui::RadioButton("Clamp##2", &wrap_mode, GL_CLAMP);
 		ImGui::SameLine();
-		changed = ImGui::RadioButton("Clamp to border##2", &wrap_mode, GL_CLAMP_TO_BORDER);
+		ImGui::RadioButton("Clamp to border##2", &wrap_mode, GL_CLAMP_TO_BORDER);
 
 		ImGui::Text("Min Filter");
-		changed = ImGui::RadioButton("Nearest##2", &min_filter, GL_NEAREST);
+		ImGui::RadioButton("Nearest##2", &min_filter, GL_NEAREST);
 		ImGui::SameLine();
-		changed = ImGui::RadioButton("Linear##2", &min_filter, GL_LINEAR);
+		ImGui::RadioButton("Linear##2", &min_filter, GL_LINEAR);
 
 		ImGui::Text("Mag Filter");
-		changed = ImGui::RadioButton("Nearest##1", &mag_filter, GL_NEAREST);
+		ImGui::RadioButton("Nearest##1", &mag_filter, GL_NEAREST);
 		ImGui::SameLine();
-		changed = ImGui::RadioButton("Linear##1", &mag_filter, GL_LINEAR);
+		ImGui::RadioButton("Linear##1", &mag_filter, GL_LINEAR);
 
-		if (changed)
-			App->GetRenderExercise()->model->SetTextureParameters({ i, wrap_mode, min_filter, mag_filter });
+		App->GetRenderExercise()->model->SetTextureParameters({ i, wrap_mode, min_filter, mag_filter });
 	}
 }
 

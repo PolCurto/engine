@@ -24,7 +24,7 @@ Model::Model()
 
 Model::~Model()
 {
-
+	
 }
 
 void Model::Load(const char* asset_filename)
@@ -57,13 +57,14 @@ void Model::Load(const char* asset_filename)
 			meshes.push_back(std::move(mesh));
 		}
 	}
-	UpdatePosition();
 	LoadMaterials(model);
+	LoadMatrices(model);
+	UpdatePositions();
 }
 
 void Model::LoadMaterials(const tinygltf::Model& src_model)
 {
-	LOG("Loading materials");
+	LOG("Loading materials...");
 
 	for (const tinygltf::Material& src_material : src_model.materials)
 	{
@@ -84,13 +85,35 @@ void Model::LoadMaterials(const tinygltf::Model& src_model)
 	LOG("Materials loaded");
 }
 
+void Model::LoadMatrices(const tinygltf::Model& src_model)
+{
+	LOG("Loading matrices...");
+
+	for (const tinygltf::Node& node : src_model.nodes)
+	{
+		if (node.mesh >= 0)
+		{
+			if (node.matrix.size() > 0) // If node has a complete model matrix, pass it to the mesh
+			{
+				meshes[node.mesh]->SetModelMatrix(node.matrix);
+			}
+			else // If not pass the three separate matrices (The mesh will build the model matrix from that)
+			{
+				meshes[node.mesh]->SetModelMatrix(node.translation, node.rotation, node.scale);
+			}
+		}
+	}
+
+	LOG("Matrices loaded")
+}
+
 void Model::Render(const unsigned int program)
 {
 	for (const std::unique_ptr<Mesh>& mesh : meshes)
 	{
 		mesh->Render(program, textures_id);
 	}
-	UpdatePosition();
+	//UpdatePosition();
 }
 
 void Model::ShowModelInformation() const
@@ -141,7 +164,7 @@ void Model::Delete()
 	textures_data.clear();
 }
 
-void Model::UpdatePosition()
+void Model::UpdatePositions()
 {
 	float3 world_positions_sum(0, 0, 0);
 	float3 local_positions_sum(0, 0, 0);
@@ -149,7 +172,7 @@ void Model::UpdatePosition()
 	for (int i = 0; i < meshes.size(); ++i)
 	{
 		world_positions_sum += *meshes[i]->world_position;
-		local_positions_sum += *meshes[i]->world_position + *meshes[i]->mesh_center;
+		local_positions_sum += *meshes[i]->mesh_center;
 	
 		if (i == 0)
 		{

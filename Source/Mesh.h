@@ -2,7 +2,7 @@
 #define __MESH_H__
 
 #include "Globals.h"
-#include "memory"
+#include <memory>
 
 namespace tinygltf
 {
@@ -14,6 +14,7 @@ namespace tinygltf
 namespace math
 {
 	class float3;
+	class float4x4;
 }
 
 
@@ -28,6 +29,8 @@ public:
 	void CreateVAO();
 	void Render(const unsigned int program, const std::vector<unsigned int>& textures) const;
 	void Delete() const;
+	void SetModelMatrix(const std::vector<double>& model);
+	void SetModelMatrix(const std::vector<double>& translation, const std::vector<double>& rotation, const std::vector<double>& scale);
 
 	size_t GetVertexCount() const { return vertex_count; }
 	size_t GetTrianglesCount() const { return vertex_count / 3; }
@@ -51,6 +54,6 @@ private:
 	std::unique_ptr<math::float3> max_positions_local;
 	std::unique_ptr<math::float3> min_positions_local;
 
-	std::unique_ptr<math::float3> translate;
+	std::unique_ptr<math::float4x4> model_matrix;
 };
 #endif // __MESH_H__

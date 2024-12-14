@@ -125,6 +125,7 @@ void ModuleOpenGL::SetFaceCull(bool enable) const
 
 void ModuleOpenGL::SetFrontFaceMode(int mode) const
 {
+	LOG("SET FACE CULL MODE: %d", mode);
 	glFrontFace(mode);
 }
 

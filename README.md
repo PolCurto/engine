@@ -11,5 +11,9 @@ In-house engine made from scratch with C++ in the UPC School Advanced Programmin
 * Right click + [W][A][S][D] to move around, [Q][E] to move up/down in the Y axis. In this mode the mouse motion moves the camera around
 
 ## Additional functionality
+Explicar lo de la model matrix.
+Si ho arribo a fer explicar el moviment dels objectes
 
 ## Additional comments
+Explicar lo de max/min positions i world i local i el offset del focus.
+Explicar una mica el flow del programa

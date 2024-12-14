@@ -21,7 +21,7 @@ Mesh::Mesh()
 	max_positions_world = std::make_unique<float3>();
 	min_positions_world = std::make_unique<float3>();
 
-	translate = std::make_unique<float3>(0.0f, 1.0f, -4.0f);
+	model_matrix = std::make_unique<float4x4>();
 }
 
 Mesh::~Mesh()
@@ -126,10 +126,6 @@ void Mesh::LoadVBO(const tinygltf::Model& model, const tinygltf::Mesh& mesh, con
 					uvs_buffer_ptr += uvs_view.byteStride;
 			}
 			glUnmapBuffer(GL_ARRAY_BUFFER);
-
-			*mesh_center = float3((max_positions_local->x + min_positions_local->x) / 2, (max_positions_local->y + min_positions_local->y) / 2, (max_positions_local->z + min_positions_local->z));
-			LOG("Max positions: %f, %f, %f", max_positions_local->x, max_positions_local->y, max_positions_local->z);
-			LOG("Min positions: %f, %f, %f", min_positions_local->x, min_positions_local->y, min_positions_local->z);
 		}
 		else
 		{
@@ -179,20 +175,66 @@ void Mesh::LoadVBO(const tinygltf::Model& model, const tinygltf::Mesh& mesh, con
 			}
 			glUnmapBuffer(GL_ARRAY_BUFFER);
 		}
-		float4x4 model = math::float4x4::FromTRS(*translate, float4x4::RotateZ(0), float3(1.0f, 1.0f, 1.0f));
-		float4 max_pos = model * float4(*max_positions_local, 1.0f);
-		*max_positions_world = float3(max_pos.x, max_pos.y, max_pos.z);
-
-		float4 min_pos = model * float4(*min_positions_local, 1.0f);
-		*min_positions_world = float3(min_pos.x, min_pos.y, min_pos.z);
-
-		*world_position = *translate;
-
-		LOG("Max positions world: %f, %f, %f", max_positions_world->x, max_positions_world->y, max_positions_world->z);
-		LOG("Min positions world: %f, %f, %f", min_positions_world->x, min_positions_world->y, min_positions_world->z);
-		LOG("World pos: %f, %f, %f", world_position->x, world_position->y, world_position->z);
 	}
 	LOG("Load mesh with vbo index: %d. vertex count: %d. uvs count: %d", vbo, vertex_count, uvs_count);
+}
+
+void Mesh::SetModelMatrix(const std::vector<double>& model_matrix)
+{
+	for (int i = 0; i < 4; ++i)
+	{
+
+	}
+}
+
+void Mesh::SetModelMatrix(const std::vector<double>& trans, const std::vector<double>& rot, const std::vector<double>& sc)
+{
+	float3 translation = float3::zero;
+	float4x4 rotation = float4x4::identity;
+	float3 scale = float3::one;
+
+	// Translation
+	if (trans.size() > 0)
+	{
+		for (int i = 0; i < trans.size(); ++i)
+		{
+			translation[i] = static_cast<float>(trans[i]);
+		}
+	}
+
+	// Rotation
+	if (rot.size() > 0)
+	{
+		Quat quaternion(static_cast<float>(rot[0]), static_cast<float>(rot[1]), static_cast<float>(rot[2]), static_cast<float>(rot[3]));
+		rotation = quaternion.ToFloat4x4();
+	}
+	
+	// Scale
+	if (sc.size() > 0)
+	{
+		for (int i = 0; i < sc.size(); ++i)
+		{
+			scale[i] = static_cast<float>(sc[i]);
+		}
+	}
+
+	*model_matrix = float4x4::FromTRS(translation, rotation, scale);
+
+	float4 max_pos = *model_matrix * float4(*max_positions_local, 1.0f);
+	*max_positions_world = float3(max_pos.x, max_pos.y, max_pos.z);
+	
+	float4 min_pos = *model_matrix * float4(*min_positions_local, 1.0f);
+	*min_positions_world = float3(min_pos.x, min_pos.y, min_pos.z);
+	
+	*world_position = model_matrix->TranslatePart();
+
+	LOG("Max positions world: %f, %f, %f", max_positions_world->x, max_positions_world->y, max_positions_world->z);
+	LOG("Min positions world: %f, %f, %f", min_positions_world->x, min_positions_world->y, min_positions_world->z);
+	LOG("World pos: %f, %f, %f", world_position->x, world_position->y, world_position->z);
+
+	*mesh_center = float3((max_positions_world->x + min_positions_world->x) / 2, (max_positions_world->y + min_positions_world->y) / 2, (max_positions_world->z + min_positions_world->z));
+	LOG("Max positions: %f, %f, %f", max_positions_local->x, max_positions_local->y, max_positions_local->z);
+	LOG("Min positions: %f, %f, %f", min_positions_local->x, min_positions_local->y, min_positions_local->z);
 }
 
 void Mesh::LoadEBO(const tinygltf::Model& model, const tinygltf::Mesh& mesh, const tinygltf::Primitive& primitive)
@@ -264,14 +306,16 @@ void Mesh::Render(unsigned int program, const std::vector<unsigned int>& texture
 	float4x4 projection = App->GetCamera()->GetProjectionMatrix();
 	float4x4 view = App->GetCamera()->GetViewMatrix();
 	//float4x4 model = math::float4x4::FromTRS(float3(0.0f, 1.0f, -4.0f), float4x4::RotateZ(0), float3(100.0f, 100.0f, 100.0f));
-	float4x4 model = math::float4x4::FromTRS(*translate, float4x4::RotateZ(0), float3(1.0f, 1.0f, 1.0f));
+	//float4x4 model = math::float4x4::FromTRS(*translate, float4x4::RotateZ(0), float3(1.0f, 1.0f, 1.0f));
+	float4x4 model = *model_matrix;
 
 	glUseProgram(program);
 	glUniformMatrix4fv(0, 1, GL_TRUE, &projection[0][0]);
 	glUniformMatrix4fv(1, 1, GL_TRUE, &view[0][0]);
 	glUniformMatrix4fv(2, 1, GL_TRUE, &model[0][0]);
 
-	*world_position = *translate;
+	// Should only change if the mesh is moved
+	*world_position = model.TranslatePart();
 
 	float4 max_pos = model * float4(*max_positions_local, 1.0f);
 	*max_positions_world = float3(max_pos.x, max_pos.y, max_pos.z);

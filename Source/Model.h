@@ -29,7 +29,6 @@ public:
 	~Model();
 
 	void Load(const char* asset_filename);
-	void LoadMaterials(const tinygltf::Model& src_model);
 	void Render(unsigned int program);
 	void ShowModelInformation() const;
 	void SetTextureParameters(const std::vector<int>&& params);
@@ -43,7 +42,9 @@ public:
 	std::unique_ptr<math::float3> min_positions;
 
 private:
-	void UpdatePosition();
+	void LoadMaterials(const tinygltf::Model& src_model);
+	void LoadMatrices(const tinygltf::Model& src_model);
+	void UpdatePositions();
 
 	std::vector<std::unique_ptr<Mesh>> meshes;
 	std::vector<unsigned int> textures_id;
