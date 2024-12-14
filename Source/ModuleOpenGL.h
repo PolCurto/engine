@@ -17,11 +17,7 @@ public:
 	update_status PostUpdate();
 	bool CleanUp();
 
-	unsigned CreateTriangleVBO(float vertex_data[], int data_length);
-	void RenderVBO(unsigned vbo, unsigned program, unsigned texture) const;
 	void DestroyVBO(unsigned vbo) const;
-
-	void DestroyTexture(unsigned texture) const;
 
 	void* GetContext() const { return context; }
 

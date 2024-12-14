@@ -12,22 +12,7 @@ ModuleProgram::~ModuleProgram()
 
 }
 
-bool ModuleProgram::Init()
-{
-	return true;
-}
-
-update_status ModuleProgram::Update()
-{
-	return UPDATE_CONTINUE;
-}
-
-bool ModuleProgram::CleanUp()
-{
-	return true;
-}
-
-char* ModuleProgram::LoadShaderSource(const char* shader_file_name)
+char* ModuleProgram::LoadShaderSource(const char* shader_file_name) const
 {
 	char* data = nullptr;
 	FILE* file = nullptr;
@@ -45,7 +30,7 @@ char* ModuleProgram::LoadShaderSource(const char* shader_file_name)
 	return data;    //Must free data after using it
 }
 
-unsigned ModuleProgram::CompileShader(unsigned type, const char* source)
+unsigned int ModuleProgram::CompileShader(const unsigned int type, const char* source) const
 {
 	// Types GL_VERTEX_SHADER / GL_FRAGMENT_SHADER
 	unsigned shader_id = glCreateShader(type);
@@ -71,7 +56,7 @@ unsigned ModuleProgram::CompileShader(unsigned type, const char* source)
 	return shader_id;
 }
 
-unsigned ModuleProgram::CreateProgram(unsigned vertex_shader, unsigned fragment_shader)
+unsigned int ModuleProgram::CreateProgram(const unsigned int vertex_shader, const unsigned int fragment_shader) const
 {
 	unsigned program_id = glCreateProgram();
 	glAttachShader(program_id, vertex_shader);
@@ -97,7 +82,7 @@ unsigned ModuleProgram::CreateProgram(unsigned vertex_shader, unsigned fragment_
 	return program_id;
 }
 
-void ModuleProgram::DeleteProgram(unsigned int program_id)
+void ModuleProgram::DeleteProgram(const unsigned int program_id) const
 {
 	glDeleteProgram(program_id);
 }

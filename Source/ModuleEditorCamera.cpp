@@ -165,21 +165,21 @@ void ModuleEditorCamera::FocusGeometry()
 	SetOrientation(pos);
 }
 
-void ModuleEditorCamera::SetFOV(float new_fov)
+void ModuleEditorCamera::SetFOV(const float new_fov)
 {
 	frustum.horizontalFov = DegToRad(new_fov);
 	frustum.verticalFov = 2.0f * atanf(tanf(frustum.horizontalFov * 0.5f) * (1 / aspect_ratio));
 	projection_matrix = frustum.ProjectionMatrix();
 }
 
-void ModuleEditorCamera::SetAspectRatio(float new_aspect_ratio)
+void ModuleEditorCamera::SetAspectRatio(const float new_aspect_ratio)
 {
 	aspect_ratio = new_aspect_ratio;
 	frustum.verticalFov = 2.0f * atanf(tanf(frustum.horizontalFov * 0.5f) * (1 / aspect_ratio));
 	projection_matrix = frustum.ProjectionMatrix();
 }
 
-void ModuleEditorCamera::SetPlaneDistances(float near_plane_dist, float far_plane_dist)
+void ModuleEditorCamera::SetPlaneDistances(const float near_plane_dist, const float far_plane_dist)
 {
 	frustum.nearPlaneDistance = near_plane_dist;
 	frustum.farPlaneDistance = far_plane_dist;

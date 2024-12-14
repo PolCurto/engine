@@ -31,7 +31,7 @@ public:
 	void Load(const char* asset_filename);
 	void Render(unsigned int program);
 	void ShowModelInformation() const;
-	void SetTextureParameters(const std::vector<int>&& params);
+	void SetTextureParameters(const std::vector<int>&& params) const;
 	void Delete();
 
 	int GetTexturesIDCount() const { return textures_id.size(); }

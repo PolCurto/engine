@@ -19,7 +19,6 @@ public:
 	bool Init();
 	update_status PreUpdate();
 	update_status Update();
-	update_status PostUpdate();
 	bool CleanUp();
 
 	void AddLog(const char* new_log) const;
@@ -32,11 +31,11 @@ private:
 	void MainMenu();
 
 	void SettingsMenu();
-	void WindowConfig();
-	void CameraConfig();
-	void OpenGLConfig();
-	void TexturesConfig();
-	void ModelConfig();
+	void WindowConfig() const;
+	void CameraConfig() const;
+	void OpenGLConfig() const;
+	void TexturesConfig() const;
+	void ModelConfig() const;
 
 	void FPSCount();
 	void AboutWindow() const;
@@ -47,9 +46,6 @@ private:
 	bool show_settings = false;
 	bool show_properties = false;
 	bool show_console = true;
-
-	bool fullscreen = false;
-	bool resizable = true;
 
 	bool quit = false;
 

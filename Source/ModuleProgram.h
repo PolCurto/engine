@@ -8,14 +8,10 @@ public:
 	ModuleProgram();
 	~ModuleProgram();
 
-	bool Init();
-	update_status Update();
-	bool CleanUp();
-
-	char* LoadShaderSource(const char* shader_file_name);
-	unsigned CompileShader(unsigned type, const char* source);
-	unsigned CreateProgram(unsigned vertex_shader, unsigned fragment_shader);
-	void DeleteProgram(unsigned program_id);
+	char* LoadShaderSource(const char* shader_file_name) const;
+	unsigned int CompileShader(const unsigned int type, const char* source) const;
+	unsigned int CreateProgram(const unsigned int vertex_shader, const unsigned int fragment_shader) const;
+	void DeleteProgram(const unsigned int program_id) const;
 
 private:
 

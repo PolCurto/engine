@@ -41,11 +41,8 @@ bool ModuleRenderExercise::Init()
 	program_id = App->GetProgram()->CreateProgram(vtx_id, frag_id);
 	LOG("Program id: %d", program_id);
 
-	// Load model
-	//model->Load("Models/Avocado/Avocado.gltf");
+	// Load model and focus the camera
 	model->Load("Models/BakerHouse/BakerHouse.gltf");
-	//model->Load("Models/Helmet/SciFiHelmet.gltf");
-	//model->Load("Models/Boxes/BoxTextured.gltf");
 	App->GetCamera()->FocusGeometry();
 	return true;
 }
@@ -54,8 +51,6 @@ update_status ModuleRenderExercise::Update()
 {
 	model->Render(program_id);
 	model->ShowModelInformation();
-
-	//App->GetOpenGL()->RenderVBO(vbo, program_id, texture);
 
 	return UPDATE_CONTINUE;
 }

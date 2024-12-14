@@ -78,6 +78,7 @@ update_status ModuleOpenGL::Update()
 {
 	float4x4 projection = App->GetCamera()->GetProjectionMatrix();
 	float4x4 view = App->GetCamera()->GetViewMatrix();
+
 	// Draw debug axis origin and square grid
 	App->GetDebug()->Draw(view, projection, App->GetWindow()->GetWidth(), App->GetWindow()->GetHeight());
 	return UPDATE_CONTINUE;
@@ -92,12 +93,8 @@ update_status ModuleOpenGL::PostUpdate()
 // Called before quitting
 bool ModuleOpenGL::CleanUp()
 {
-
 	LOG("Destroying renderer");
-
 	SDL_GL_DeleteContext(context);
-
-	//Destroy window
 
 	return true;
 }

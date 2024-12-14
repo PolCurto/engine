@@ -142,7 +142,7 @@ void Model::ShowModelInformation() const
 	App->GetEditor()->ShowModelProperties(meshes_data, textures_metadata);
 }
 
-void Model::SetTextureParameters(const std::vector<int>&& params)
+void Model::SetTextureParameters(const std::vector<int>&& params) const
 {
 	glBindTexture(GL_TEXTURE_2D, textures_id[params[0]]);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, params[1]);
@@ -190,7 +190,6 @@ void Model::UpdatePositions()
 		}
 		else
 		{
-
 			if (meshes[i]->max_positions_world->x > max_positions->x)
 				max_positions->x = meshes[i]->max_positions_world->x;
 

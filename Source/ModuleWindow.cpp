@@ -66,14 +66,16 @@ bool ModuleWindow::CleanUp()
 	if(window != NULL)
 	{
 		SDL_DestroyWindow(window);
+		window = nullptr;
 	}
+
 
 	//Quit SDL subsystems
 	SDL_Quit();
 	return true;
 }
 
-void ModuleWindow::WindowResized(unsigned width, unsigned height)
+void ModuleWindow::WindowResized(const unsigned int width, const unsigned int height)
 {
 	window_width = width;
 	window_height = height;
@@ -91,13 +93,13 @@ void ModuleWindow::SetBrightness(float brightness) const
 	SDL_SetWindowBrightness(window, brightness);
 }
 
-void ModuleWindow::SetWidth(int width)
+void ModuleWindow::SetWidth(const unsigned int width)
 {
 	window_width = width;
 	SDL_SetWindowSize(window, window_width, window_height);
 }
 
-void ModuleWindow::SetHeight(int height)
+void ModuleWindow::SetHeight(const unsigned int height)
 {
 	window_height = height;
 	SDL_SetWindowSize(window, window_width, window_height);

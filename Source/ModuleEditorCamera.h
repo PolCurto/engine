@@ -17,9 +17,9 @@ public:
 	float4x4 GetViewMatrix() const { return view_matrix; }
 
 	void FocusGeometry();
-	void SetFOV(float new_fov);
-	void SetAspectRatio(float new_aspect_ratio);
-	void SetPlaneDistances(float near_plane, float far_plane);
+	void SetFOV(const float new_fov);
+	void SetAspectRatio(const float new_aspect_ratio);
+	void SetPlaneDistances(const float near_plane, const float far_plane);
 	void SetPosition(const float3& new_position);
 	void SetPosition(const float x, const float y, const float z);
 	void SetOrientation(const float3& new_front);

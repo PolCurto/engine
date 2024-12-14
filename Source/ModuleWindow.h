@@ -23,16 +23,16 @@ public:
 	// Called before quitting
 	bool CleanUp();
 
-	void WindowResized(unsigned width, unsigned height);
+	void WindowResized(const unsigned int width, const unsigned int height);
 
 	int GetWidth() const { return window_width; }
 	int GetHeight() const { return window_height; }
 
 	float GetBrightness() const;
 
-	void SetBrightness(float brightness) const;
-	void SetWidth(int width);
-	void SetHeight(int height);
+	void SetBrightness(const float brightness) const;
+	void SetWidth(const unsigned int width);
+	void SetHeight(const unsigned int height);
 
 	bool SetFullscreen(bool fullscreen) const;
 	void SetResizable(bool resizable) const;

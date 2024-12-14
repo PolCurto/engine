@@ -127,7 +127,7 @@ void Mesh::LoadVBO(const tinygltf::Model& model, const tinygltf::Mesh& mesh, con
 			}
 			glUnmapBuffer(GL_ARRAY_BUFFER);
 		}
-		else
+		else // If the mesh has no uvs
 		{
 			glGenBuffers(1, &vbo);
 			glBindBuffer(GL_ARRAY_BUFFER, vbo);
@@ -179,11 +179,14 @@ void Mesh::LoadVBO(const tinygltf::Model& model, const tinygltf::Mesh& mesh, con
 	LOG("Load mesh with vbo index: %d. vertex count: %d. uvs count: %d", vbo, vertex_count, uvs_count);
 }
 
-void Mesh::SetModelMatrix(const std::vector<double>& model_matrix)
+void Mesh::SetModelMatrix(const std::vector<double>& model)
 {
 	for (int i = 0; i < 4; ++i)
 	{
-
+		for (int j = 0; j < 4; ++j)
+		{
+			model_matrix->At(j, i) = static_cast<float>(model[i]);
+		}
 	}
 }
 

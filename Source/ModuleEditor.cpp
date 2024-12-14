@@ -78,11 +78,6 @@ update_status ModuleEditor::Update()
 	return UPDATE_CONTINUE;
 }
 
-update_status ModuleEditor::PostUpdate()
-{
-	return UPDATE_CONTINUE;
-}
-
 bool ModuleEditor::CleanUp()
 {
 	delete logs;
@@ -206,10 +201,12 @@ void ModuleEditor::SettingsMenu()
 	ImGui::End();
 }
 
-void ModuleEditor::WindowConfig()
+void ModuleEditor::WindowConfig() const
 {
 	static bool borderless = false;
 	static bool full_desktop = false;
+	static bool resizable = true;
+	static bool fullscreen = false;
 
 	// Brightness Slider
 	float brightness = App->GetWindow()->GetBrightness();
@@ -247,7 +244,7 @@ void ModuleEditor::WindowConfig()
 		App->GetWindow()->SetFullDesktop(full_desktop);
 }
 
-void ModuleEditor::CameraConfig()
+void ModuleEditor::CameraConfig() const
 {
 	// Camera position
 	float3 camera_pos = App->GetCamera()->GetCameraPosition();
@@ -305,7 +302,7 @@ void ModuleEditor::CameraConfig()
 	}
 }
 
-void ModuleEditor::OpenGLConfig()
+void ModuleEditor::OpenGLConfig() const
 {
 	static bool depth_test = true;
 	if (ImGui::Checkbox("Depth test", &depth_test))
@@ -333,7 +330,7 @@ void ModuleEditor::OpenGLConfig()
 	}	
 }
 
-void ModuleEditor::TexturesConfig() 
+void ModuleEditor::TexturesConfig() const
 {
 	static int wrap_mode = GL_CLAMP;
 	static int mag_filter = GL_NEAREST;
@@ -365,7 +362,7 @@ void ModuleEditor::TexturesConfig()
 	}
 }
 
-void ModuleEditor::ModelConfig()
+void ModuleEditor::ModelConfig() const
 {
 	float3 model_pos = *App->GetRenderExercise()->model->world_position;
 	float pos[] = { model_pos.x, model_pos.y, model_pos.z };
