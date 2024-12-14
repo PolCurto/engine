@@ -12,6 +12,7 @@
 #include "tiny_gltf.h"
 #include "Model.h"
 #include "SDL.h"
+#include "Math/MathAll.h"
 
 
 ModuleEditor::ModuleEditor()

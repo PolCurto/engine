@@ -1,6 +1,13 @@
 #pragma once
+#include <memory>
 #include "Module.h"
-#include "MathGeoLib.h"
+
+namespace math
+{
+	class Frustum;
+	class float3;
+	class float4x4;
+}
 
 class ModuleEditorCamera : public Module
 {
@@ -13,39 +20,38 @@ public:
 	update_status Update();
 	bool CleanUp();
 
-	float4x4 GetProjectionMatrix() const { return projection_matrix; }
-	float4x4 GetViewMatrix() const { return view_matrix; }
+	math::float4x4& GetProjectionMatrix() const { return *projection_matrix; }
+	math::float4x4& GetViewMatrix() const { return *view_matrix; }
 
 	void FocusGeometry();
 	void SetFOV(const float new_fov);
 	void SetAspectRatio(const float new_aspect_ratio);
 	void SetPlaneDistances(const float near_plane, const float far_plane);
-	void SetPosition(const float3& new_position);
+	void SetPosition(const math::float3& new_position);
 	void SetPosition(const float x, const float y, const float z);
-	void SetOrientation(const float3& new_front);
+	void SetOrientation(const math::float3& new_front);
 
-	float3 GetCameraPosition() const { return camera_position; }
-	float GetFOV() const { return RadToDeg(frustum.horizontalFov); }
+	math::float3& GetCameraPosition() const { return *camera_position; }
+	float GetFOV() const;
 	float GetSensitivity() const { return sensitivity; }
 	float GetFreeMovementSpeed() const { return free_movement_speed; }
 	float GetZoomSpeed() const { return zoom_speed; }
 	float GetDragSpeed() const { return drag_speed; }
-	float GetNearPlaneDist() const { return frustum.nearPlaneDistance; }
-	float GetFarPlaneDist() const { return frustum.farPlaneDistance; }
+	float GetNearPlaneDist() const;
+	float GetFarPlaneDist() const;
 
 	void SetSensitivity(float new_sens) { sensitivity = new_sens; }
 	void SetFreeMovementSpeed(float new_speed) { free_movement_speed = new_speed; }
 	void SetZoomSpeed(float new_speed) { zoom_speed = new_speed; }
 	void SetDragSpeed(float new_speed) { drag_speed = new_speed; }
 
-
 private:
 	void ProcessInput();
 
-	Frustum frustum;
-	float4x4 projection_matrix = float4x4::zero;
-	float4x4 view_matrix = float4x4::zero;
-	float3 camera_position = float3::zero;
+	std::unique_ptr<math::Frustum> frustum; 
+	std::unique_ptr<math::float4x4> projection_matrix;
+	std::unique_ptr<math::float4x4> view_matrix;
+	std::unique_ptr<math::float3> camera_position;
 
 	float aspect_ratio = 0;
 
