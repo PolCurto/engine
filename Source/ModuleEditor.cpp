@@ -401,11 +401,20 @@ void ModuleEditor::AboutWindow() const
 {
 	ImGui::Begin("About");
 
+	SDL_version ver;
+	SDL_GetVersion(&ver);
+
 	ImGui::Text("Engine name: %s", TITLE);
-	ImGui::Text("Description: rock solid");
+	ImGui::Text("Description: Made from scratch with C++ in the UPC School Advanced Programming for AAA games master's degree");
 	ImGui::Text("Author: Pol Curto");
-	ImGui::Text("Libraries: SDL, Glew, MathGeoLib, ImGui, DirectXTex");
-	ImGui::Text("License: ");
+	ImGui::Text("Libraries:");
+	ImGui::BulletText("SDL v%u.%u.%u", ver.major, ver.minor, ver.patch);
+	ImGui::BulletText("Glew v2.1.0");
+	ImGui::BulletText("MathGeoLib v1.5");
+	ImGui::BulletText("ImGui v1.91.4");
+	ImGui::BulletText("DirectXTex vOct2024");
+	ImGui::BulletText("TinyGltf v2.9.3");
+	ImGui::Text("License: MIT License");
 
 	ImGui::End();
 }

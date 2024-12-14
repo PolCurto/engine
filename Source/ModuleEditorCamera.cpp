@@ -63,7 +63,7 @@ void ModuleEditorCamera::ProcessInput()
 	float yaw_deg = 0;
 	float pitch_deg = 0;
 
-	if (keys[SDL_SCANCODE_F])
+	if (keys[SDL_SCANCODE_F]) // Focus
 	{
 		FocusGeometry();
 	}
