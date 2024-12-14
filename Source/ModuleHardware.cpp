@@ -28,9 +28,6 @@ update_status ModuleHardware::Update()
 
 void ModuleHardware::ShowHardwareInfo() const
 {
-	ImGui::Text("SDL Version: %d.%d.%d", sdl_version->major, sdl_version->minor, sdl_version->patch);
-	ImGui::Separator();
-
 	ImGui::Text("CPUs: %i (Cache: %i KB)", SDL_GetCPUCount(), SDL_GetCPUCacheLineSize());
 	ImGui::Text("System RAM: %.2f GB", static_cast<float>(SDL_GetSystemRAM()) / 1024);
 	ImGui::Separator();

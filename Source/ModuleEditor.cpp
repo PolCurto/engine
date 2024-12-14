@@ -200,7 +200,6 @@ void ModuleEditor::SettingsMenu()
 	}
 	ImGui::Spacing();
 
-	ImGui::Separator();
 	ImGui::SeparatorText("Hardware Info");
 	App->GetHardware()->ShowHardwareInfo();
 
