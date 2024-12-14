@@ -4,6 +4,7 @@
 #include "SDL.h"
 #include "Model.h"
 #include "ModuleRenderExercise.h"
+#include "ModuleWindow.h"
 
 ModuleEditorCamera::ModuleEditorCamera()
 {
@@ -17,7 +18,6 @@ ModuleEditorCamera::~ModuleEditorCamera()
 
 bool ModuleEditorCamera::Init()
 {
-	camera_position.y = 1.0f;
 	free_movement_speed = 15;
 	zoom_speed = 50;
 	drag_speed = 10;
@@ -31,7 +31,7 @@ bool ModuleEditorCamera::Init()
 	frustum.farPlaneDistance = 100.0f;
 	frustum.horizontalFov = DegToRad(90);
 
-	aspect_ratio = static_cast<float>(SCREEN_WIDTH) / static_cast<float>(SCREEN_HEIGHT);
+	aspect_ratio = static_cast<float>(App->GetWindow()->GetWidth()) / static_cast<float>(App->GetWindow()->GetHeight());
 	frustum.verticalFov = 2.0f * atanf(tanf(frustum.horizontalFov * 0.5f) * (1 / aspect_ratio));
 	frustum.pos = camera_position;
 	projection_matrix = frustum.ProjectionMatrix();

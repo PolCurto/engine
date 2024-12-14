@@ -29,12 +29,15 @@ public:
 	void CreateVAO();
 	void Render(const unsigned int program, const std::vector<unsigned int>& textures) const;
 	void Delete() const;
+	void Move(const math::float3& distance);
+
 	void SetModelMatrix(const std::vector<double>& model);
 	void SetModelMatrix(const std::vector<double>& translation, const std::vector<double>& rotation, const std::vector<double>& scale);
 
 	size_t GetVertexCount() const { return vertex_count; }
 	size_t GetTrianglesCount() const { return vertex_count / 3; }
 	size_t GetIndicesCount() const { return vertex_count; }
+
 
 	std::unique_ptr<math::float3> mesh_center;
 	std::unique_ptr<math::float3> world_position;

@@ -46,7 +46,7 @@ bool ModuleRenderExercise::Init()
 	model->Load("Models/BakerHouse/BakerHouse.gltf");
 	//model->Load("Models/Helmet/SciFiHelmet.gltf");
 	//model->Load("Models/Boxes/BoxTextured.gltf");
-
+	App->GetCamera()->FocusGeometry();
 	return true;
 }
 

@@ -227,7 +227,6 @@ void Mesh::SetModelMatrix(const std::vector<double>& trans, const std::vector<do
 	*min_positions_world = float3(min_pos.x, min_pos.y, min_pos.z);
 	
 	*world_position = model_matrix->TranslatePart();
-
 	LOG("Max positions world: %f, %f, %f", max_positions_world->x, max_positions_world->y, max_positions_world->z);
 	LOG("Min positions world: %f, %f, %f", min_positions_world->x, min_positions_world->y, min_positions_world->z);
 	LOG("World pos: %f, %f, %f", world_position->x, world_position->y, world_position->z);
@@ -305,23 +304,12 @@ void Mesh::Render(unsigned int program, const std::vector<unsigned int>& texture
 {
 	float4x4 projection = App->GetCamera()->GetProjectionMatrix();
 	float4x4 view = App->GetCamera()->GetViewMatrix();
-	//float4x4 model = math::float4x4::FromTRS(float3(0.0f, 1.0f, -4.0f), float4x4::RotateZ(0), float3(100.0f, 100.0f, 100.0f));
-	//float4x4 model = math::float4x4::FromTRS(*translate, float4x4::RotateZ(0), float3(1.0f, 1.0f, 1.0f));
 	float4x4 model = *model_matrix;
 
 	glUseProgram(program);
 	glUniformMatrix4fv(0, 1, GL_TRUE, &projection[0][0]);
 	glUniformMatrix4fv(1, 1, GL_TRUE, &view[0][0]);
 	glUniformMatrix4fv(2, 1, GL_TRUE, &model[0][0]);
-
-	// Should only change if the mesh is moved
-	*world_position = model.TranslatePart();
-
-	float4 max_pos = model * float4(*max_positions_local, 1.0f);
-	*max_positions_world = float3(max_pos.x, max_pos.y, max_pos.z);
-	
-	float4 min_pos = model * float4(*min_positions_local, 1.0f);
-	*min_positions_world = float3(min_pos.x, min_pos.y, min_pos.z);
 
 	if (material_index >= 0) // Only if mesh has texture
 	{
@@ -352,4 +340,21 @@ void Mesh::Delete() const
 	glDeleteBuffers(1, &vbo);
 	glDeleteBuffers(1, &ebo);
 	glDeleteVertexArrays(1, &vao);
+}
+
+void Mesh::Move(const float3& distance)
+{
+	model_matrix->SetTranslatePart(distance);
+
+	// Update the boundaries of the mesh
+	*world_position = model_matrix->TranslatePart();
+
+	float4 max_pos = *model_matrix * float4(*max_positions_local, 1.0f);
+	*max_positions_world = float3(max_pos.x, max_pos.y, max_pos.z);
+
+	float4 min_pos = *model_matrix * float4(*min_positions_local, 1.0f);
+	*min_positions_world = float3(min_pos.x, min_pos.y, min_pos.z);
+
+	*mesh_center = float3((max_positions_world->x + min_positions_world->x) / 2, (max_positions_world->y + min_positions_world->y) / 2, (max_positions_world->z + min_positions_world->z));
+
 }

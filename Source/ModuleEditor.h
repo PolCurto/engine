@@ -36,6 +36,7 @@ private:
 	void CameraConfig();
 	void OpenGLConfig();
 	void TexturesConfig();
+	void ModelConfig();
 
 	void FPSCount();
 	void AboutWindow() const;

@@ -164,6 +164,15 @@ void Model::Delete()
 	textures_data.clear();
 }
 
+void Model::SetPosition(const float3& new_position)
+{
+	for (const std::unique_ptr<Mesh>& mesh : meshes)
+	{
+		mesh->Move(new_position);
+	}
+	UpdatePositions();
+}
+
 void Model::UpdatePositions()
 {
 	float3 world_positions_sum(0, 0, 0);

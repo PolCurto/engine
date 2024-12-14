@@ -194,6 +194,11 @@ void ModuleEditor::SettingsMenu()
 		TexturesConfig();
 	}
 	ImGui::Spacing();
+	if (ImGui::CollapsingHeader("Model"))
+	{
+		ModelConfig();
+	}
+	ImGui::Spacing();
 
 	ImGui::Separator();
 	ImGui::SeparatorText("Hardware Info");
@@ -358,6 +363,17 @@ void ModuleEditor::TexturesConfig()
 		ImGui::RadioButton("Linear##1", &mag_filter, GL_LINEAR);
 
 		App->GetRenderExercise()->model->SetTextureParameters({ i, wrap_mode, min_filter, mag_filter });
+	}
+}
+
+void ModuleEditor::ModelConfig()
+{
+	float3 model_pos = *App->GetRenderExercise()->model->world_position;
+	float pos[] = { model_pos.x, model_pos.y, model_pos.z };
+	if (ImGui::InputFloat3("Model position", pos))
+	{
+		float3 new_pos(pos[0], pos[1], pos[2]);
+		App->GetRenderExercise()->model->SetPosition(new_pos);
 	}
 }
 
