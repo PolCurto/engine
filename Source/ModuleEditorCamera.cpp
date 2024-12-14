@@ -162,8 +162,6 @@ void ModuleEditorCamera::FocusGeometry()
 	camera_position.y = pos.y;
 	camera_position.z = pos.z + diagonal;
 
-	//LOG("Camera position: %f, %f, %f", camera_position.x, camera_position.y, camera_position.z);
-
 	SetOrientation(pos);
 }
 

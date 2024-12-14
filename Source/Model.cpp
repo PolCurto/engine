@@ -104,7 +104,7 @@ void Model::LoadMatrices(const tinygltf::Model& src_model)
 		}
 	}
 
-	LOG("Matrices loaded")
+	LOG("Matrices loaded");
 }
 
 void Model::Render(const unsigned int program)
@@ -212,8 +212,5 @@ void Model::UpdatePositions()
 	}
 
 	*world_position = world_positions_sum / meshes.size();;
-	*local_position = local_positions_sum / meshes.size();
-
-	//LOG("Max model positions: %f, %f, %f", max_positions->x, max_positions->y, max_positions->z);
-	//LOG("Min model positions: %f, %f, %f", min_positions->x, min_positions->y, min_positions->z);
+	*local_position = float3((max_positions->x + min_positions->x) / 2, (max_positions->y + min_positions->y) / 2, (max_positions->z + min_positions->z) / 2);
 }
