@@ -30,7 +30,7 @@ public:
 
 	void Load(const char* asset_filename);
 	void Render(unsigned int program);
-	void ShowModelInformation() const;
+	void GetModelInformation(std::vector<std::vector<int>>& mesh_data, std::vector<std::vector<int>>& tex_metadata) const;
 	void SetTextureParameters(const std::vector<int>&& params) const;
 	void Delete();
 

@@ -112,11 +112,16 @@ void ModuleEditor::Draw()
 
 	if (show_console)
 		Console();
+
+	if (show_properties)
+		ShowModelProperties();
 }
 
 void ModuleEditor::MainMenu()
 {
 	ImGui::BeginMainMenuBar();
+
+	// General menu
 	if (ImGui::BeginMenu("General"))
 	{
 		if (ImGui::MenuItem("Geometry properties"))
@@ -131,6 +136,7 @@ void ModuleEditor::MainMenu()
 		ImGui::EndMenu();
 	}
 
+	// Settings menu
 	if (ImGui::BeginMenu("Settings"))
 	{
 		if (ImGui::MenuItem("Editor settings"))
@@ -139,6 +145,7 @@ void ModuleEditor::MainMenu()
 		ImGui::EndMenu();
 	}
 
+	// Help menu
 	if (ImGui::BeginMenu("Help"))
 	{
 		if (ImGui::MenuItem("Gui Demo"))
@@ -148,10 +155,10 @@ void ModuleEditor::MainMenu()
 			App->RequestBrowser("https://github.com/PolCurto/engine");
 
 		if (ImGui::MenuItem("Download Latest"))
-			App->RequestBrowser("https://github.com/PolCurto/engine");
+			App->RequestBrowser("https://github.com/PolCurto/engine/releases");
 
 		if (ImGui::MenuItem("Report a bug"))
-			App->RequestBrowser("https://github.com/PolCurto/engine");
+			App->RequestBrowser("https://github.com/PolCurto/engine/issues");
 
 		if (ImGui::MenuItem("About"))
 			show_about = !show_about;
@@ -433,32 +440,34 @@ void ModuleEditor::AboutWindow() const
 	ImGui::End();
 }
 
-void ModuleEditor::ShowModelProperties(const std::vector<std::vector<int>>& meshes_data, const std::vector<std::vector<int>>& textures_data) const
+void ModuleEditor::ShowModelProperties() const
 {
-	if (show_properties)
+	std::vector<std::vector<int>> meshes_data;
+	std::vector<std::vector<int>> textures_data;
+
+	App->GetRenderExercise()->model->GetModelInformation(meshes_data, textures_data);
+
+	ImGui::Begin("Properties");
+
+	ImGui::SeparatorText("Geometry properties");
+	for (int i = 0; i < meshes_data.size(); ++i)
 	{
-		ImGui::Begin("Properties");
+		ImGui::Text("Mesh %d", i + 1);
+		ImGui::Text("Number of vertices: %d", meshes_data[i][0]);
+		ImGui::Text("Number of triangles: %d", meshes_data[i][1]);
+		ImGui::Spacing();
+	}
 
-		ImGui::SeparatorText("Geometry properties");
-		for (int i = 0; i < meshes_data.size(); ++i)
-		{
-			ImGui::Text("Mesh %d", i + 1);
-			ImGui::Text("Number of vertices: %d", meshes_data[i][0]);
-			ImGui::Text("Number of triangles: %d", meshes_data[i][1]);
-			ImGui::Spacing();
-		}
+	ImGui::SeparatorText("Texture properties");
+	for (int i = 0; i < textures_data.size(); ++i)
+	{
+		ImGui::Text("Texture %d", i + 1);
+		ImGui::Text("Texture width: %d", textures_data[i][0]);
+		ImGui::Text("Texture height: %d", textures_data[i][1]);
+		ImGui::Spacing();
+	}
 
-		ImGui::SeparatorText("Texture properties");
-		for (int i = 0; i < textures_data.size(); ++i)
-		{
-			ImGui::Text("Texture %d", i + 1);
-			ImGui::Text("Texture width: %d", textures_data[i][0]);
-			ImGui::Text("Texture height: %d", textures_data[i][1]);
-			ImGui::Spacing();
-		}
-
-		ImGui::End();
-	}	
+	ImGui::End();
 }
 
 void ModuleEditor::Console() const

@@ -23,7 +23,7 @@ public:
 
 	void AddLog(const char* new_log) const;
 	void AddFPS(float new_fps);
-	void ShowModelProperties(const std::vector<std::vector<int>>& meshes_data, const std::vector<std::vector<int>>& textures_data) const;
+	void ShowModelProperties() const;
 
 
 private:

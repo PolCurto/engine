@@ -50,7 +50,6 @@ bool ModuleRenderExercise::Init()
 update_status ModuleRenderExercise::Update()
 {
 	model->Render(program_id);
-	model->ShowModelInformation();
 
 	return UPDATE_CONTINUE;
 }

@@ -116,30 +116,26 @@ void Model::Render(const unsigned int program)
 	//UpdatePosition();
 }
 
-void Model::ShowModelInformation() const
+void Model::GetModelInformation(std::vector<std::vector<int>>& mesh_data, std::vector<std::vector<int>>& tex_metadata) const
 {
 	std::vector<int> data;
 
-	std::vector<std::vector<int>> meshes_data;
 	for (const std::unique_ptr<Mesh>& mesh : meshes)
 	{
 		data.emplace_back(mesh->GetVertexCount());
 		data.emplace_back(mesh->GetTrianglesCount());
-		meshes_data.emplace_back(data);
+		mesh_data.emplace_back(data);
 		data.clear();
 	}
 
-	std::vector<std::vector<int>> textures_metadata;
 	for (const auto& tex_data : textures_data)
 	{
 		DirectX::TexMetadata metadata = tex_data.second->GetMetadata();
 		data.emplace_back(metadata.width);
 		data.emplace_back(metadata.height);
-		textures_metadata.emplace_back(data);
+		tex_metadata.push_back(data);
 		data.clear();
 	}
-
-	App->GetEditor()->ShowModelProperties(meshes_data, textures_metadata);
 }
 
 void Model::SetTextureParameters(const std::vector<int>&& params) const
