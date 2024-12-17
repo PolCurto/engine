@@ -314,6 +314,27 @@ void Mesh::Render(unsigned int program, const std::vector<unsigned int>& texture
 	glUniformMatrix4fv(1, 1, GL_TRUE, &view[0][0]);
 	glUniformMatrix4fv(2, 1, GL_TRUE, &model[0][0]);
 
+
+	float light_dir[3] = { 0.5f, 0.5f, 0 };
+	float3 camera_pos = App->GetCamera()->GetCameraPosition();
+	float view_position[3] = { camera_pos.x, camera_pos.y, camera_pos.z };
+
+	float ambient_color[3] = { 0.2f, 0.2f, 0.2f };
+	float light_color[3] = { 0.8f, 0.8f, 0.8f };
+
+	float ks = 0.2f;
+	float kd = 0.8f;
+	float shininess = 250.0f;
+
+	glUniform3fv(3, 1, &light_dir[0]);
+	glUniform3fv(4, 1, &view_position[0]);
+	glUniform3fv(5, 1, &ambient_color[0]);
+	glUniform3fv(6, 1, &light_color[0]);
+	
+	glUniform1f(7, ks);
+	glUniform1f(8, kd);
+	glUniform1f(9, shininess);
+
 	if (material_index >= 0) // Only if mesh has texture
 	{
 		glActiveTexture(GL_TEXTURE0);

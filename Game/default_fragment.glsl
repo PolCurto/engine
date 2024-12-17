@@ -7,12 +7,14 @@ in vec3 position_normal;
 in vec3 fragment_position;
 
 layout(location = 3) uniform vec3 light_dir;
-layout(location = 4) uniform vec3 ambient;
-layout(location = 5) uniform float Ks;
-layout(location = 6) uniform float Kd;
-layout(location = 7) uniform float shininess;
-layout(location = 8) uniform vec3 light_color;
-layout(location = 9) uniform vec3 view_position; 
+layout(location = 4) uniform vec3 view_position; 
+
+layout(location = 5) uniform vec3 ambient;
+layout(location = 6) uniform vec3 light_color;
+
+layout(location = 7) uniform float ks;
+layout(location = 8) uniform float kd;
+layout(location = 9) uniform float shininess;
 
 layout(binding = 0) uniform sampler2D mytexture;
 
@@ -26,12 +28,12 @@ void main()
 
     if (NdotL > 0.0f)
 	{
-		vec3 diffuse = diffuse_color.xyz * light_color * NdotL * Kd;
+		vec3 diffuse = diffuse_color.xyz * light_color * NdotL * kd;
 		vec3 R = reflect(-n_light_dir, n_position_normal);
 		vec3 V = normalize(view_position - fragment_position);
 		
 		float RdotV = max(dot(R, V), 0.0f);
-		vec3 specular = light_color * pow(RdotV, shininess) * Ks;
+		vec3 specular = light_color * pow(RdotV, shininess) * ks;
 		
 		vec3 color = ambient * diffuse_color.xyz + diffuse + specular;
 	}
