@@ -53,6 +53,7 @@ private:
 	size_t vertex_count = 0;
 	size_t indices_count = 0;
 	size_t uvs_count = 0;
+	size_t normals_count = 0;
 
 	std::unique_ptr<math::float3> max_positions_local;
 	std::unique_ptr<math::float3> min_positions_local;

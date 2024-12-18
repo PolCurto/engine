@@ -6,7 +6,7 @@ in vec2 uv0;
 in vec3 position_normal;
 in vec3 fragment_position;
 
-layout(location = 3) uniform vec3 light_dir;
+layout(location = 3) uniform vec3 light_pos;
 layout(location = 4) uniform vec3 view_position; 
 
 layout(location = 5) uniform vec3 ambient;
@@ -20,7 +20,7 @@ layout(binding = 0) uniform sampler2D mytexture;
 
 void main()
 {
-    vec3 n_light_dir = normalize(light_dir);
+    vec3 n_light_dir = normalize(fragment_position - light_pos);
     vec3 n_position_normal = normalize(position_normal);
     float NdotL = dot(n_position_normal, -n_light_dir);
 
@@ -36,11 +36,14 @@ void main()
 		vec3 specular = light_color * pow(RdotV, shininess) * ks;
 		
 		vec3 color = ambient * diffuse_color.xyz + diffuse + specular;
+		out_color = vec4(color, 1.0f);
 	}
 	else
 	{
-		vec3 color = diffuse_color * vec4(ambient, 1.0f);
+		vec3 color = diffuse_color.xyz * ambient;
+		out_color = vec4(color, 1.0f);
 	}
 
-    out_color = vec4(color, 1.0f);
+    
+	//out_color = diffuse_color;
 }

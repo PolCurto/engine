@@ -42,13 +42,11 @@ void Mesh::LoadVBO(const tinygltf::Model& model, const tinygltf::Mesh& mesh, con
 
 		const tinygltf::BufferView& position_view = model.bufferViews[position_accessor.bufferView];
 		const tinygltf::Buffer& position_buffer = model.buffers[position_view.buffer];
-		const unsigned char* buffer_ptr = &(position_buffer.data[position_accessor.byteOffset + position_view.byteOffset]);
+		const unsigned char* positions_buffer_ptr = &(position_buffer.data[position_accessor.byteOffset + position_view.byteOffset]);
 		size_t i = position_buffer.data.size();
-		LOG("Positions buffer raw data size: %d", i);
 		LOG("Positions byte stride: %d", position_view.byteStride);
 
 		int stride = 3;
-		bool uvs_exist = false;
 
 		// Load UVs positions to vbo
 		const auto& it_tex = primitive.attributes.find("TEXCOORD_0");
@@ -64,68 +62,155 @@ void Mesh::LoadVBO(const tinygltf::Model& model, const tinygltf::Mesh& mesh, con
 			const tinygltf::Buffer& uvs_buffer = model.buffers[uvs_view.buffer];
 			const unsigned char* uvs_buffer_ptr = &(uvs_buffer.data[uvs_accessor.byteOffset + uvs_view.byteOffset]);
 			size_t j = uvs_buffer.data.size();
-			LOG("Uvs buffer raw data size: %d", j);
 			LOG("Uvs byte stride: %d", uvs_view.byteStride);
 
 			stride = 5;
 
-			glGenBuffers(1, &vbo);
-			glBindBuffer(GL_ARRAY_BUFFER, vbo);
-			int buffer_size = sizeof(float) * ((3 * vertex_count) + (2 * uvs_count));
-			glBufferData(GL_ARRAY_BUFFER, buffer_size, nullptr, GL_STATIC_DRAW);
-
-			float* vbo_pos_ptr = reinterpret_cast<float*>(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
-			for (size_t i = 0; i < (3 * vertex_count) + (2 * uvs_count); i += stride)
+			const auto& it_norm = primitive.attributes.find("NORMAL");
+			if (it_norm != primitive.attributes.end()) // If mesh has everything
 			{
-				// Vertex data
-				float3 vtx_pos = *reinterpret_cast<const float3*>(buffer_ptr);
+				const tinygltf::Accessor& normals_accesor = model.accessors[it_norm->second];
+				SDL_assert(normals_accesor.type == TINYGLTF_TYPE_VEC3);
+				SDL_assert(normals_accesor.componentType == GL_FLOAT);
+				normals_count = normals_accesor.count;
 
-				vbo_pos_ptr[i] = vtx_pos.x;
-				vbo_pos_ptr[i + 1] = vtx_pos.y;
-				vbo_pos_ptr[i + 2] = vtx_pos.z;
-				
-				if (i == 0)
+				const tinygltf::BufferView& normals_view = model.bufferViews[normals_accesor.bufferView];
+				const tinygltf::Buffer& normals_buffer = model.buffers[normals_view.buffer];
+				const unsigned char* normals_buffer_ptr = &(normals_buffer.data[normals_accesor.byteOffset + normals_view.byteOffset]);
+				size_t j = uvs_buffer.data.size();
+				LOG("Normals byte stride: %d", uvs_view.byteStride);
+
+				stride = 8;
+
+				glGenBuffers(1, &vbo);
+				glBindBuffer(GL_ARRAY_BUFFER, vbo);
+				int buffer_size = sizeof(float) * ((3 * vertex_count) + (2 * uvs_count) + (3 * normals_count));
+				glBufferData(GL_ARRAY_BUFFER, buffer_size, nullptr, GL_STATIC_DRAW);
+
+				float* vbo_ptr = reinterpret_cast<float*>(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
+				for (size_t i = 0; i < buffer_size / sizeof(float); i += stride)
 				{
-					*max_positions_local = vtx_pos;
-					*min_positions_local = vtx_pos;
+					// Vertex data
+					float3 vtx_pos = *reinterpret_cast<const float3*>(positions_buffer_ptr);
+
+					vbo_ptr[i] = vtx_pos.x;
+					vbo_ptr[i + 1] = vtx_pos.y;
+					vbo_ptr[i + 2] = vtx_pos.z;
+
+					if (i == 0)
+					{
+						*max_positions_local = vtx_pos;
+						*min_positions_local = vtx_pos;
+					}
+					else
+					{
+						if (vtx_pos.x > max_positions_local->x)
+							max_positions_local->x = vtx_pos.x;
+
+						if (vtx_pos.x < min_positions_local->x)
+							min_positions_local->x = vtx_pos.x;
+
+						if (vtx_pos.y > max_positions_local->y)
+							max_positions_local->y = vtx_pos.y;
+
+						if (vtx_pos.y < min_positions_local->y)
+							min_positions_local->y = vtx_pos.y;
+
+						if (vtx_pos.z > max_positions_local->z)
+							max_positions_local->z = vtx_pos.z;
+
+						if (vtx_pos.z < min_positions_local->z)
+							min_positions_local->z = vtx_pos.z;
+					}
+
+					if (position_view.byteStride == 0)
+						positions_buffer_ptr += sizeof(float) * 3;
+					else
+						positions_buffer_ptr += position_view.byteStride;
+
+					// Uvs data
+					float2 uvs_pos = *reinterpret_cast<const float2*>(uvs_buffer_ptr);
+					vbo_ptr[i + 3] = uvs_pos.x;
+					vbo_ptr[i + 4] = uvs_pos.y;
+
+					if (uvs_view.byteStride == 0)
+						uvs_buffer_ptr += sizeof(float) * 2;
+					else
+						uvs_buffer_ptr += uvs_view.byteStride;
+
+					// Normals data
+					float3 normals_pos = *reinterpret_cast<const float3*>(normals_buffer_ptr);
+					vbo_ptr[i + 5] = normals_pos.x;
+					vbo_ptr[i + 6] = normals_pos.y;
+					vbo_ptr[i + 7] = normals_pos.z;
+
+					if (normals_view.byteStride == 0)
+						normals_buffer_ptr += sizeof(float) * 3;
+					else
+						normals_buffer_ptr += normals_view.byteStride;
 				}
-				else
-				{
-					if (vtx_pos.x > max_positions_local->x)
-						max_positions_local->x = vtx_pos.x;
-
-					if (vtx_pos.x < min_positions_local->x)
-						min_positions_local->x = vtx_pos.x;
-
-					if (vtx_pos.y > max_positions_local->y)
-						max_positions_local->y = vtx_pos.y;
-
-					if (vtx_pos.y < min_positions_local->y)
-						min_positions_local->y = vtx_pos.y;
-
-					if (vtx_pos.z > max_positions_local->z)
-						max_positions_local->z = vtx_pos.z;
-
-					if (vtx_pos.z < min_positions_local->z)
-						min_positions_local->z = vtx_pos.z;
-				}
-
-				if (position_view.byteStride == 0)
-					buffer_ptr += sizeof(float) * 3;
-				else
-					buffer_ptr += position_view.byteStride;
-
-				// Uvs data
-				float2 uvs_pos = *reinterpret_cast<const float2*>(uvs_buffer_ptr);
-				vbo_pos_ptr[i + 3] = uvs_pos.x;
-				vbo_pos_ptr[i + 4] = uvs_pos.y;
-				
-				if (uvs_view.byteStride == 0)
-					uvs_buffer_ptr += sizeof(float) * 2;
-				else
-					uvs_buffer_ptr += uvs_view.byteStride;
+				glUnmapBuffer(GL_ARRAY_BUFFER);
 			}
-			glUnmapBuffer(GL_ARRAY_BUFFER);
+			else // If mesh has no normals
+			{
+				glGenBuffers(1, &vbo);
+				glBindBuffer(GL_ARRAY_BUFFER, vbo);
+				int buffer_size = sizeof(float) * ((3 * vertex_count) + (2 * uvs_count));
+				glBufferData(GL_ARRAY_BUFFER, buffer_size, nullptr, GL_STATIC_DRAW);
+
+				float* vbo_ptr = reinterpret_cast<float*>(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
+				for (size_t i = 0; i < (3 * vertex_count) + (2 * uvs_count); i += stride)
+				{
+					// Vertex data
+					float3 vtx_pos = *reinterpret_cast<const float3*>(positions_buffer_ptr);
+
+					vbo_ptr[i] = vtx_pos.x;
+					vbo_ptr[i + 1] = vtx_pos.y;
+					vbo_ptr[i + 2] = vtx_pos.z;
+
+					if (i == 0)
+					{
+						*max_positions_local = vtx_pos;
+						*min_positions_local = vtx_pos;
+					}
+					else
+					{
+						if (vtx_pos.x > max_positions_local->x)
+							max_positions_local->x = vtx_pos.x;
+
+						if (vtx_pos.x < min_positions_local->x)
+							min_positions_local->x = vtx_pos.x;
+
+						if (vtx_pos.y > max_positions_local->y)
+							max_positions_local->y = vtx_pos.y;
+
+						if (vtx_pos.y < min_positions_local->y)
+							min_positions_local->y = vtx_pos.y;
+
+						if (vtx_pos.z > max_positions_local->z)
+							max_positions_local->z = vtx_pos.z;
+
+						if (vtx_pos.z < min_positions_local->z)
+							min_positions_local->z = vtx_pos.z;
+					}
+
+					if (position_view.byteStride == 0)
+						positions_buffer_ptr += sizeof(float) * 3;
+					else
+						positions_buffer_ptr += position_view.byteStride;
+
+					// Uvs data
+					float2 uvs_pos = *reinterpret_cast<const float2*>(uvs_buffer_ptr);
+					vbo_ptr[i + 3] = uvs_pos.x;
+					vbo_ptr[i + 4] = uvs_pos.y;
+
+					if (uvs_view.byteStride == 0)
+						uvs_buffer_ptr += sizeof(float) * 2;
+					else
+						uvs_buffer_ptr += uvs_view.byteStride;
+				}
+				glUnmapBuffer(GL_ARRAY_BUFFER);
+			}
 		}
 		else // If the mesh has no uvs
 		{
@@ -134,13 +219,13 @@ void Mesh::LoadVBO(const tinygltf::Model& model, const tinygltf::Mesh& mesh, con
 			int buffer_size = sizeof(float) * ((3 * vertex_count) + (2 * uvs_count));
 			glBufferData(GL_ARRAY_BUFFER, buffer_size, nullptr, GL_STATIC_DRAW);
 
-			float* vbo_pos_ptr = reinterpret_cast<float*>(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
+			float* vbo_ptr = reinterpret_cast<float*>(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
 			for (size_t i = 0; i < 3 * vertex_count; i += 3)
 			{
-				 float3 vtx_pos = *reinterpret_cast<const float3*>(buffer_ptr);
-				 vbo_pos_ptr[i] = vtx_pos.x;
-				 vbo_pos_ptr[i + 1] = vtx_pos.y;
-				 vbo_pos_ptr[i + 2] = vtx_pos.z;
+				 float3 vtx_pos = *reinterpret_cast<const float3*>(positions_buffer_ptr);
+				 vbo_ptr[i] = vtx_pos.x;
+				 vbo_ptr[i + 1] = vtx_pos.y;
+				 vbo_ptr[i + 2] = vtx_pos.z;
 
 				 if (i == 0)
 				 {
@@ -169,9 +254,9 @@ void Mesh::LoadVBO(const tinygltf::Model& model, const tinygltf::Mesh& mesh, con
 				 }
 
 				if (position_view.byteStride == 0)
-					buffer_ptr += sizeof(float) * 3;
+					positions_buffer_ptr += sizeof(float) * 3;
 				else
-					buffer_ptr += position_view.byteStride;
+					positions_buffer_ptr += position_view.byteStride;
 			}
 			glUnmapBuffer(GL_ARRAY_BUFFER);
 		}
@@ -294,10 +379,13 @@ void Mesh::CreateVAO()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
 
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3 + sizeof(float) * 2, (void*)(0));
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3 + sizeof(float) * 2 + sizeof(float) * 3, (void*)(0));
 
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 3 + sizeof(float) * 2, (void*)(sizeof(float) * 3));
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 3 + sizeof(float) * 2 + sizeof(float) * 3, (void*)(sizeof(float) * 3));
+	
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3 + sizeof(float) * 2 + sizeof(float) * 3, (void*)(sizeof(float) * 3 + sizeof(float) * 2));
 
 	glBindVertexArray(0);
 
@@ -315,16 +403,16 @@ void Mesh::Render(unsigned int program, const std::vector<unsigned int>& texture
 	glUniformMatrix4fv(2, 1, GL_TRUE, &model[0][0]);
 
 
-	float light_dir[3] = { 0.5f, 0.5f, 0 };
+	float light_dir[3] = { 50, 100, 50 };
 	float3 camera_pos = App->GetCamera()->GetCameraPosition();
 	float view_position[3] = { camera_pos.x, camera_pos.y, camera_pos.z };
 
-	float ambient_color[3] = { 0.2f, 0.2f, 0.2f };
-	float light_color[3] = { 0.8f, 0.8f, 0.8f };
+	float ambient_color[3] = { 0.1f, 0.1f, 0.1f };
+	float light_color[3] = { 1.0f, 1.0f, 1.0f };
 
-	float ks = 0.2f;
-	float kd = 0.8f;
-	float shininess = 250.0f;
+	float ks = 0.4f;
+	float kd = 1.0f;
+	float shininess = 50;
 
 	glUniform3fv(3, 1, &light_dir[0]);
 	glUniform3fv(4, 1, &view_position[0]);
