@@ -12,6 +12,7 @@
 #include "DirectXTex.h"
 #include "tiny_gltf.h"
 #include "Model.h"
+#include "Mesh.h"
 #include "SDL.h"
 #include "Math/MathAll.h"
 
@@ -390,7 +391,7 @@ void ModuleEditor::ShadingConfig() const
 {
 	ImGui::Text("Lightning Settings");
 
-	static std::vector<float> light_pos;
+	std::vector<float> light_pos;
 	App->GetLightning()->GetLightPosition(light_pos);
 	float pos[3] = { light_pos[0], light_pos[1], light_pos[2]};
 	if (ImGui::InputFloat3("Light position", pos))
@@ -398,7 +399,7 @@ void ModuleEditor::ShadingConfig() const
 		App->GetLightning()->SetLightPosition(pos[0], pos[1], pos[2]);
 	}
 	
-	static std::vector<float> light_color;
+	std::vector<float> light_color;
 	App->GetLightning()->GetLightColor(light_color);
 	float color[3] = { light_color[0], light_color[1], light_color[2]};
 	if (ImGui::InputFloat3("Light color", color))
@@ -406,7 +407,7 @@ void ModuleEditor::ShadingConfig() const
 		App->GetLightning()->SetLightColor(color[0], color[1], color[2]);
 	}
 	
-	static std::vector<float> ambient_color;
+	std::vector<float> ambient_color;
 	App->GetLightning()->GetAmbientColor(ambient_color);
 	float ambient[3] = { ambient_color[0], ambient_color[1], ambient_color[2]};
 	if (ImGui::InputFloat3("Ambient color", ambient))
@@ -414,17 +415,35 @@ void ModuleEditor::ShadingConfig() const
 		App->GetLightning()->SetAmbientColor(ambient[0], ambient[1], ambient[2]);
 	}
 
-	
-	//static std::vector<float> light_color;
-	//static std::vector<float> ambient_color;
-	//
-	//for (const std::unique_ptr<Mesh>& mesh : App->GetRenderExercise()->model->GetMeshes())
-	//{
-	//	
-	//	float ks = 0.2f;
-	//	float kd = 0.4f;
-	//	float shininess = 250;
-	//}
+	ImGui::Separator();
+	int i = 0;
+
+	for (const std::unique_ptr<Mesh>& mesh : App->GetRenderExercise()->model->GetMeshes())
+	{
+		ImGui::Text("Mesh %d properties", i + 1);
+		float ks = mesh->GetKs();
+		std::string label = "Ks##" + std::to_string(i);
+		if (ImGui::InputFloat(label.c_str(), &ks))
+		{
+			mesh->SetKs(ks);
+		}
+
+		float kd = mesh->GetKd();
+		label = "Kd##" + std::to_string(i);
+		if (ImGui::InputFloat(label.c_str(), &kd))
+		{
+			mesh->SetKd(kd);
+		}
+
+		float shininess = mesh->GetShininess();
+		label = "Shininess##" + std::to_string(i);
+		if (ImGui::InputFloat(label.c_str(), &shininess))
+		{
+			mesh->SetShininess(shininess);
+		}
+		++i;
+		ImGui::Spacing();
+	}
 }
 
 void ModuleEditor::FPSCount()
