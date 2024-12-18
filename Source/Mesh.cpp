@@ -7,6 +7,7 @@
 #include "SDL.h"
 #include "GL/glew.h"
 #include "ModuleEditorCamera.h"
+#include "ModuleLightning.h"
 #include "ImGui/imgui.h"
 #include <Math/MathAll.h>	
 
@@ -402,19 +403,17 @@ void Mesh::Render(unsigned int program, const std::vector<unsigned int>& texture
 	glUniformMatrix4fv(1, 1, GL_TRUE, &view[0][0]);
 	glUniformMatrix4fv(2, 1, GL_TRUE, &model[0][0]);
 
-
-	float light_dir[3] = { 50, 100, 50 };
 	float3 camera_pos = App->GetCamera()->GetCameraPosition();
 	float view_position[3] = { camera_pos.x, camera_pos.y, camera_pos.z };
 
-	float ambient_color[3] = { 0.1f, 0.1f, 0.1f };
-	float light_color[3] = { 1.0f, 1.0f, 1.0f };
+	std::vector<float> light_pos;
+	std::vector<float> light_color;
+	std::vector<float> ambient_color;
+	App->GetLightning()->GetLightPosition(light_pos);
+	App->GetLightning()->GetLightColor(light_color);
+	App->GetLightning()->GetAmbientColor(ambient_color);
 
-	float ks = 0.4f;
-	float kd = 1.0f;
-	float shininess = 50;
-
-	glUniform3fv(3, 1, &light_dir[0]);
+	glUniform3fv(3, 1, &light_pos[0]);
 	glUniform3fv(4, 1, &view_position[0]);
 	glUniform3fv(5, 1, &ambient_color[0]);
 	glUniform3fv(6, 1, &light_color[0]);

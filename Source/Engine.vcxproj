@@ -193,6 +193,7 @@
     <ClCompile Include="ModuleEditorCamera.cpp" />
     <ClCompile Include="ModuleHardware.cpp" />
     <ClCompile Include="ModuleInput.cpp" />
+    <ClCompile Include="ModuleLightning.cpp" />
     <ClCompile Include="ModuleOpenGL.cpp" />
     <ClCompile Include="ModuleProgram.cpp" />
     <ClCompile Include="ModuleRenderExercise.cpp" />
@@ -282,6 +283,7 @@
     <ClInclude Include="ModuleEditorCamera.h" />
     <ClInclude Include="ModuleHardware.h" />
     <ClInclude Include="ModuleInput.h" />
+    <ClInclude Include="ModuleLightning.h" />
     <ClInclude Include="ModuleOpenGL.h" />
     <ClInclude Include="ModuleProgram.h" />
     <ClInclude Include="ModuleRenderExercise.h" />

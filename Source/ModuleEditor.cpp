@@ -8,6 +8,7 @@
 #include "ModuleEditorCamera.h"
 #include "ModuleHardware.h"
 #include "ModuleRenderExercise.h"
+#include "ModuleLightning.h"
 #include "DirectXTex.h"
 #include "tiny_gltf.h"
 #include "Model.h"
@@ -202,6 +203,10 @@ void ModuleEditor::SettingsMenu()
 		ModelConfig();
 	}
 	ImGui::Spacing();
+	if (ImGui::CollapsingHeader("Shading"))
+	{
+		ShadingConfig();
+	}
 
 	ImGui::SeparatorText("Hardware Info");
 	App->GetHardware()->ShowHardwareInfo();
@@ -379,6 +384,47 @@ void ModuleEditor::ModelConfig() const
 		float3 new_pos(pos[0], pos[1], pos[2]);
 		App->GetRenderExercise()->model->SetPosition(new_pos);
 	}
+}
+
+void ModuleEditor::ShadingConfig() const
+{
+	ImGui::Text("Lightning Settings");
+
+	static std::vector<float> light_pos;
+	App->GetLightning()->GetLightPosition(light_pos);
+	float pos[3] = { light_pos[0], light_pos[1], light_pos[2]};
+	if (ImGui::InputFloat3("Light position", pos))
+	{
+		App->GetLightning()->SetLightPosition(pos[0], pos[1], pos[2]);
+	}
+	
+	static std::vector<float> light_color;
+	App->GetLightning()->GetLightColor(light_color);
+	float color[3] = { light_color[0], light_color[1], light_color[2]};
+	if (ImGui::InputFloat3("Light color", color))
+	{
+		App->GetLightning()->SetLightColor(color[0], color[1], color[2]);
+	}
+	
+	static std::vector<float> ambient_color;
+	App->GetLightning()->GetAmbientColor(ambient_color);
+	float ambient[3] = { ambient_color[0], ambient_color[1], ambient_color[2]};
+	if (ImGui::InputFloat3("Ambient color", ambient))
+	{
+		App->GetLightning()->SetAmbientColor(ambient[0], ambient[1], ambient[2]);
+	}
+
+	
+	//static std::vector<float> light_color;
+	//static std::vector<float> ambient_color;
+	//
+	//for (const std::unique_ptr<Mesh>& mesh : App->GetRenderExercise()->model->GetMeshes())
+	//{
+	//	
+	//	float ks = 0.2f;
+	//	float kd = 0.4f;
+	//	float shininess = 250;
+	//}
 }
 
 void ModuleEditor::FPSCount()

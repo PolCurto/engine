@@ -17,6 +17,7 @@ class ModuleEditorCamera;
 class ModuleEditor;
 class ModuleHardware;
 class ModuleTextures;
+class ModuleLightning;
 class Model;
 
 class Application
@@ -43,6 +44,7 @@ public:
     ModuleTextures* GetTextures() const { return textures; }
     ModuleRenderExercise* GetRenderExercise() const { return exercise; }
     ModuleHardware* GetHardware() const { return hardware; }
+    ModuleLightning* GetLightning() const { return lightning; }
 
 public:
     float delta = 0;
@@ -61,6 +63,7 @@ private:
     ModuleEditor* editor = nullptr;
     ModuleHardware* hardware = nullptr;
     ModuleTextures* textures = nullptr;
+    ModuleLightning* lightning = nullptr;
 
     std::list<Module*> modules;
 

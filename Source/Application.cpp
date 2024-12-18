@@ -10,6 +10,7 @@
 #include "ModuleEditor.h"
 #include "ModuleHardware.h"
 #include "ModuleTextures.h"
+#include "ModuleLightning.h"
 #include "Model.h"
 
 using namespace std;
@@ -27,6 +28,7 @@ Application::Application()
 	modules.push_back(exercise = new ModuleRenderExercise());
 	modules.push_back(hardware = new ModuleHardware());
 	modules.push_back(editor = new ModuleEditor());
+	modules.push_back(lightning = new ModuleLightning());
 }
 
 Application::~Application()

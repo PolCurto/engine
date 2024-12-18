@@ -50,6 +50,10 @@ private:
 	unsigned int vao = 0;
 	int material_index = -1;
 
+	float ks = 0.2f;
+	float kd = 0.9f;
+	float shininess = 250;
+
 	size_t vertex_count = 0;
 	size_t indices_count = 0;
 	size_t uvs_count = 0;

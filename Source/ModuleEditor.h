@@ -36,6 +36,7 @@ private:
 	void OpenGLConfig() const;
 	void TexturesConfig() const;
 	void ModelConfig() const;
+	void ShadingConfig() const;
 
 	void FPSCount();
 	void AboutWindow() const;

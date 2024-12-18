@@ -1,5 +1,5 @@
 #ifndef __MODULE_HARDWARE_H__
-#define __MODULE_HARDWAR_H__
+#define __MODULE_HARDWARE_H__
 
 #include "Module.h"
 #include <string>

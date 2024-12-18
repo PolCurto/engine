@@ -133,6 +133,7 @@
     <ClCompile Include="ModuleTextures.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="ModuleLightning.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Dummy.h" />
@@ -364,6 +365,7 @@
     <ClInclude Include="ModuleTextures.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="Mesh.h" />
+    <ClInclude Include="ModuleLightning.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="MathGeoLib\include\Geometry\KDTree.inl">

@@ -35,6 +35,7 @@ public:
 	void Delete();
 
 	int GetTexturesIDCount() const { return textures_id.size(); }
+	//std::vector<std::unique_ptr<Mesh>> GetMeshes() const { return meshes; }
 
 	void SetPosition(const math::float3& new_position);
 
