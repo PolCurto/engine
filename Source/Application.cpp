@@ -11,6 +11,7 @@
 #include "ModuleHardware.h"
 #include "ModuleTextures.h"
 #include "Model.h"
+#include "Timer.h"
 
 using namespace std;
 
@@ -27,6 +28,8 @@ Application::Application()
 	modules.push_back(exercise = new ModuleRenderExercise());
 	modules.push_back(hardware = new ModuleHardware());
 	modules.push_back(editor = new ModuleEditor());
+
+	timer = new Timer();
 }
 
 Application::~Application()
@@ -51,8 +54,11 @@ bool Application::Init()
 {
 	bool ret = true;
 
+
 	for(list<Module*>::iterator it = modules.begin(); it != modules.end() && ret; ++it)
 		ret = (*it)->Init();
+
+	timer->Start();
 
 	return ret;
 }
@@ -84,8 +90,12 @@ bool Application::CleanUp()
 {
 	bool ret = true;
 
+	LOG("Elapsed time: %f\n", static_cast<float>(timer->Stop()) / 1000.0f);
+
 	for(list<Module*>::reverse_iterator it = modules.rbegin(); it != modules.rend() && ret; ++it)
 		ret = (*it)->CleanUp();
+
+	delete timer;
 
 	return ret;
 }

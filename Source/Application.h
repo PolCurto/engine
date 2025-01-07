@@ -18,6 +18,7 @@ class ModuleEditor;
 class ModuleHardware;
 class ModuleTextures;
 class Model;
+class Timer;
 
 class Application
 {
@@ -68,6 +69,8 @@ private:
     std::chrono::duration<float, std::milli> time_lapse;
     float frames = 0;
     float sec_timer = 0;
+
+    Timer* timer;
 };
 
 extern Application* App;
