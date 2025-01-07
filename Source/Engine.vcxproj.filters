@@ -134,6 +134,7 @@
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Timer.cpp" />
+    <ClCompile Include="PreciseTimer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Dummy.h" />
@@ -366,6 +367,7 @@
     <ClInclude Include="Model.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Timer.h" />
+    <ClInclude Include="PreciseTimer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="MathGeoLib\include\Geometry\KDTree.inl">

@@ -7,9 +7,9 @@ public:
 	Timer();
 	~Timer();
 
-	void Start();
-	unsigned int Read();
-	unsigned int Stop();
+	virtual void Start();
+	virtual unsigned int Read();
+	virtual unsigned int Stop();
 
 
 private:

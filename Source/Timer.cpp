@@ -18,7 +18,7 @@ void Timer::Start()
 	is_enabled = true;
 	start_time = SDL_GetTicks();
 
-	LOG("Start time: %d", start_time);
+	LOG("Timer start time: %d", start_time);
 }
 
 unsigned int Timer::Read()
@@ -33,5 +33,8 @@ unsigned int Timer::Stop()
 {
 	is_enabled = false;
 	elapsed_time = SDL_GetTicks() - start_time;
+
+	LOG("Timer elapsed time: %f", static_cast<float>(elapsed_time) / 1000.0f);
+
 	return elapsed_time;
 }

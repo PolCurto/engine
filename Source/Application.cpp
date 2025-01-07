@@ -12,6 +12,7 @@
 #include "ModuleTextures.h"
 #include "Model.h"
 #include "Timer.h"
+#include "PreciseTimer.h"
 
 using namespace std;
 
@@ -30,6 +31,7 @@ Application::Application()
 	modules.push_back(editor = new ModuleEditor());
 
 	timer = new Timer();
+	preciseTimer = new PreciseTimer();
 }
 
 Application::~Application()
@@ -59,6 +61,7 @@ bool Application::Init()
 		ret = (*it)->Init();
 
 	timer->Start();
+	preciseTimer->Start();
 
 	return ret;
 }
@@ -83,6 +86,10 @@ update_status Application::Update()
 	for(list<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
 		ret = (*it)->PostUpdate();
 
+	//LOG("Time: %d", timer->Read());
+	timer->Read();
+	preciseTimer->Read();
+
 	return ret;
 }
 
@@ -90,12 +97,15 @@ bool Application::CleanUp()
 {
 	bool ret = true;
 
-	LOG("Elapsed time: %f\n", static_cast<float>(timer->Stop()) / 1000.0f);
+	timer->Stop();
+	preciseTimer->Stop();
+	//LOG("Elapsed time: %f\n", static_cast<float>(timer->Stop()) / 1000.0f);
 
 	for(list<Module*>::reverse_iterator it = modules.rbegin(); it != modules.rend() && ret; ++it)
 		ret = (*it)->CleanUp();
 
 	delete timer;
+	delete preciseTimer;
 
 	return ret;
 }

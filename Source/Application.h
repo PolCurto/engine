@@ -19,6 +19,7 @@ class ModuleHardware;
 class ModuleTextures;
 class Model;
 class Timer;
+class PreciseTimer;
 
 class Application
 {
@@ -71,6 +72,7 @@ private:
     float sec_timer = 0;
 
     Timer* timer;
+    PreciseTimer* preciseTimer;
 };
 
 extern Application* App;
