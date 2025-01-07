@@ -31,7 +31,7 @@ Application::Application()
 	modules.push_back(editor = new ModuleEditor());
 
 	timer = new Timer();
-	preciseTimer = new PreciseTimer();
+	precise_timer = new PreciseTimer();
 }
 
 Application::~Application()
@@ -61,7 +61,7 @@ bool Application::Init()
 		ret = (*it)->Init();
 
 	timer->Start();
-	preciseTimer->Start();
+	precise_timer->Start();
 
 	return ret;
 }
@@ -88,7 +88,7 @@ update_status Application::Update()
 
 	//LOG("Time: %d", timer->Read());
 	timer->Read();
-	preciseTimer->Read();
+	precise_timer->Read();
 
 	return ret;
 }
@@ -98,14 +98,14 @@ bool Application::CleanUp()
 	bool ret = true;
 
 	timer->Stop();
-	preciseTimer->Stop();
+	precise_timer->Stop();
 	//LOG("Elapsed time: %f\n", static_cast<float>(timer->Stop()) / 1000.0f);
 
 	for(list<Module*>::reverse_iterator it = modules.rbegin(); it != modules.rend() && ret; ++it)
 		ret = (*it)->CleanUp();
 
 	delete timer;
-	delete preciseTimer;
+	delete precise_timer;
 
 	return ret;
 }

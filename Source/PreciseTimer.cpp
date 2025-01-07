@@ -38,5 +38,6 @@ unsigned int PreciseTimer::Stop()
 
 	LOG("PreciseTimer elapsed time: %f", elapsed_time);
 
+	// Ha de tornar float ya veurem
 	return elapsed_time;
 }

@@ -72,7 +72,7 @@ private:
     float sec_timer = 0;
 
     Timer* timer;
-    PreciseTimer* preciseTimer;
+    PreciseTimer* precise_timer;
 };
 
 extern Application* App;
