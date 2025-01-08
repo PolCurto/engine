@@ -13,6 +13,7 @@
 #include "Model.h"
 #include "Timer.h"
 #include "PreciseTimer.h"
+#include "ModuleTime.h"
 
 using namespace std;
 
@@ -28,6 +29,7 @@ Application::Application()
 	modules.push_back(debug = new ModuleDebugDraw());
 	modules.push_back(exercise = new ModuleRenderExercise());
 	modules.push_back(hardware = new ModuleHardware());
+	modules.push_back(time = new ModuleTime());
 	modules.push_back(editor = new ModuleEditor());
 
 	timer = new Timer();
@@ -56,12 +58,8 @@ bool Application::Init()
 {
 	bool ret = true;
 
-
 	for(list<Module*>::iterator it = modules.begin(); it != modules.end() && ret; ++it)
 		ret = (*it)->Init();
-
-	timer->Start();
-	precise_timer->Start();
 
 	return ret;
 }
@@ -87,8 +85,6 @@ update_status Application::Update()
 		ret = (*it)->PostUpdate();
 
 	//LOG("Time: %d", timer->Read());
-	timer->Read();
-	precise_timer->Read();
 
 	return ret;
 }

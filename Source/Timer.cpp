@@ -17,24 +17,32 @@ void Timer::Start()
 {
 	is_enabled = true;
 	start_time = SDL_GetTicks();
-
-	LOG("Timer start time: %d", start_time);
+	real_elapsed_time = start_time;
 }
 
-unsigned int Timer::Read()
+float Timer::Read()
 {
 	if (is_enabled)
-		elapsed_time = SDL_GetTicks() - start_time;
+	{
+		delta_time = (TicksSinceStartup() - real_elapsed_time) * time_scale;
+		elapsed_time += delta_time;
+		real_elapsed_time = TicksSinceStartup();
+	}
 
 	return elapsed_time;
 }
 
-unsigned int Timer::Stop()
+float Timer::Stop()
 {
 	is_enabled = false;
-	elapsed_time = SDL_GetTicks() - start_time;
+	//elapsed_time = SDL_GetTicks() - start_time;
 
-	LOG("Timer elapsed time: %f", static_cast<float>(elapsed_time) / 1000.0f);
+	//LOG("Timer elapsed time: %f", static_cast<float>(elapsed_time) / 1000.0f);
 
 	return elapsed_time;
+}
+
+float Timer::TicksSinceStartup() const
+{
+	return SDL_GetTicks() - start_time;
 }

@@ -20,6 +20,7 @@ class ModuleTextures;
 class Model;
 class Timer;
 class PreciseTimer;
+class ModuleTime;
 
 class Application
 {
@@ -63,6 +64,7 @@ private:
     ModuleEditor* editor = nullptr;
     ModuleHardware* hardware = nullptr;
     ModuleTextures* textures = nullptr;
+    ModuleTime* time = nullptr;
 
     std::list<Module*> modules;
 

@@ -2,9 +2,8 @@
 
 #include "Module.h"
 #include <memory>
-
-class Timer;
-class PreciseTimer;
+#include "Timer.h"
+#include "PreciseTimer.h"
 
 class ModuleTime : public Module
 {
@@ -15,21 +14,26 @@ public:
 
 	bool PreInit();
 	bool Init();
-	update_status PreUpdate();
 	update_status Update();
 	bool CleanUp();
 
+	void ShowTimers();
+
+	void SetTimeScale(const float new_scale);
 
 private:
 
-	std::unique_ptr<Timer> timer;
-	std::unique_ptr<PreciseTimer> precise_timer;
+	Timer timer;
+	Timer game_clock;
+	Timer realtime_clock;
 
-	unsigned int frame_count;
-	float time_scale;
-	float time;
-	float real_time;
-	float delta_time;
-	float real_delta_time;
+	unsigned int frame_count = 0;
+	float time_scale = 1.0f;
+	float time = 0;
+	float real_time = 0;
+	float delta_time = 0;
+	float real_delta_time = 0;
+
+	int fps_limit = 0;
 
 };

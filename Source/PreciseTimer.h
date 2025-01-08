@@ -9,8 +9,9 @@ public:
 	~PreciseTimer();
 
 	void Start() override;
-	unsigned int Read() override;
-	unsigned int Stop() override;
+	float Read() override;
+	float Stop() override;
+	float TicksSinceStartup() const override;
 
 
 private:
@@ -18,7 +19,10 @@ private:
 	bool is_enabled = false;
 
 	float start_time = 0;
+	float delta_time = 0;
 	float elapsed_time = 0;
+	float real_elapsed_time = 0;
+	float time_scale = 1.0f;
 
 	static float frequency;
 
