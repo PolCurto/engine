@@ -134,6 +134,9 @@
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="ModuleLightning.cpp" />
+    <ClCompile Include="Timer.cpp" />
+    <ClCompile Include="PreciseTimer.cpp" />
+    <ClCompile Include="ModuleTime.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Dummy.h" />
@@ -366,6 +369,9 @@
     <ClInclude Include="Model.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="ModuleLightning.h" />
+    <ClInclude Include="Timer.h" />
+    <ClInclude Include="PreciseTimer.h" />
+    <ClInclude Include="ModuleTime.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="MathGeoLib\include\Geometry\KDTree.inl">

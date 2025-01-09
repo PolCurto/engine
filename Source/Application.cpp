@@ -12,6 +12,9 @@
 #include "ModuleTextures.h"
 #include "ModuleLightning.h"
 #include "Model.h"
+#include "Timer.h"
+#include "PreciseTimer.h"
+#include "ModuleTime.h"
 
 using namespace std;
 
@@ -27,6 +30,7 @@ Application::Application()
 	modules.push_back(debug = new ModuleDebugDraw());
 	modules.push_back(exercise = new ModuleRenderExercise());
 	modules.push_back(hardware = new ModuleHardware());
+	modules.push_back(time = new ModuleTime());
 	modules.push_back(editor = new ModuleEditor());
 	modules.push_back(lightning = new ModuleLightning());
 }
@@ -79,12 +83,18 @@ update_status Application::Update()
 	for(list<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
 		ret = (*it)->PostUpdate();
 
+	//LOG("Time: %d", timer->Read());
+
 	return ret;
 }
 
 bool Application::CleanUp()
 {
 	bool ret = true;
+
+	timer->Stop();
+	precise_timer->Stop();
+	//LOG("Elapsed time: %f\n", static_cast<float>(timer->Stop()) / 1000.0f);
 
 	for(list<Module*>::reverse_iterator it = modules.rbegin(); it != modules.rend() && ret; ++it)
 		ret = (*it)->CleanUp();

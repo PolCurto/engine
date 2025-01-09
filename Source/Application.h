@@ -19,6 +19,7 @@ class ModuleHardware;
 class ModuleTextures;
 class ModuleLightning;
 class Model;
+class ModuleTime;
 
 class Application
 {
@@ -64,6 +65,7 @@ private:
     ModuleHardware* hardware = nullptr;
     ModuleTextures* textures = nullptr;
     ModuleLightning* lightning = nullptr;
+    ModuleTime* time = nullptr;
 
     std::list<Module*> modules;
 

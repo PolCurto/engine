@@ -28,7 +28,6 @@ int main(int argc, char ** argv)
 		switch (state)
 		{
 		case MAIN_CREATION:
-
 			//LOG("Application Creation --------------");
 			App = new Application();
 			state = MAIN_START;
@@ -85,7 +84,6 @@ int main(int argc, char ** argv)
 			break;
 
 		}
-
 	}
 
 	delete App;
