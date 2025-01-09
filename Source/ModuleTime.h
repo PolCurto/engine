@@ -17,7 +17,9 @@ public:
 	update_status Update();
 	bool CleanUp();
 
+	void CalcFps();
 	void ShowTimers();
+	void LimitFPS();
 
 	void SetTimeScale(const float new_scale);
 
@@ -34,6 +36,13 @@ private:
 	float delta_time = 0;
 	float real_delta_time = 0;
 
+	unsigned int fps = 0;
+	bool fps_is_limited = false;
 	int fps_limit = 0;
+	float desired_ms = 0;
+
+	unsigned int fps_2 = 0;
+	float fps_timer = 0;
+	float fps_counter = 0;
 
 };
