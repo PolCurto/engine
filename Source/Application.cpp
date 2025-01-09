@@ -12,8 +12,6 @@
 #include "ModuleTextures.h"
 #include "ModuleLightning.h"
 #include "Model.h"
-#include "Timer.h"
-#include "PreciseTimer.h"
 #include "ModuleTime.h"
 
 using namespace std;
@@ -92,8 +90,6 @@ bool Application::CleanUp()
 {
 	bool ret = true;
 
-	timer->Stop();
-	precise_timer->Stop();
 	//LOG("Elapsed time: %f\n", static_cast<float>(timer->Stop()) / 1000.0f);
 
 	for(list<Module*>::reverse_iterator it = modules.rbegin(); it != modules.rend() && ret; ++it)
