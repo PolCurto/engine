@@ -379,12 +379,15 @@ void Mesh::CreateVAO()
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
 
+	// Position
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3 + sizeof(float) * 2 + sizeof(float) * 3, (void*)(0));
 
+	// Uvs
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 3 + sizeof(float) * 2 + sizeof(float) * 3, (void*)(sizeof(float) * 3));
 	
+	// Normals
 	glEnableVertexAttribArray(2);
 	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3 + sizeof(float) * 2 + sizeof(float) * 3, (void*)(sizeof(float) * 3 + sizeof(float) * 2));
 

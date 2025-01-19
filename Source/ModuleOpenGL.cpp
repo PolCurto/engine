@@ -68,8 +68,8 @@ update_status ModuleOpenGL::PreUpdate()
 {
 	glViewport(0, 0, App->GetWindow()->GetWidth(), App->GetWindow()->GetHeight());
 
-	glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	//glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
+	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	return UPDATE_CONTINUE;
 }
@@ -111,6 +111,12 @@ void ModuleOpenGL::SetDepthTest(bool enable) const
 		glEnable(GL_DEPTH_TEST);
 	else
 		glDisable(GL_DEPTH_TEST);
+}
+
+void ModuleOpenGL::SetDepthFunc(bool enable) const
+{
+	if (enable) glDepthFunc(GL_LESS);
+	else glDepthFunc(GL_ALWAYS);
 }
 
 void ModuleOpenGL::SetFaceCull(bool enable) const
