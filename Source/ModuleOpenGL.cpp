@@ -81,7 +81,7 @@ update_status ModuleOpenGL::Update()
 	float4x4 view = App->GetCamera()->GetViewMatrix();
 
 	// Draw debug axis origin and square grid
-	App->GetDebug()->Draw(view, projection, App->GetWindow()->GetWidth(), App->GetWindow()->GetHeight());
+	//App->GetDebug()->Draw(view, projection, App->GetWindow()->GetWidth(), App->GetWindow()->GetHeight());
 	return UPDATE_CONTINUE;
 }
 

@@ -9,6 +9,8 @@
 #include "DirectXTex.h"
 #include "Model.h"
 #include "Mesh.h"
+#include "ModuleDebugDraw.h"
+#include "ModuleWindow.h"
 #include <Math/MathAll.h>	
 
 
@@ -56,10 +58,19 @@ update_status ModuleRenderExercise::PreUpdate()
 
 update_status ModuleRenderExercise::Update()
 {
+    // Render the skybox
     App->GetOpenGL()->SetDepthFunc(false);
     RenderSkybox();
     App->GetOpenGL()->SetDepthFunc(true);
+
+    // Render the meshes
 	model->Render(program_id);
+
+    // Draw the grid
+    float4x4 projection = App->GetCamera()->GetProjectionMatrix();
+    float4x4 view = App->GetCamera()->GetViewMatrix();
+    App->GetDebug()->Draw(view, projection, App->GetWindow()->GetWidth(), App->GetWindow()->GetHeight());
+
 
 	return UPDATE_CONTINUE;
 }
