@@ -1,6 +1,5 @@
-# Assignment 1 Engine
-In-house engine made from scratch with C++ in the UPC School Advanced Programming for AAA games master's degree.
-[Github page](https://github.com/PolCurto/engine)
+# Custom Engine
+In-house engine made from scratch with C++.
 
 ## How to use
 ### Move the camera around
